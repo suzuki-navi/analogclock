@@ -1972,7 +1972,7 @@ function printMonthsDisk(element, {
 // 西暦年の針
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const year2000HandTop = 308;
+const year2000HandTop = 300;
 
 (() => {
   const layerName = "year2000-hand";
@@ -2019,72 +2019,6 @@ const year2000HandTop = 308;
       }
       diskScrolling(angle) {
         //diskScrollingCommon(moveDisk, this, angle);
-      }
-    }();
-  });
-})();
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// 1月～12月の針その1
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const monthHandTop = 354;
-
-(() => {
-  const layerName = "month-hand-1";
-  const help = [
-    "1月から12月までのいずれかを示す針です。マウスで動かすことができます。",
-  ];
-  layerNames.push({name:layerName, help});
-
-  layerInitializers.push(clockElement => {
-    createCircleHandElement(clockElement, {
-      layerName,
-      top: monthHandTop,
-      halfWidth: 12,
-    }, (element1, element2s, element2, element3s, element3, glassElement) => {
-      element2s.style.left = "calc(50% - 32px)";
-      element2s.style.width = "64px";
-      element2s.style.borderRadius = "12px";
-      element2.style.left = "calc(50% - 32px)";
-      element2.style.width = "64px";
-      element2.style.borderRadius = "12px";
-      element3.style.backgroundColor = "#999999";
-    });
-  });
-
-  diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
-    new class {
-      constructor() {
-        this.time = 0;
-        this.value = null;
-        this.angle = 0;
-        addTimeResetEventListener(this);
-        addMoveEventListener("mday-hand", this);
-        addDiskScrollListener(this, 360 / 12);
-      }
-      name() {
-        return layerName;
-      }
-      timeToValue(time) {
-        let [year, yday]  = timeToYear(time);
-        let [month, mday, daysOfMonth] = ydayToMonth(yday);
-        return month;
-      }
-      valueToAngle(value) {
-        return (value - 0.5) * 30;
-      }
-      setTime(time) {
-        this.time = time;
-        diskSetTimeCommon(moveDisk, this, time);
-      }
-      diskScrolled(count) {
-        let delta = calcSecondsPerMonth(this.time, count);
-        changeIndicatingTime(delta, true);
-        setPulseMode({isPulseActive: false, isNow: false});
-      }
-      diskScrolling(angle) {
-        diskScrollingCommon(moveDisk, this, angle);
       }
     }();
   });
@@ -2270,11 +2204,13 @@ const monthHandTop = 354;
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// 1月～12月の針その2
+// 1月～12月の針
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const monthHandTop = 346;
+
 (() => {
-  const layerName = "month-hand-2";
+  const layerName = "month-hand";
   const help = [
     "1年で1周する針です。マウスで動かすことができます。",
   ];
@@ -2674,7 +2610,7 @@ const monthHandTop = 354;
       constructor() {
         this.value = 0;
         addTimeResetEventListener(this);
-        addMoveEventListener("month-hand-1", this);
+        addMoveEventListener("month-hand", this);
       }
       name() {
         return layerName;
