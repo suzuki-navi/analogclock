@@ -1752,7 +1752,96 @@ let setCalendarHandRotation = null;
         if (monthWday == 0) {
           monthWday = 7;
         }
-        return monthWday + daysOfMonth - 31;
+        let value = monthWday + daysOfMonth - 31;
+        return value;
+      }
+      valueToAngle(value) {
+        return (value - 4) * 360 / 42;
+      }
+      setTime(time) {
+        diskSetTimeCommon(moveDisk, this, time);
+      }
+    }();
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 12月の表記
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  const layerName = "calendar-december";
+  const help = [
+    "「12月」という表記だけの文字盤です。30日または31日が月曜または火曜のときは場所が重なるため隠れます。",
+  ];
+  layerNames.push({name:layerName, help});
+
+  layerInitializers.push(clockElement => {
+    createDiskElement(clockElement, {
+      layerName,
+      size: -316,
+      shadow: true,
+      glass: true,
+      rotation: 6 * 360 / 42,
+    }, clip => {
+      clip.circleBegin (-30,  0, -1, +1);
+      clip.circleLineTo( 30,  0, +1, +1);
+      clip.circleLineTo( 30, 56, +1, +1);
+      clip.circleLineTo(150, 56,  0, +1);
+      clip.circleLineTo(-90, 56, -1, +1);
+      clip.circleLineTo(-90, 28, -1, +1);
+      clip.circleLineTo(-30, 28, -1, +1);
+      clip.circleLineTo(-30,  0, -1, +1);
+      clip.end();
+    }, (shadowElement, bodyElement, glassElement) => {
+      bodyElement.style.background = "white";
+      const text = "12月";
+      createTextElement(bodyElement, {
+        layerName,
+        top: 38,
+        halfWidth: 40,
+        text: text,
+        rotation: -79,
+        angle: 2,
+      }, (element1, element2) => {
+        element2.style.fontSize = "14px";
+      });
+      createScaleElement(bodyElement, {
+        layerName,
+        top: 48,
+        height: 6,
+        halfWidth: 1,
+        rotation: -60 + 343 * 360 / 365,
+      });
+    });
+  });
+
+  diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
+    new class {
+      constructor() {
+        this.value = null;
+        this.angle = 0;
+        addTimeResetEventListener(this);
+        addMoveEventListener("hour-hand", this);
+      }
+      name() {
+        return layerName;
+      }
+      timeToValue(time) {
+        let [year, yday]  = timeToYear(time);
+        let [month, mday, daysOfMonth] = ydayToMonth(yday);
+        if (year % 4 != 0 && month == 2) daysOfMonth--;
+        let monthWday = timeToWday(time - (mday - 1) * 86400);
+        if (monthWday == 0) {
+          monthWday = 7;
+        }
+        let value = monthWday + daysOfMonth - 31;
+        if (value < 5) {
+          value = 5;
+        } else if (value == 6) {
+          value = 7;
+        }
+        return value;
       }
       valueToAngle(value) {
         return (value - 4) * 360 / 42;
