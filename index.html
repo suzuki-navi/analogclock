@@ -1135,10 +1135,11 @@ const eclipticTop = 48 + southernLatToY(0);
         });
       }
       for (const [lng, text] of [
-        [178, "土星の環が消失"],
-        [358, "土星の環が消失"],
+        [178, "土星環消失"],
+        [358, "土星環消失"],
+        [336, "火星近日点"],
       ]) {
-        const lng2 = eclipticLngToEquatorial(lng) + 180;
+        const lng2 = eclipticLngToEquatorial(lng);
         createTextElement(bodyElement, {
           layerName,
           top: 98,
