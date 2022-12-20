@@ -6,10 +6,18 @@
 <meta name="viewport" content="width=1000" >
 </head>
 <body>
-<div>
+<div id="clockwrapper">
   <div id="clock"></div>
 </div>
 <style>
+  body {
+    margin: 0;
+  }
+  #clockwrapper {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    overflow: hidden;
+  }
   #clock {
     margin: 0 auto;
   }
@@ -3921,7 +3929,6 @@ function initializeClockElement(clockElement) {
   clockElement.style.position = "relative";
   clockElement.style.height = "1000px";
   clockElement.style.width = "1000px";
-  clockElement.style.overflow = "hidden";
   clockElement.style.fontFamily = "sans-serif";
   clockElement.style.boxSizing = "border-box";
   clockElement.style.lineHeight = "60%";
