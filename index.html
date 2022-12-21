@@ -36,13 +36,46 @@ const layerNames = [];
 const diskGenerators = [];
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// 色
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+let colors = {
+  font: "#000000",
+  shadow: "#999999",
+  face: "#ffffff",
+  scale: "#aaaaaa",
+  firstHand: "#999999",
+  secondHand: "#ed8d8d",
+  skyHand: "#999999",
+  shaft: "#d7d163",
+  skyRedLine: "#ed8d8d",
+  skyYelloLine: "#d7d163",
+  skyGrayLine: "#999999",
+  skyGradient0: "#ffffff",
+  skyGradient1: "#c1724a",
+  skyGradient2: "#121b4a",
+  skyFont: "#ffffff",
+  sun: "#f3ec64",
+  mercury: "#acbee8",
+  venus: "#e9e030",
+  moon: "#f3ec64",
+  opposition: "#f3ec64",
+  starRed: "#dc6969",
+  starOrange: "#dc9d69",
+  star: "#ffffff",
+  horizon: "#5e3030",
+  horizonFont: "#ffffff",
+  digitalBackground: "#fb7c00",
+  digitalSegmentOn: "#000000",
+  glass: "#d0d0d0",
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // HTML要素生成
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const shadowColor = "#999999";
-const shadowColor2 = "#99999980";
-const boxShadow = "1px 1px 4px " + shadowColor;
-const shadowFilter = "drop-shadow(2px 2px 8px #99999980)";
+const boxShadow = "1px 1px 4px " + colors.shadow;
+const shadowFilter = "drop-shadow(2px 2px 8px " + colors.shadow + "80)";
 
 function createSVGElement(parentElement, tagName, elementInitializer = null) {
   const element = document.createElementNS("http://www.w3.org/2000/svg", tagName);
@@ -144,7 +177,6 @@ function createDiskElement(parentElement, {layerName, size, shadow = false, glas
   }, element => {
     element.style.borderRadius = "50%";
     if (shadow) {
-      //element.style.background = shadowColor;
       element.style.filter = shadowFilter;
     }
   });
@@ -344,7 +376,7 @@ function createScaleElement(parentElement, {
     left: "0",
     width: "calc(2 * " + halfWidth + "px)",
   }, element => {
-    element.style.backgroundColor = "#aaaaaa";
+    element.style.backgroundColor = colors.scale;
   });
   if (elementInitializer) {
     elementInitializer(element1, element2);
@@ -424,7 +456,7 @@ function createSecondHandElement(parentElement, {
     left: "calc(50% - " + halfWidth + "px)",
     width: "calc(2 * " + halfWidth + "px)",
   }, element => {
-    element.style.backgroundColor = shadowColor;
+    element.style.backgroundColor = colors.shadow;
     element.style.boxShadow = boxShadow;
   });
   const element3 = createClockElement(element1, {
@@ -434,7 +466,7 @@ function createSecondHandElement(parentElement, {
     left: "calc(50% - " + halfWidth + "px)",
     width: "calc(2 * " + halfWidth + "px)",
   }, element => {
-    element.style.backgroundColor = "#ed8d8d";
+    element.style.backgroundColor = colors.secondHand;
   });
   const glassElement = createClockElement(parentElement, {
     layerName,
@@ -496,7 +528,7 @@ function createFirstHandElement(parentElement, {
     left: "0",
     width: "100%",
   }, element => {
-    element.style.backgroundColor = "#999999d0";
+    element.style.backgroundColor = colors.firstHand + "d0";
     element.style.borderRadius = halfWidth + "px";
   });
   let halfWidth2 = halfWidth;
@@ -552,7 +584,7 @@ function createCircleHandElement(parentElement, {
     width: "calc(2 * " + halfWidth + "px)",
   }, element => {
     element.style.borderRadius = "50%";
-    element.style.border = shadowColor;
+    element.style.border = colors.shadow;
     element.style.boxShadow = boxShadow;
     //element.style.filter = shadowFilter;
   });
@@ -564,7 +596,7 @@ function createCircleHandElement(parentElement, {
     width: "calc(2 * " + halfWidth + "px)",
   }, element => {
     element.style.borderRadius = "50%";
-    element.style.border = "2px solid #ed8d8d";
+    element.style.border = "2px solid " + colors.secondHand;
   });
   const element3s = createClockElement(element1, {
     layerName,
@@ -573,7 +605,7 @@ function createCircleHandElement(parentElement, {
     left: "calc(50% - 1px)",
     width: "2px",
   }, element => {
-    element.style.backgroundColor = shadowColor;
+    element.style.backgroundColor = colors.shadow;
     element.style.boxShadow = boxShadow;
     //element.style.filter = shadowFilter;
   });
@@ -584,7 +616,7 @@ function createCircleHandElement(parentElement, {
     left: "calc(50% - 1px)",
     width: "2px",
   }, element => {
-    element.style.backgroundColor = "#ed8d8d";
+    element.style.backgroundColor = colors.secondHand;
   });
   const glassElement = createClockElement(parentElement, {
     layerName,
@@ -640,7 +672,7 @@ function createMdayHandElement(parentElement, {
       width: "calc(2 * " + halfWidth + "px)",
     }, element => {
       element.style.borderRadius = "50%";
-      element.style.border = shadowColor;
+      element.style.border = colors.shadow;
       element.style.boxShadow = boxShadow;
     });
     const element2 = createClockElement(element1, {
@@ -651,7 +683,7 @@ function createMdayHandElement(parentElement, {
       width: "calc(2 * " + halfWidth + "px)",
     }, element => {
       element.style.borderRadius = "50%";
-      element.style.border = "2px solid #ed8d8d";
+      element.style.border = "2px solid " + colors.secondHand;
     });
     const element3s = createClockElement(element1, {
       layerName,
@@ -660,7 +692,7 @@ function createMdayHandElement(parentElement, {
       left: "calc(50% - 1px)",
       width: "2px",
     }, element => {
-      element.style.backgroundColor = shadowColor;
+      element.style.backgroundColor = colors.shadow;
       element.style.boxShadow = boxShadow;
     });
     const element3 = createClockElement(element1, {
@@ -670,7 +702,7 @@ function createMdayHandElement(parentElement, {
       left: "calc(50% - 1px)",
       width: "2px",
     }, element => {
-      element.style.backgroundColor = "#ed8d8d";
+      element.style.backgroundColor = colors.secondHand;
     });
     setAngle = function(angle) {
       element1.style.transform = "rotateZ(" + (angle) + "deg)";
@@ -723,7 +755,7 @@ function createOppositionHandElement(parentElement, {
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
       shadowElement.classList.remove("rotation");
-      bodyElement.style.backgroundColor = "#f3ec64";
+      bodyElement.style.backgroundColor = colors.opposition;
     });
   });
 }
@@ -842,7 +874,7 @@ function createArrowHandElement(parentElement, {
     element2.style.borderTop = "4px solid transparent";
     element2.style.borderLeft = "6px solid transparent";
     element2.style.borderRight = "6px solid transparent";
-    element2.style.borderBottom = "12px solid #ed8d8d";
+    element2.style.borderBottom = "12px solid " + colors.secondHand;
     element3s.style.top = "32px";
     element3s.style.height = "calc(100% - 32px)";
     element3s.style.left = "calc(50% - 2px)";
@@ -872,7 +904,7 @@ function createArrowHandElement(parentElement, {
       shadow: true,
       glass: true,
     }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "white";
+      bodyElement.style.background = colors.face;
 
       for (let i = 0; i < 24; i++) {
         createTextElement(bodyElement, {
@@ -911,7 +943,7 @@ function createArrowHandElement(parentElement, {
       glass: true,
       classNames: ["scrollable"],
     }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "#ffffff";
+      bodyElement.style.background = colors.face;
 
       function addCity(html, offset, line) {
         createTextElement(bodyElement, {
@@ -970,8 +1002,8 @@ function createArrowHandElement(parentElement, {
         rotation: 180,
         angle: 180,
       }, (element1, element2) => {
-        element2.style.background = "#5e3030";
-        element2.style.color = "#ffffff";
+        element2.style.background = colors.horizon;
+        element2.style.color = colors.horizonFont;
         element2.style.fontSize = "12px";
         element2.style.paddingTop = "12px";
         element2.style.paddingBottom = "2px";
@@ -1029,7 +1061,7 @@ function createArrowHandElement(parentElement, {
       shadow: true,
       glass: true,
     }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "conic-gradient(#ffffff, #ffffff 15%, #c1724a 30%, #121b4a 35%, #121b4a 65%, #c1724a 70%, #ffffff 85%, #ffffff)";
+      bodyElement.style.background = "conic-gradient(" + colors.skyGradient0 + ", " + colors.skyGradient0 + " 15%, " + colors.skyGradient1 + " 30%, " + colors.skyGradient2 + " 35%, " + colors.skyGradient2 + " 65%, " + colors.skyGradient1 + " 70%, " + colors.skyGradient0 + " 85%, " + colors.skyGradient0 + ")";
     });
   });
 })();
@@ -1072,7 +1104,6 @@ const eclipticTop = 48 + southernLatToY(0);
       }
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      //bodyElement.style.backgroundColor = "red";
       drawNightSky(layerName, bodyElement, null);
 
       // 太陽黄経
@@ -1086,7 +1117,7 @@ const eclipticTop = 48 + southernLatToY(0);
           halfWidth: 1,
           rotation: lng2,
         }, (element1, element2) => {
-          element2.style.backgroundColor = "#d7d163";
+          element2.style.backgroundColor = colors.skyYelloLine;
         });
         let text;
         if (i % 15 == 0) {
@@ -1107,7 +1138,7 @@ const eclipticTop = 48 + southernLatToY(0);
           rotation: lng2,
           angle: 180,
         }, (element1, element2) => {
-          element2.style.color = "#ffffff";
+          element2.style.color = colors.skyFont;
           element2.style.fontSize = "10px";
         });
       }
@@ -1120,7 +1151,7 @@ const eclipticTop = 48 + southernLatToY(0);
           halfWidth: 1,
           rotation: lng2,
         }, (element1, element2) => {
-          element2.style.backgroundColor = "#d7d163";
+          element2.style.backgroundColor = colors.skyYelloLine;
         });
         createTextElement(bodyElement, {
           layerName,
@@ -1130,7 +1161,7 @@ const eclipticTop = 48 + southernLatToY(0);
           rotation: lng2,
           angle: 180,
         }, (element1, element2) => {
-          element2.style.color = "#ffffff";
+          element2.style.color = colors.skyFont;
           element2.style.fontSize = "10px";
         });
       }
@@ -1148,37 +1179,10 @@ const eclipticTop = 48 + southernLatToY(0);
           rotation: lng2,
           angle: 180,
         }, (element1, element2) => {
-          element2.style.color = "#ffffff";
+          element2.style.color = colors.skyFont;
           element2.style.fontSize = "7px";
         });
       }
-
-      return;
-      createDiskElement(bodyElement, {
-        layerName,
-        size: 0,
-        shadow: false,
-        glass: false,
-      }, clip => {
-        for (let i = 0; i <= 360; i += 5) {
-          const [lng, lat] = equatorialLngLatToXY(i, +45);
-          const top = southernLatToY(lat);
-          if (i == 0) {
-            clip.circleBegin (lng, top, 0, +1);
-          } else {
-            clip.circleLineTo(lng, top, 0, +1);
-          }
-        }
-        for (let i = 360; i >= 0; i -= 5) {
-          const lng = i;
-          const top = 90;
-          clip.circleLineTo(lng, top, 0, -1);
-        }
-        clip.end();
-      }, (shadowElement, bodyElement, glassElement) => {
-        shadowElement.classList.remove("rotation");
-        bodyElement.style.backgroundColor = "#cccccc";
-      });
     });
   });
 
@@ -1220,33 +1224,33 @@ const eclipticTop = 48 + southernLatToY(0);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, planetHelp] of [
-  ["saturn", calcSaturnLng, null, 6, "#98d98e", [
+  ["saturn", calcSaturnLng, null, 6, "#", [
     "土星の位置を示す針です。",
     "下にある黄色の針の位置に来るときが衝です。",
     "しし座とペガスス座付近に土星環消失の表記があります。土星がこの付近に来ると環が消失する現象が発生します。前後1年ぐらいの期間に複数回発生します。"
   ]],
-  ["jupiter", calcJupiterLng, null, starSize(-2), "#ffde85", [
+  ["jupiter", calcJupiterLng, null, starSize(-2), "#", [
     "木星の位置を示す針です。木星は全天で太陽、月、金星に次ぐ明るい星です。",
     "下にある黄色の針の位置に来るときが衝です。",
   ]],
-  ["mars", calcMarsLng, null, starSize(1), "#e36516", [
+  ["mars", calcMarsLng, null, starSize(1), "#", [
     "火星の位置を示す針です。",
     "下にある黄色の針の位置に来るときが衝です。",
     "みずがめ座付近に火星近日点の表記があります。この近日点付近で衝になるときに大接近となります。"
   ]],
-  ["sun", calcSunLng, null, starSize(-27), "#f3ec64", [
+  ["sun", calcSunLng, null, starSize(-27), colors.sun, [
     "太陽の位置を示す針です。最外周の数字の12より左にあることが多いのですが、東京では12時より少し前に太陽が真南に来ることを示しています。東西の地平線と重なる時間が日の出・日没の時間です。",
     "太陽、月、惑星を示す針は、他のパーツと同様に同心円で回転します。太陽、月、惑星は黄道に沿って移動するため、南の空の星空も黄道を同心円として描かれています。",
     "太陽と反対方向にも黄色の針が伸びています。反対方向に月があると満月、惑星があると衝を示します。",
     "反対方向の内側に向いた小さな針は、太陽黄経、二十四節気、流星群を示します。",
   ]],
-  ["mercury", calcMercuryLng, calcMercuryPhase, starSize(1), "#acbee8", [
+  ["mercury", calcMercuryLng, calcMercuryPhase, starSize(1), colors.mercury, [
     "水星の位置を示す針です。太陽の右にある時期は夕方西の空に見え、太陽の左にある時期は明け方東の空に見えます。",
   ]],
-  ["venus", calcVenusLng, calcVenusPhase, starSize(-4), "#e9e030", [
+  ["venus", calcVenusLng, calcVenusPhase, starSize(-4), colors.venus, [
     "金星の位置を示す針です。太陽の右にある時期は夕方西の空に見え、宵の明星と呼ばれます。太陽の左にある時期は明け方東の空に見え、明けの明星と呼ばれます。全天で太陽、月に次ぐ明るい星です。",
   ]],
-  ["moon", calcMoonLng, calcMoonPhase, starSize(-13), "#f3ec64", [
+  ["moon", calcMoonLng, calcMoonPhase, starSize(-13), colors.moon, [
     "月の位置を示す針です。月の満ち欠けも表現していますが、簡易的に太陽と月の赤経の差から満ち欠けを表示しています。",
     "太陽と同じ位置に来ると新月を意味します。太陽と反対側の黄色の針の位置に来ると満月を意味します。",
   ]],
@@ -1291,14 +1295,14 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
           element2.style.backgroundColor = planetColor;
           element2.style.border = "2px solid " + planetColor;
         }
-        element3.style.backgroundColor = "#999999";
+        element3.style.backgroundColor = colors.skyHand;
 
         if (calcPhase) {
           setPhase = addMoonPhaseFeature(element2, {
             layerName,
             halfWidth: planetSize,
             color1: planetColor,
-            color2: "#999999",
+            color2: colors.skyHand,
           });
         }
 
@@ -1422,8 +1426,8 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         }
         clip.end();
       }, (shadowElement, bodyElement, glassElement) => {
-        bodyElement.style.background = "#5e3030";
-        bodyElement.style.color = "#ffffff";
+        bodyElement.style.background = colors.horizon;
+        bodyElement.style.color = colors.horizonFont;
         createTextElement(bodyElement, {
             layerName,
             top: 31,
@@ -1505,7 +1509,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
       clip.circleLineTo(180, 20,  0, -1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "white";
+      bodyElement.style.background = colors.face;
 
       for (let i = 0; i < 60; i++) {
         if (i % 5 == 0) {
@@ -1561,7 +1565,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
       glass: true,
       rotation: 0,
     }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "white";
+      bodyElement.style.background = colors.face;
 
       for (let i = 0; i < 6; i++) {
         let je = 13;
@@ -1729,7 +1733,7 @@ let setCalendarHandRotation = null;
       clip.circleLineTo(-30,  0, -1, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "white";
+      bodyElement.style.background = colors.face;
     });
   });
 
@@ -1794,7 +1798,7 @@ let setCalendarHandRotation = null;
       clip.circleLineTo(-30,  0, -1, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "white";
+      bodyElement.style.background = colors.face;
       const text = "12月";
       createTextElement(bodyElement, {
         layerName,
@@ -1882,7 +1886,7 @@ let setCalendarHandRotation = null;
       clip.circleLineTo(330,                140, +1, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "white";
+      bodyElement.style.background = colors.face;
     });
 
     // 時針の数字
@@ -2143,7 +2147,7 @@ const year2000HandTop = 300;
       clip.circleLineTo(0, handleHeight, 0, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "linear-gradient(to bottom, #121b4a, #121b4a 40%, #c1724a 75%, #ffffff 95%, #ffffff)";
+      bodyElement.style.background = "linear-gradient(to bottom, " + colors.skyGradient2 + ", " + colors.skyGradient2 + " 40%, " + colors.skyGradient1 + " 75%, " + colors.skyGradient0 + " 95%, " + colors.skyGradient0 + ")";
     });
   });
 })();
@@ -2168,7 +2172,6 @@ const year2000HandTop = 300;
       glass: true,
     }, clip => {
     }, (shadowElement, bodyElement, glassElement) => {
-      //bodyElement.style.backgroundColor = "red";
       bodyElement.style.overflow = "hidden";
       drawNightSky(layerName, null, bodyElement);
     });
@@ -2251,8 +2254,8 @@ const year2000HandTop = 300;
       }
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "#5e3030";
-      bodyElement.style.color = "#ffffff";
+      bodyElement.style.background = colors.horizon;
+      bodyElement.style.color = colors.horizonFont;
 
       const text = "W← Northern Sky →E";
       createTextElement(bodyElement, {
@@ -2529,45 +2532,6 @@ const monthHandTop = 346;
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// テンプ
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-(() => {
-  return;
-
-  const layerName = "balance-wheel";
-  const help = "";
-  layerNames.push({name:layerName, help});
-
-  layerInitializers.push(clockElement => {
-    createDiskElement(clockElement, {
-      layerName,
-      size: -338,
-      shadow: true,
-      glass: true,
-      rotation: 0,
-    }, clip => {
-      clip.circleBegin (180,  0,  0, +1);
-      clip.circleLineTo(240,  0, +1, +1);
-      clip.circleLineTo(240,  4, +1, -1);
-
-      clip.circleLineTo(180.7,  4, +1, -1);
-      clip.circleLineTo(210, -4, +1, +1);
-      clip.circleLineTo(  0, -4,  0, +1);
-      clip.circleLineTo(150, -4, -1, +1);
-      clip.circleLineTo(179.3,  4, -1, -1);
-
-      clip.circleLineTo(120,  4, -1, -1);
-      clip.circleLineTo(120,  0, -1, +1);
-      clip.circleLineTo(180,  0,  0, +1);
-      clip.end();
-    }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "#121b4a30";
-    });
-  });
-})();
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 // シャフト
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2587,7 +2551,7 @@ const monthHandTop = 346;
       glass: true,
       rotation: 0,
     }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "#d7d163";
+      bodyElement.style.background = colors.shaft;
     });
   });
 })();
@@ -2622,7 +2586,7 @@ const monthHandTop = 346;
       element.style.textAlign = "right";
       element.style.border = "2px solid #000000";
       element.style.borderRadius = "4px";
-      element.style.backgroundColor = "#fb7c00";
+      element.style.backgroundColor = colors.digitalBackground;
       const backgroundElement = createHTMLElement(element, "div", element => {
         element.style.position = "absolute";
         element.style.top = "0";
@@ -2634,6 +2598,7 @@ const monthHandTop = 346;
         element.style.position = "absolute";
         element.style.top = "0";
         element.style.left = "0";
+        element.style.color = colors.digitalSegmentOn;
       });
       digitalElement.addEventListener("click", event => {
         event.stopPropagation();
@@ -2857,7 +2822,6 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
           element.style.width = "1px";
           element.style.transformOrigin = "50% 0%";
           element.style.transform = "rotateZ(" + angle + "deg)";
-          element.style.backgroundColor = "#999999";
 
           if (elementInitializer) {
             elementInitializer(element);
@@ -2882,7 +2846,7 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
           rotation: lng2 + baseRotation,
           angle: baseAngle,
         }, (element1, element2) => {
-          element2.style.color = "#ffffff";
+          element2.style.color = colors.skyFont;
           element2.style.fontSize = "8px";
         });
       }
@@ -2909,11 +2873,11 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
         }, element => {
           element.style.borderRadius = "50%";
           if (color == "red") {
-            element.style.backgroundColor = "#dc6969";
+            element.style.backgroundColor = colors.starRed;
           } else if (color == "orange") {
-            element.style.backgroundColor = "#dc9d69";
+            element.style.backgroundColor = colors.starOrange;
           } else {
-            element.style.backgroundColor = "#ffffff";
+            element.style.backgroundColor = colors.star;
           }
         });
       }
@@ -2926,18 +2890,18 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
   for (let i = 0; i < 360; i += 5) {
     for (const j of [0]) {
       addLine(i + 1, j, i + 4, j, false, element => {
-        element.style.backgroundColor = "#ed8d8d";
+        element.style.backgroundColor = colors.skyRedLine;
       });
     }
     for (const j of [+45]) {
       addLine(i + 1, j, i + 4, j, false, element => {
-        element.style.backgroundColor = "#999999";
+        element.style.backgroundColor = colors.skyGrayLine;
       });
     }
   }
   for (let i = 0; i < 360; i += 2) {
     addLine(i + 0.5, 0, i + 1.5, 0, true,  element => {
-      element.style.backgroundColor = "#d7d163";
+      element.style.backgroundColor = colors.skyYelloLine;
     });
   }
   for (let j = -35; j < 90; j += 5) {
@@ -2946,11 +2910,11 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
     for (let rot = 0; rot < 360; rot += 90) {
       if (j % 15 == 0) {
         addLine(rot-len, j, rot+len, j, false, element => {
-          element.style.backgroundColor = "#ed8d8d";
+          element.style.backgroundColor = colors.skyRedLine;
         });
       } else {
         addLine(rot-len2, j, rot+len2, j, false, element => {
-          element.style.backgroundColor = "#ed8d8d";
+          element.style.backgroundColor = colors.skyRedLine;
         });
       }
     }
@@ -3588,7 +3552,7 @@ function createHelpElement(clockElement) {
         element1.style.textAlign = "right";
         function createButtonElement(html, eventListener) {
           createHTMLElement(element1, "a", element => {
-            element.style.color = "#000000";
+            element.style.color = colors.font;
             element.style.fontSize = "24px";
             element.style.textDecoration = "none";
             element.setAttribute("href", "");
@@ -3642,7 +3606,7 @@ function createHelpElement(clockElement) {
             elem.style.display = "none";
           } else {
             elem.style.display = "";
-            elem.style.backgroundColor = "#d0d0d040";
+            elem.style.backgroundColor = colors.glass + "40";
           }
         } else {
           if (layerName == null) {
