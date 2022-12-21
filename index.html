@@ -2598,19 +2598,23 @@ const monthHandTop = 346;
 
 (() => {
   const layerName = "digital";
-  const help = [];
+  const help = [
+    "左下にあるここだけデジタル時計です。上から順に、日付、時刻、Unix Time、修正ユリウス日が表示されています。",
+    "Unix Timeは1970年1月1日0時UTCからの秒数（うるう秒をカウントせず）です。",
+    "修正ユリウス日は1858年11月17日0時UTCからの日数です。",
+  ];
   layerNames.push({name:layerName, help});
 
   let digitalElement;
 
   layerInitializers.push(clockElement => {
-    createHTMLElement(clockElement, "div", element => {
-      element.style.position = "absolute";
-      element.style.boxSizing = "border-box";
-      element.style.top = "918px";
-      element.style.height = "80px";
-      element.style.left = "0";
-      element.style.width = "150px";
+    createClockElement(clockElement, {
+      layerName,
+      top: "918px",
+      height: "80px",
+      left: "0",
+      width: "150px",
+    }, element => {
       element.style.padding = "4px";
       element.style.fontSize = "16px";
       element.style.fontFamily = "dseg";
@@ -2631,6 +2635,20 @@ const monthHandTop = 346;
         element.style.top = "0";
         element.style.left = "0";
       });
+      digitalElement.addEventListener("click", event => {
+        event.stopPropagation();
+      });
+    });
+    createClockElement(clockElement, {
+      layerName,
+      top: "918px",
+      height: "80px",
+      left: "0",
+      width: "150px",
+      classNames: ["glass"],
+    }, element => {
+      element.style.display = "none";
+      element.style.borderRadius = "4px";
     });
   });
 
@@ -2673,23 +2691,40 @@ const monthHandTop = 346;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 (() => {
-  const layerName = "nao";
+  const layerName = null; // "nao";
   const help = [];
-  layerNames.push({name:layerName, help});
+  //layerNames.push({name:layerName, help});
 
   let linkElement;
 
+  const linkHtml = "&#x1f52d;";
+
   layerInitializers.push(clockElement => {
-    createHTMLElement(clockElement, "div", element => {
-      element.style.position = "absolute";
-      element.style.boxSizing = "border-box";
-      element.style.top = "980px";
-      element.style.left = "160px";
+    createClockElement(clockElement, {
+      layerName,
+      top: "980px",
+      height: "",
+      left: "160px",
+      width: "",
+    }, element => {
       element.style.fontSize = "20px";
       linkElement = createHTMLElement(element, "a", element => {
         element.style.textDecoration = "none";
         element.setAttribute("target", "_blank");
-        element.innerHTML = "&#x1f52d;";
+        element.innerHTML = linkHtml;
+      });
+    });
+    createClockElement(clockElement, {
+      layerName,
+      top: "980px",
+      height: "",
+      left: "160px",
+      width: "",
+    }, element => {
+      element.style.display = "none";
+      element.style.fontSize = "20px";
+      createHTMLElement(element, "span", element => {
+        element.innerHTML = linkHtml;
       });
     });
   });
@@ -3504,21 +3539,33 @@ function initializeTimeControl(clockElement) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// マウスイベント
+// ヘルプ表示
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function initializeMouseEvent(clockElement, circleElement, helpElement, setPulseMode, diskScrollListener) {
+function createHelpElement(clockElement) {
+  const element1 = createHTMLElement(clockElement, "div", element => {
+    element.style.position = "absolute";
+    element.style.boxSizing = "border-box";
+    element.style.top = "0";
+    element.style.height = "100%";
+    element.style.left = "0";
+    element.style.width = "100%";
+  });
+  const element2 = createHTMLElement(element1, "div", element => {
+    element.style.top = "0";
+    element.style.height = "100%";
+    element.style.left = "0";
+    element.style.width = "100%";
+    element.style.shapeOutside = "polygon(0% 0%, 0% 100%, 100% 100%, 60% 100%, 70% 97%, 86% 86%, 97% 70%, 100% 60%, 100% 40%, 97% 30%, 86% 14%, 70% 3%, 60% 0%)";
+    element.style.float = "left";
+  });
+  const helpElement = createHTMLElement(element1, "div", element => {
+    element.style.fontSize = "12px";
+    element.style.lineHeight = "100%";
+  });
+
   let currentLayerName = null;
   let transparentMode = 0; // 0 or 1
-
-  function getLayerName(elem) {
-    for(const cls of elem.classList) {
-      if (cls.endsWith("-layer")) {
-        return cls.substring(0, cls.length - 6);
-      }
-    }
-    return "";
-  }
 
   function setTransparentLayer(layerName) {
     if (layerName == currentLayerName) {
@@ -3527,17 +3574,43 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setPulse
 
     if (layerName == null || layerName == "") {
       helpElement.innerHTML = "";
+      transparentMode = 0;
     } else {
-      const help = getLayerHelp(layerName);
-      let html = "";
+      helpElement.innerHTML = "";
+
+      createHTMLElement(helpElement, "div", element1 => {
+        element1.style.textAlign = "right";
+        function createButtonElement(html, eventListener) {
+          createHTMLElement(element1, "a", element => {
+            element.style.color = "#000000";
+            element.style.fontSize = "24px";
+            element.style.textDecoration = "none";
+            element.setAttribute("href", "");
+            element.innerHTML = html;
+            element.addEventListener("click", event => {
+              event.preventDefault();
+              eventListener(event);
+            });
+          });
+        }
+        createButtonElement("&#x25c0;", event => {
+          movePrevLayer();
+        });
+        createButtonElement("&#x25b6;", event => {
+          moveNextLayer();
+        });
+      });
+
+      const help = getLayerHelpText(layerName);
       for (const t of help) {
-        html += "<p>" + t + "</p>";
+        createHTMLElement(helpElement, "p", element => {
+          element.innerText = t;
+        });
       }
-      helpElement.innerHTML = html;
     }
 
     for (const elem of clockElement.getElementsByClassName("layer")) {
-      const name = getLayerName(elem);
+      const name = getLayerNameFromElement(elem);
       const isGlass = elem.classList.contains("glass");
       const cmp = compareLayer(name, layerName);
       if (transparentMode == 1) {
@@ -3583,6 +3656,28 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setPulse
     currentLayerName = layerName;
   }
 
+  function movePrevLayer() {
+    if (currentLayerName == null) {
+      return;
+    }
+    setTransparentLayer(getPrevLayerName(currentLayerName));
+  }
+
+  function moveNextLayer() {
+    if (currentLayerName == null) {
+      return;
+    }
+    setTransparentLayer(getNextLayerName(currentLayerName));
+  }
+
+  return [helpElement, setTransparentLayer];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// マウスイベント
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function initializeMouseEvent(clockElement, circleElement, helpElement, setTransparentLayer, setPulseMode, diskScrollListener) {
   function getMouseEventPosition(event) {
     const clockRect = circleElement.getBoundingClientRect();
     const x = event.pageX - (clockRect.left + clockRect.right) / 2 - window.pageXOffset;
@@ -3614,7 +3709,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setPulse
   let scrollMoved = false;
 
   for (const elem of clockElement.getElementsByClassName("layer")) {
-    const diskName = getLayerName(elem);
+    const diskName = getLayerNameFromElement(elem);
     let disk = null;
     let angleUnit = null;
     if (diskScrollListener[diskName]) {
@@ -3796,7 +3891,7 @@ function getLayerIndex(name) {
 // レイヤー関係のライブラリ
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function getLayerHelp(name) {
+function getLayerHelpText(name) {
   return layerNames[getLayerIndex(name)].help;
 }
 
@@ -3804,6 +3899,35 @@ function compareLayer(layerName1, layerName2) {
   const idx1 = getLayerIndex(layerName1);
   const idx2 = getLayerIndex(layerName2);
   return idx1 - idx2;
+}
+
+function getPrevLayerName(layerName) {
+  let idx = getLayerIndex(layerName);
+  idx--;
+  if (idx >= 0) {
+    return layerNames[idx].name;
+  } else {
+    return null;
+  }
+}
+
+function getNextLayerName(layerName) {
+  let idx = getLayerIndex(layerName);
+  idx++;
+  if (idx < layerNames.length) {
+    return layerNames[idx].name;
+  } else {
+    return null;
+  }
+}
+
+function getLayerNameFromElement(elem) {
+  for(const cls of elem.classList) {
+    if (cls.endsWith("-layer")) {
+      return cls.substring(0, cls.length - 6);
+    }
+  }
+  return "";
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3829,30 +3953,6 @@ function createClockCircleElement(clockElement) {
   });
 }
 
-function createHelpElement(clockElement) {
-  const element1 = createHTMLElement(clockElement, "div", element => {
-    element.style.position = "absolute";
-    element.style.boxSizing = "border-box";
-    element.style.top = "0";
-    element.style.height = "100%";
-    element.style.left = "0";
-    element.style.width = "100%";
-  });
-  const element2 = createHTMLElement(element1, "div", element => {
-    element.style.top = "0";
-    element.style.height = "100%";
-    element.style.left = "0";
-    element.style.width = "100%";
-    element.style.shapeOutside = "polygon(0% 0%, 0% 100%, 100% 100%, 60% 100%, 70% 97%, 86% 86%, 97% 70%, 100% 60%, 100% 40%, 97% 30%, 86% 14%, 70% 3%, 60% 0%)";
-    element.style.float = "left";
-  });
-  const element3 = createHTMLElement(element1, "div", element => {
-    element.style.fontSize = "12px";
-    element.style.lineHeight = "100%";
-  });
-  return element3;
-}
-
 function initializeClock(clockElementId) {
   addDsegFontStyle();
 
@@ -3860,7 +3960,7 @@ function initializeClock(clockElementId) {
   initializeClockElement(clockElement);
   const circleElement = createClockCircleElement(clockElement);
 
-  const helpElement = createHelpElement(clockElement);
+  const [helpElement, setTransparentLayer] = createHelpElement(clockElement);
 
   for (const g of layerInitializers) {
     g(clockElement);
@@ -3874,7 +3974,7 @@ function initializeClock(clockElementId) {
     g(addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode);
   }
 
-  initializeMouseEvent(clockElement, circleElement, helpElement, setPulseMode, diskScrollListener);
+  initializeMouseEvent(clockElement, circleElement, helpElement, setTransparentLayer, setPulseMode, diskScrollListener);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
