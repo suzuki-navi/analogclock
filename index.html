@@ -4007,7 +4007,8 @@ function toggleColorMode(clockElement) {
     colors = darkColors;
   }
   localStorage.setItem("color", colorMode);
-  resetClock(clockElement);
+  location.reload();
+  //resetClock(clockElement);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
