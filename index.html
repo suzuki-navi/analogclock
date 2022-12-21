@@ -1676,9 +1676,10 @@ let setCalendarHandRotation = null;
   ];
   layerNames.push({name:layerName, help});
 
-  const setAngle = [];
+  let setAngle = [];
 
   layerInitializers.push(clockElement => {
+    setAngle = [];
     for (let i = 0; i < 6; i++) {
       setAngle.push(createMdayHandElement(clockElement, {
         layerName,
