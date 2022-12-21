@@ -39,7 +39,12 @@ const diskGenerators = [];
 // 色
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let colors = {
+let colors;
+
+let colorMode;
+
+const normalColors = {
+  background: "#ffffff",
   font: "#000000",
   shadow: "#999999",
   face: "#ffffff",
@@ -57,7 +62,7 @@ let colors = {
   skyFont: "#ffffff",
   sun: "#f3ec64",
   mercury: "#acbee8",
-  venus: "#e9e030",
+  venus: "#f3ec64",
   moon: "#f3ec64",
   opposition: "#f3ec64",
   starRed: "#dc6969",
@@ -70,12 +75,48 @@ let colors = {
   glass: "#d0d0d0",
 }
 
+const darkColors = {
+  background: "#000000",
+  font: "#cccccc",
+  shadow: "#555555",
+  face: "#000000",
+  scale: "#777777",
+  firstHand: "#555555",
+  secondHand: "#9b5050",
+  skyHand: "#555555",
+  shaft: "#9c9738",
+  skyRedLine: "#9b5050",
+  skyYelloLine: "#9c9738",
+  skyGrayLine: "#555555",
+  skyGradient0: "#000000",
+  skyGradient1: "#000000",
+  skyGradient2: "#000000",
+  skyFont: "#cccccc",
+  sun: "#989334",
+  mercury: "#546180",
+  venus: "#989334",
+  moon: "#989334",
+  opposition: "#989334",
+  starRed: "#984444",
+  starOrange: "#936d4e",
+  star: "#cccccc",
+  horizon: "#5e3030",
+  horizonFont: "#cccccc",
+  digitalBackground: "#000000",
+  digitalSegmentOn: "#a95f15",
+  glass: "#737373",
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // HTML要素生成
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const boxShadow = "1px 1px 4px " + colors.shadow;
-const shadowFilter = "drop-shadow(2px 2px 8px " + colors.shadow + "80)";
+function boxShadow() {
+  return "1px 1px 4px " + colors.shadow;
+}
+function shadowFilter() {
+  return "drop-shadow(2px 2px 8px " + colors.shadow + "80)";
+}
 
 function createSVGElement(parentElement, tagName, elementInitializer = null) {
   const element = document.createElementNS("http://www.w3.org/2000/svg", tagName);
@@ -177,7 +218,7 @@ function createDiskElement(parentElement, {layerName, size, shadow = false, glas
   }, element => {
     element.style.borderRadius = "50%";
     if (shadow) {
-      element.style.filter = shadowFilter;
+      element.style.filter = shadowFilter();
     }
   });
   const bodyElement = createClockElement(shadowElement, {
@@ -457,7 +498,7 @@ function createSecondHandElement(parentElement, {
     width: "calc(2 * " + halfWidth + "px)",
   }, element => {
     element.style.backgroundColor = colors.shadow;
-    element.style.boxShadow = boxShadow;
+    element.style.boxShadow = boxShadow();
   });
   const element3 = createClockElement(element1, {
     layerName,
@@ -585,8 +626,7 @@ function createCircleHandElement(parentElement, {
   }, element => {
     element.style.borderRadius = "50%";
     element.style.border = colors.shadow;
-    element.style.boxShadow = boxShadow;
-    //element.style.filter = shadowFilter;
+    element.style.boxShadow = boxShadow();
   });
   const element2 = createClockElement(element1, {
     layerName,
@@ -606,8 +646,7 @@ function createCircleHandElement(parentElement, {
     width: "2px",
   }, element => {
     element.style.backgroundColor = colors.shadow;
-    element.style.boxShadow = boxShadow;
-    //element.style.filter = shadowFilter;
+    element.style.boxShadow = boxShadow();
   });
   const element3 = createClockElement(element1, {
     layerName,
@@ -673,7 +712,7 @@ function createMdayHandElement(parentElement, {
     }, element => {
       element.style.borderRadius = "50%";
       element.style.border = colors.shadow;
-      element.style.boxShadow = boxShadow;
+      element.style.boxShadow = boxShadow();
     });
     const element2 = createClockElement(element1, {
       layerName,
@@ -693,7 +732,7 @@ function createMdayHandElement(parentElement, {
       width: "2px",
     }, element => {
       element.style.backgroundColor = colors.shadow;
-      element.style.boxShadow = boxShadow;
+      element.style.boxShadow = boxShadow();
     });
     const element3 = createClockElement(element1, {
       layerName,
@@ -1224,33 +1263,39 @@ const eclipticTop = 48 + southernLatToY(0);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, planetHelp] of [
-  ["saturn", calcSaturnLng, null, 6, "#", [
+  ["saturn", calcSaturnLng, null, 6, null, [
     "土星の位置を示す針です。",
     "下にある黄色の針の位置に来るときが衝です。",
     "しし座とペガスス座付近に土星環消失の表記があります。土星がこの付近に来ると環が消失する現象が発生します。前後1年ぐらいの期間に複数回発生します。"
   ]],
-  ["jupiter", calcJupiterLng, null, starSize(-2), "#", [
-    "木星の位置を示す針です。木星は全天で太陽、月、金星に次ぐ明るい星です。",
+  ["jupiter", calcJupiterLng, null, starSize(-2), null, [
+    "木星の位置を示す針です。",
+    "木星は全天で太陽、月、金星に次ぐ明るい星です。",
     "下にある黄色の針の位置に来るときが衝です。",
   ]],
-  ["mars", calcMarsLng, null, starSize(1), "#", [
+  ["mars", calcMarsLng, null, starSize(1), null, [
     "火星の位置を示す針です。",
     "下にある黄色の針の位置に来るときが衝です。",
     "みずがめ座付近に火星近日点の表記があります。この近日点付近で衝になるときに大接近となります。"
   ]],
-  ["sun", calcSunLng, null, starSize(-27), colors.sun, [
-    "太陽の位置を示す針です。最外周の数字の12より左にあることが多いのですが、東京では12時より少し前に太陽が真南に来ることを示しています。東西の地平線と重なる時間が日の出・日没の時間です。",
+  ["sun", calcSunLng, null, starSize(-27), () => colors.sun, [
+    "太陽の位置を示す針です。",
+    "最外周の数字の12より左にあることが多いのですが、東京では12時より少し前に太陽が真南に来ることを示しています。東西の地平線と重なる時間が日の出・日没の時間です。",
     "太陽、月、惑星を示す針は、他のパーツと同様に同心円で回転します。太陽、月、惑星は黄道に沿って移動するため、南の空の星空も黄道を同心円として描かれています。",
     "太陽と反対方向にも黄色の針が伸びています。反対方向に月があると満月、惑星があると衝を示します。",
     "反対方向の内側に向いた小さな針は、太陽黄経、二十四節気、流星群を示します。",
   ]],
-  ["mercury", calcMercuryLng, calcMercuryPhase, starSize(1), colors.mercury, [
-    "水星の位置を示す針です。太陽の右にある時期は夕方西の空に見え、太陽の左にある時期は明け方東の空に見えます。",
+  ["mercury", calcMercuryLng, calcMercuryPhase, starSize(1), () => colors.mercury, [
+    "水星の位置を示す針です。",
+    "太陽の右にある時期は夕方西の空に見え、太陽の左にある時期は明け方東の空に見えます。",
+    "満月状のときは、時計上は太陽の手前にあるときもありますが、実際は太陽より向こう側にいます。",
   ]],
-  ["venus", calcVenusLng, calcVenusPhase, starSize(-4), colors.venus, [
-    "金星の位置を示す針です。太陽の右にある時期は夕方西の空に見え、宵の明星と呼ばれます。太陽の左にある時期は明け方東の空に見え、明けの明星と呼ばれます。全天で太陽、月に次ぐ明るい星です。",
+  ["venus", calcVenusLng, calcVenusPhase, starSize(-4), () => colors.venus, [
+    "金星の位置を示す針です。",
+    "太陽の右にある時期は夕方西の空に見え、宵の明星と呼ばれます。太陽の左にある時期は明け方東の空に見え、明けの明星と呼ばれます。全天で太陽、月に次ぐ明るい星です。",
+    "満月状のときは、時計上は太陽の手前にあるときもありますが、実際は太陽より向こう側にいます。",
   ]],
-  ["moon", calcMoonLng, calcMoonPhase, starSize(-13), colors.moon, [
+  ["moon", calcMoonLng, calcMoonPhase, starSize(-13), () => colors.moon, [
     "月の位置を示す針です。月の満ち欠けも表現していますが、簡易的に太陽と月の赤経の差から満ち欠けを表示しています。",
     "太陽と同じ位置に来ると新月を意味します。太陽と反対側の黄色の針の位置に来ると満月を意味します。",
   ]],
@@ -1292,8 +1337,8 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
           element2.style.backgroundRepeat = "no-repeat";
           element2.style.transform = "rotateZ(180deg)";
         } else {
-          element2.style.backgroundColor = planetColor;
-          element2.style.border = "2px solid " + planetColor;
+          element2.style.backgroundColor = planetColor();
+          element2.style.border = "2px solid " + planetColor();
         }
         element3.style.backgroundColor = colors.skyHand;
 
@@ -1301,7 +1346,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
           setPhase = addMoonPhaseFeature(element2, {
             layerName,
             halfWidth: planetSize,
-            color1: planetColor,
+            color1: planetColor(),
             color2: colors.skyHand,
           });
         }
@@ -2656,9 +2701,7 @@ const monthHandTop = 346;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 (() => {
-  const layerName = null; // "nao";
-  const help = [];
-  //layerNames.push({name:layerName, help});
+  const layerName = null;
 
   let linkElement;
 
@@ -2711,6 +2754,48 @@ const monthHandTop = 346;
         linkElement.setAttribute("href", url);
       }
     }();
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// ダークモード切替のボタン
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  const layerName = null;
+
+  const linkHtml = "&#x263D;";
+
+  layerInitializers.push(clockElement => {
+    createClockElement(clockElement, {
+      layerName,
+      top: "980px",
+      height: "",
+      left: "200px",
+      width: "",
+    }, element => {
+      element.style.fontSize = "28px";
+      createHTMLElement(element, "span", element => {
+        element.style.cursor = "pointer";
+        element.innerHTML = linkHtml;
+        element.addEventListener("click", event => {
+          toggleColorMode(clockElement);
+        });
+      });
+    });
+    createClockElement(clockElement, {
+      layerName,
+      top: "980px",
+      height: "",
+      left: "200px",
+      width: "",
+    }, element => {
+      element.style.display = "none";
+      element.style.fontSize = "28px";
+      createHTMLElement(element, "span", element => {
+        element.innerHTML = linkHtml;
+      });
+    });
   });
 })();
 
@@ -3901,13 +3986,42 @@ function getLayerNameFromElement(elem) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// ダークモード切替
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function loadColorMode() {
+  colorMode = localStorage.getItem("color");
+  if (colorMode == "dark") {
+    colors = darkColors;
+  } else {
+    colors = normalColors;
+  }
+}
+
+function toggleColorMode(clockElement) {
+  if (colorMode == "dark") {
+    colorMode = "normal";
+    colors = normalColors;
+  } else {
+    colorMode = "dark";
+    colors = darkColors;
+  }
+  localStorage.setItem("color", colorMode);
+  resetClock(clockElement);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // 時計構築のメイン処理
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function initializeClockElement(clockElement) {
+  clockElement.innerHTML = "";
+  document.body.style.backgroundColor = colors.background;
   clockElement.style.position = "relative";
   clockElement.style.height = "1000px";
   clockElement.style.width = "1000px";
+  clockElement.style.backgroundColor = colors.background;
+  clockElement.style.color = colors.font;
   clockElement.style.fontFamily = "sans-serif";
   clockElement.style.boxSizing = "border-box";
   clockElement.style.lineHeight = "60%";
@@ -3926,7 +4040,13 @@ function createClockCircleElement(clockElement) {
 function initializeClock(clockElementId) {
   addDsegFontStyle();
 
+  loadColorMode();
+
   const clockElement = document.getElementById(clockElementId);
+  resetClock(clockElement);
+}
+
+function resetClock(clockElement) {
   initializeClockElement(clockElement);
   const circleElement = createClockCircleElement(clockElement);
 
