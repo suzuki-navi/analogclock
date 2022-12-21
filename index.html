@@ -1035,7 +1035,7 @@ function createArrowHandElement(parentElement, {
       // 南の地平線
       createTextElement(bodyElement, {
         layerName,
-        top: 16,
+        top: 17,
         halfWidth: 80,
         text: "E← Southern Sky →W",
         rotation: 180,
@@ -1415,7 +1415,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         classNames: ["scrollable"],
       }, clip => {
         const start = -40;
-        const end = +76;
+        const end = +60;
         const lineWidth = 4;
         const lineHalfLength = 10;
         for (let i = start; i <= end; i += 2) {
@@ -1463,7 +1463,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
           if (i == start) {
             clip.circleLineTo(lng, top     , 0, +1);
           } else if (i == -lineHalfLength) {
-            clip.circleLineTo(lng - 0.6 * sign, top - 20, 0, +1);
+            clip.circleLineTo(lng - 0.9 * sign, top - 20, 0, +1);
             clip.circleLineTo(lng, top     , 0, +1);
           } else {
             clip.circleLineTo(lng, top     , 0, +1);
@@ -1475,11 +1475,11 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         bodyElement.style.color = colors.horizonFont;
         createTextElement(bodyElement, {
             layerName,
-            top: 31,
+            top: 32,
             halfWidth: 80,
             text: text,
             rotation: 0,
-            angle: 180 - 7 * sign,
+            angle: 180 - 13 * sign,
           }, (element1, element2) => {
             element2.style.fontSize = "12px";
           });
@@ -2305,7 +2305,7 @@ const year2000HandTop = 300;
       const text = "W← Northern Sky →E";
       createTextElement(bodyElement, {
         layerName,
-        top: 20,
+        top: 44,
         halfWidth: 80,
         text: text,
         rotation: 180,
@@ -2810,9 +2810,8 @@ function southernLatToY(lat) {
   if (lat < -45) {
     return -1;
   }
-  //const data = [0, 10, 25, 45, 65, 82, 95, 105, 115, 125];
-  const data = [0, 3, 18, 45, 72, 92, 110, 120, 125, 130];
-  const x1 = (lat + 45) / 15;
+  const data = [0, 1, 2, 4, 8, 13, 20, 28, 36, 45, 54, 63, 71, 79, 86, 92, 98, 103, 108, 112, 116, 120, 124, 128, 132];
+  const x1 = (lat + 45) / 5;
   const x1i = Math.floor(x1);
   if (x1i >= data.length - 1) {
     return -1;
