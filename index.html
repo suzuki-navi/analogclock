@@ -3509,6 +3509,7 @@ function initializeTimeControl(clockElement) {
 
 function initializeMouseEvent(clockElement, circleElement, helpElement, setPulseMode, diskScrollListener) {
   let currentLayerName = null;
+  let transparentMode = 0; // 0 or 1
 
   function getLayerName(elem) {
     for(const cls of elem.classList) {
@@ -3521,7 +3522,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setPulse
 
   function setTransparentLayer(layerName) {
     if (layerName == currentLayerName) {
-      return;
+      transparentMode = 1 - transparentMode;
     }
 
     if (layerName == null || layerName == "") {
@@ -3539,32 +3540,42 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setPulse
       const name = getLayerName(elem);
       const isGlass = elem.classList.contains("glass");
       const cmp = compareLayer(name, layerName);
-      if (isGlass) {
-        if (layerName == null) {
+      if (transparentMode == 1) {
+        if (isGlass) {
           elem.style.display = "none";
-        } else if (name == layerName) {
-          elem.style.display = "none";
-        //} else if (cmp > 0) {
-        //  elem.style.display = "";
-        //  //elem.style.backgroundColor = "#ffffff00";
-        //  elem.style.backgroundColor = "#d0d0d020";
-        //} else {
-        //  elem.style.display = "";
-        //  elem.style.backgroundColor = "#d0d0d040";
         } else {
-          elem.style.display = "";
-          elem.style.backgroundColor = "#d0d0d040";
+          if (layerName == null) {
+            elem.style.display = elem.dataset.origDisplay;
+          } else if (cmp <= 0) {
+            elem.style.display = elem.dataset.origDisplay;
+          } else {
+            if (elem.dataset.origDisplay == undefined) {
+              elem.dataset.origDisplay = elem.style.display;
+            }
+            elem.style.display = "none";
+          }
         }
       } else {
-        if (layerName == null) {
-          elem.style.display = elem.dataset.origDisplay;
-        } else if (cmp == 0) {
-          elem.style.display = elem.dataset.origDisplay;
-        } else {
-          if (elem.dataset.origDisplay == undefined) {
-            elem.dataset.origDisplay = elem.style.display;
+        if (isGlass) {
+          if (layerName == null) {
+            elem.style.display = "none";
+          } else if (name == layerName) {
+            elem.style.display = "none";
+          } else {
+            elem.style.display = "";
+            elem.style.backgroundColor = "#d0d0d040";
           }
-          elem.style.display = "none";
+        } else {
+          if (layerName == null) {
+            elem.style.display = elem.dataset.origDisplay;
+          } else if (cmp == 0) {
+            elem.style.display = elem.dataset.origDisplay;
+          } else {
+            if (elem.dataset.origDisplay == undefined) {
+              elem.dataset.origDisplay = elem.style.display;
+            }
+            elem.style.display = "none";
+          }
         }
       }
     }
@@ -3655,10 +3666,6 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setPulse
 
     event.preventDefault();
 
-    //if (getDiskMovingEndTime(scrollDisk.name()) != 0) {
-    //  return;
-    //}
-
     const pos = getMouseEventPosition(event);
     let angle = pos - scrollStartPosition;
     if (angle < -180) {
@@ -3703,6 +3710,16 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setPulse
         scrollDisk.diskScrolling(angle);
       }
     }
+  });
+
+  helpElement.addEventListener("mousedown", event => {
+    event.stopPropagation();
+  });
+  helpElement.addEventListener("mouseup", event => {
+    event.stopPropagation();
+  });
+  helpElement.addEventListener("click", event => {
+    event.stopPropagation();
   });
 
   function mouseUpListener() {
@@ -3793,15 +3810,6 @@ function compareLayer(layerName1, layerName2) {
 // 時計構築のメイン処理
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function initializeControls(clockElement, circleElement) {
-  const controlsElement = document.createElement("div");
-  controlsElement.style.position = "absolute";
-  controlsElement.style.top = "0";
-  controlsElement.style.left = "0";
-  clockElement.insertAdjacentElement("beforeend", controlsElement);
-  // TODO
-}
-
 function initializeClockElement(clockElement) {
   clockElement.style.position = "relative";
   clockElement.style.height = "1000px";
@@ -3867,8 +3875,6 @@ function initializeClock(clockElementId) {
   }
 
   initializeMouseEvent(clockElement, circleElement, helpElement, setPulseMode, diskScrollListener);
-
-  initializeControls(clockElement, circleElement);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
