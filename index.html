@@ -2128,7 +2128,7 @@ const year2000HandTop = 300;
     const handleHeight = 20;
     const element = createDiskElement(clockElement, {
       layerName,
-      size: 92 + handleHeight,
+      size: northernSkyElementSize + handleHeight,
       shadow: true,
       glass: true,
       rotation: 0,
@@ -2163,7 +2163,7 @@ const year2000HandTop = 300;
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
       layerName,
-      size: 92,
+      size: northernSkyElementSize,
       shadow: true,
       glass: true,
     }, clip => {
@@ -2215,12 +2215,12 @@ const year2000HandTop = 300;
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
       layerName,
-      size: 92 + extWidth,
+      size: northernSkyElementSize + extWidth,
       shadow: true,
       glass: true,
     }, clip => {
-      const start = 122;
-      const end = 238;
+      const start = 112;
+      const end = 248;
       for (let i = start; i <= end; i += 2) {
         const lng = i;
         const lat = northernHorizontalLat(lng);
@@ -2308,7 +2308,7 @@ const monthHandTop = 346;
   layerInitializers.push(clockElement => {
     createArrowHandElement(clockElement, {
       layerName,
-      top: monthHandTop + 4,
+      top: monthHandTop + 2,
     });
   });
 
@@ -2775,11 +2775,11 @@ function southernLatToY(lat) {
   return latY;
 }
 
-const northernSkyElementSize = 92;
+const northernSkyElementSize = 128;
 
 function northernLatToY(lat) {
   // 半径92px
-  const latY = 92 * (lat - 35.0) / 55.0;
+  const latY = northernSkyElementSize * (lat - 25.0) / 65.0;
   return latY;
 }
 
