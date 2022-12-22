@@ -71,6 +71,7 @@ const normalColors = {
   horizon: "#5e3030",
   horizonFont: "#ffffff",
   eclipse: "#8c8242",
+  eclipseFont: "#ffffff",
   digitalBackground: "#fb7c00",
   digitalSegmentOn: "#000000",
   glass: "#d0d0d0",
@@ -104,8 +105,9 @@ const darkColors = {
   horizon: "#5e3030",
   horizonFont: "#cccccc",
   eclipse: "#8c8242",
+  eclipseFont: "#ffffff",
   digitalBackground: "#000000",
-  digitalSegmentOn: "#a95f15",
+  digitalSegmentOn: "#784b1e",
   glass: "#737373",
 }
 
@@ -1089,6 +1091,8 @@ function createArrowHandElement(parentElement, {
 // 南の空の薄明背景
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const southernSkyTop = 44;
+
 (() => {
   const layerName = "southern-sky";
   const help = [
@@ -1099,7 +1103,7 @@ function createArrowHandElement(parentElement, {
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
       layerName,
-      size: -48,
+      size: -southernSkyTop,
       shadow: true,
       glass: true,
     }, null, (shadowElement, bodyElement, glassElement) => {
@@ -1112,7 +1116,7 @@ function createArrowHandElement(parentElement, {
 // 南の空の星座
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const eclipticTop = 48 + southernLatToY(0);
+const eclipticTop = southernSkyTop + southernLatToY(0);
 
 (() => {
   const layerName = "southern-stars";
@@ -1127,7 +1131,7 @@ const eclipticTop = 48 + southernLatToY(0);
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
       layerName,
-      size: -48,
+      size: -southernSkyTop,
       shadow: true,
       glass: true,
       classNames: ["scrollable"],
@@ -1148,13 +1152,15 @@ const eclipticTop = 48 + southernLatToY(0);
     }, (shadowElement, bodyElement, glassElement) => {
       drawNightSky(layerName, bodyElement, null);
 
+      const smallWindowTop = 132;
+
       // 太陽黄経
       for (let i = 0; i < 360; i += 5) {
         const lng = i;
         const lng2 = eclipticLngToEquatorial(lng) + 180;
         createScaleElement(bodyElement, {
           layerName,
-          top: 136,
+          top: smallWindowTop + 8,
           height: 5,
           halfWidth: 1,
           rotation: lng2,
@@ -1174,7 +1180,7 @@ const eclipticTop = 48 + southernLatToY(0);
         }
         createTextElement(bodyElement, {
           layerName,
-          top: 128,
+          top: smallWindowTop,
           halfWidth: 10,
           text,
           rotation: lng2,
@@ -1188,7 +1194,7 @@ const eclipticTop = 48 + southernLatToY(0);
         const lng2 = eclipticLngToEquatorial(lng) + 180;
         createScaleElement(bodyElement, {
           layerName,
-          top: 142,
+          top: smallWindowTop + 14,
           height: 5,
           halfWidth: 1,
           rotation: lng2,
@@ -1197,7 +1203,7 @@ const eclipticTop = 48 + southernLatToY(0);
         });
         createTextElement(bodyElement, {
           layerName,
-          top: 146,
+          top: smallWindowTop + 18,
           halfWidth: 50,
           text,
           rotation: lng2,
@@ -1215,14 +1221,14 @@ const eclipticTop = 48 + southernLatToY(0);
         const lng2 = eclipticLngToEquatorial(lng);
         createTextElement(bodyElement, {
           layerName,
-          top: 98,
+          top: 102,
           halfWidth: 20,
           text,
           rotation: lng2,
           angle: 180,
         }, (element1, element2) => {
           element2.style.background = colors.eclipse + "70";
-          element2.style.color = colors.skyFont;
+          element2.style.color = colors.eclipseFont;
           element2.style.fontSize = "7px";
         });
       }
@@ -1413,7 +1419,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
     layerInitializers.push(clockElement => {
       createDiskElement(clockElement, {
         layerName,
-        size: -48,
+        size: -southernSkyTop,
         shadow: true,
         glass: true,
         rotation: 180 - 90 * sign,
@@ -1638,10 +1644,10 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         clip.end();
       }, (shadowElement, bodyElement, glassElement) => {
         bodyElement.style.background = colors.eclipse + "70";
-        bodyElement.style.color = colors.skyFont;
+        bodyElement.style.color = colors.eclipseFont;
         createTextElement(bodyElement, {
           layerName,
-          top: -1,
+          top: 0,
           halfWidth: 80,
           angle: 180,
           text: "日食・月食",
@@ -1650,7 +1656,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         });
         createTextElement(bodyElement, {
           layerName,
-          top: -1,
+          top: 0,
           halfWidth: 80,
           rotation: -7.5,
           angle: 180,
@@ -1729,7 +1735,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         clip.end();
       }, (shadowElement, bodyElement, glassElement) => {
         bodyElement.style.background = colors.eclipse + "70";
-        bodyElement.style.color = colors.skyFont;
+        bodyElement.style.color = colors.eclipseFont;
         createTextElement(bodyElement, {
           layerName,
           top: 7,
@@ -2120,9 +2126,9 @@ let setCalendarHandRotation = null;
     for (i = 1; i <= 11; i++) {
       let rot = i * 30;
       if (i == 1) {
-        rot += 4;
+        rot += 3; // 1時は少し右にずらす
       } else if (i == 11) {
-        rot -= 4;
+        rot -= 4; // 11時は少し左にずらす
       }
       const text = i;
       createTextElement(element, {
@@ -2816,7 +2822,7 @@ const monthHandTop = 346;
     createClockElement(clockElement, {
       layerName,
       top: "918px",
-      height: "80px",
+      height: "82px",
       left: "0",
       width: "150px",
     }, element => {
@@ -3000,7 +3006,7 @@ const monthHandTop = 346;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function southernLatToY(lat) {
-  // 縦幅108px
+  // 縦幅112px
   const margin = 20;
   //const latY = 45 * (1.0 + lat / 45.0);
   if (lat < -45) {
