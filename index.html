@@ -70,6 +70,7 @@ const normalColors = {
   star: "#ffffff",
   horizon: "#5e3030",
   horizonFont: "#ffffff",
+  eclipse: "#8c8242",
   digitalBackground: "#fb7c00",
   digitalSegmentOn: "#000000",
   glass: "#d0d0d0",
@@ -102,6 +103,7 @@ const darkColors = {
   star: "#cccccc",
   horizon: "#5e3030",
   horizonFont: "#cccccc",
+  eclipse: "#8c8242",
   digitalBackground: "#000000",
   digitalSegmentOn: "#a95f15",
   glass: "#737373",
@@ -1214,11 +1216,12 @@ const eclipticTop = 48 + southernLatToY(0);
         createTextElement(bodyElement, {
           layerName,
           top: 98,
-          halfWidth: 50,
+          halfWidth: 20,
           text,
           rotation: lng2,
           angle: 180,
         }, (element1, element2) => {
+          element2.style.background = colors.eclipse + "70";
           element2.style.color = colors.skyFont;
           element2.style.fontSize = "7px";
         });
@@ -1591,6 +1594,180 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         });
       }
     });
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 日食・月食
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  const layerName = "eclipse";
+  const help = [
+    "月の黄道に対する昇交点と降交点の位置を示す針です。",
+    "背景の星座とともに1年で反時計回りに1周しますが、それと同時に星座の中を少しずつ移動しており18.6年かけて1周します。",
+    "月と太陽の両方が昇交点と降交点のいずれかに来た時に新月になると日食、満月になると月食になります。昇交点または降交点に近いほど日食であれば皆既日食または金環日食、月食であれば皆既月食になりやすくなります。",
+    "月が近地点に近い場合は皆既日食、遠地点に近い場合は金環日食になりやすくなります。",
+  ];
+  layerNames.push({name:layerName, help});
+
+  for (const [direction, text] of [[0, "昇交点"], [180, "降交点"]]) {
+    layerInitializers.push(clockElement => {
+      createDiskElement(clockElement, {
+        layerName,
+        size: -154,
+        shadow: true,
+        glass: true,
+        rotation: direction,
+      }, clip => {
+        clip.circleBegin (  0,  0,  0, +1);
+        clip.circleLineTo( 17,  0, +1, +1);
+        clip.circleLineTo( 17,  2, +1, -1);
+        clip.circleLineTo( 11,  8, +1, -1);
+        clip.circleLineTo(  6, 10, +1, -1);
+        clip.circleLineTo(0.8, 10, +1, -1);
+        clip.circleLineTo( 20, -8, +1, +1);
+        clip.circleLineTo(180, -8,  0, +1);
+        clip.circleLineTo(340, -8, -1, +1);
+        clip.circleLineTo(-0.8,10, -1, -1);
+        clip.circleLineTo( -6, 10, -1, -1);
+        clip.circleLineTo(-11,  8, -1, -1);
+        clip.circleLineTo(-17,  2, -1, -1);
+        clip.circleLineTo(-17,  0, -1, +1);
+        clip.circleLineTo(  0,  0,  0, +1);
+        clip.end();
+      }, (shadowElement, bodyElement, glassElement) => {
+        bodyElement.style.background = colors.eclipse + "70";
+        bodyElement.style.color = colors.skyFont;
+        createTextElement(bodyElement, {
+          layerName,
+          top: -1,
+          halfWidth: 80,
+          angle: 180,
+          text: "日食・月食",
+        }, (element1, element2) => {
+          element2.style.fontSize = "6px";
+        });
+        createTextElement(bodyElement, {
+          layerName,
+          top: -1,
+          halfWidth: 80,
+          rotation: -7.5,
+          angle: 180,
+          text: "(月の" + text + ")",
+        }, (element1, element2) => {
+          element2.style.fontSize = "6px";
+        });
+      });
+    });
+  }
+
+  diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
+    new class {
+      constructor() {
+        this.value = null;
+        this.angle = 0;
+        addTimeResetEventListener(this);
+        addMoveEventListener("hour-hand", this);
+      }
+      name() {
+        return layerName;
+      }
+      timeToValue(time) {
+        const time1 = Math.floor(time / 3600) * 3600 + 1800;
+        const day1 = (time1 + 9 * 3600) / 86400.0;
+        const day2 = day1 - Math.floor(day1);
+        const sid = timeToSidereal(time1) - day2 * 360;
+        return calcEclipseLng(time) - sid;
+      }
+      valueToAngle(value) {
+        return value - tokyoLng + 180;
+      }
+      setTime(time) {
+        diskSetTimeCommon(moveDisk, this, time);
+      }
+    }();
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 月の近地点・遠地点
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  const layerName = "perigee";
+  const help = [
+    "月の近地点と遠地点の位置を示す針です。",
+    "背景の星座とともに1年で反時計回りに1周しますが、それと同時に星座の中を少しずつ移動しており約9年かけて1周します。実際には単純に1周するだけでなく細かく振動しているのですが、この針では一定速度で回転しているものとして近似しているため、この針は誤差が大きいです。",
+    "月が近地点付近ですといつもより大きめの月、遠地点付近ですといつもより小さめの月が見えます。",
+  ];
+  layerNames.push({name:layerName, help});
+
+  for (const [direction, text] of [[0, "近地点"], [180, "遠地点"]]) {
+    layerInitializers.push(clockElement => {
+      createDiskElement(clockElement, {
+        layerName,
+        size: -154,
+        shadow: true,
+        glass: true,
+        rotation: direction,
+      }, clip => {
+        clip.circleBegin (-0.8,  8, -1, +1);
+        clip.circleLineTo(-0.8,  0, -1, +1);
+        clip.circleLineTo( 0.8,  0, +1, +1);
+        clip.circleLineTo( 0.8,  8, +1, +1);
+        clip.circleLineTo(   4,  8, +1, +1);
+        clip.circleLineTo(   4, 16, +1, -1);
+        clip.circleLineTo( 0.8, 16, +1, -1);
+        clip.circleLineTo(  20,-10, +1, +1);
+        clip.circleLineTo( 180,-10,  0, +1);
+        clip.circleLineTo( 340,-10, -1, +1);
+        clip.circleLineTo(-0.8, 16, -1, -1);
+        clip.circleLineTo(  -4, 16, -1, -1);
+        clip.circleLineTo(  -4,  8, -1, +1);
+        clip.circleLineTo(-0.8,  8, -1, +1);
+        clip.end();
+      }, (shadowElement, bodyElement, glassElement) => {
+        bodyElement.style.background = colors.eclipse + "70";
+        bodyElement.style.color = colors.skyFont;
+        createTextElement(bodyElement, {
+          layerName,
+          top: 7,
+          halfWidth: 80,
+          angle: 180,
+          text: "月の" + text,
+        }, (element1, element2) => {
+          element2.style.fontSize = "6px";
+        });
+      });
+    });
+  }
+
+  diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
+    new class {
+      constructor() {
+        this.value = null;
+        this.angle = 0;
+        addTimeResetEventListener(this);
+        addMoveEventListener("hour-hand", this);
+      }
+      name() {
+        return layerName;
+      }
+      timeToValue(time) {
+        const time1 = Math.floor(time / 3600) * 3600 + 1800;
+        const day1 = (time1 + 9 * 3600) / 86400.0;
+        const day2 = day1 - Math.floor(day1);
+        const sid = timeToSidereal(time1) - day2 * 360;
+        return calcPerigeeLng(time) - sid;
+      }
+      valueToAngle(value) {
+        return value - tokyoLng + 180;
+      }
+      setTime(time) {
+        diskSetTimeCommon(moveDisk, this, time);
+      }
+    }();
   });
 })();
 
@@ -4129,6 +4306,20 @@ function midnightTimeToSiderial(time) {
   const day1 = (time + 9 * 3600) / 86400.0;
   const day2 = day1 - Math.floor(day1);
   return timeToSidereal(time) - day2 * 360;
+}
+
+function calcEclipseLng(time) {
+  // 天文年鑑2022 p208
+  const day = timeToMjd(time);
+  let lng = 125.0446 - 0.052953765 * (day - 51544.5);
+  return lng - Math.floor(lng / 360) * 360;
+}
+
+function calcPerigeeLng(time) {
+  // 天文年鑑2022 p208
+  const day = timeToMjd(time);
+  let lng = 83.3532 + 0.111403522 * (day - 51544.5);
+  return lng - Math.floor(lng / 360) * 360;
 }
 
 function calcSunLng(time0) {
