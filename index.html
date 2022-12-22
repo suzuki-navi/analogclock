@@ -4335,28 +4335,35 @@ function calcSunLng(time0) {
   return (lng - Math.floor(lng)) * 360;
 }
 function calcMoonLng(time0) {
-  // 最大誤差 0.48度
+  // 最大誤差 0.30度
   const time = timeToMjd(time0);
   let lng = 0.0;
-  lng += 360.0 * (time / 27.321582 + 0.02100);
-  lng += 2.45921 * Math.sin(time / 13.66079 * 2.0 * Math.PI + -2.87786);
+  lng += 360.0 * (time / 27.321582 + 0.02101);
+  lng += 2.45648 * Math.sin(time / 13.66079 * 2.0 * Math.PI + -2.87822);
   lng += 6.28901 * Math.sin(time / 27.55455 * 2.0 * Math.PI + -1.63279);
-  lng += 0.21370 * Math.sin(time / 13.77728 * 2.0 * Math.PI + 3.01774);
-  lng += 1.07075 * Math.sin(time / 6793.50000 * 2.0 * Math.PI + -2.73459);
-  lng += 360.0 * (time * -0.0000000003);
-  lng += 1.27405 * Math.sin(time / 31.81175 * 2.0 * Math.PI + -0.11744);
-  lng += 1.05372 * Math.sin(time / 13.63328 * 2.0 * Math.PI + -2.65928);
-  lng += 0.65537 * Math.sin(time / 14.76558 * 2.0 * Math.PI + -1.21409);
-  lng += 0.27523 * Math.sin(time / 27.09287 * 2.0 * Math.PI + 2.06559);
-  lng += 0.26830 * Math.sin(time / 9.13284 * 2.0 * Math.PI + 1.38948);
-  lng += 0.18426 * Math.sin(time / 364.97341 * 2.0 * Math.PI + 1.59055);
-  lng += 0.11594 * Math.sin(time / 26.98332 * 2.0 * Math.PI + 1.53037);
-  lng += 0.11487 * Math.sin(time / 9.12075 * 2.0 * Math.PI + 2.52279);
-  lng += 0.11184 * Math.sin(time / 13.60635 * 2.0 * Math.PI + -1.51627);
-  lng += 0.05932 * Math.sin(time / 23.94067 * 2.0 * Math.PI + -0.58594);
-  lng += 0.05839 * Math.sin(time / 205.97007 * 2.0 * Math.PI + 2.22911);
-  lng += 0.05677 * Math.sin(time / 34.84919 * 2.0 * Math.PI + 1.40542);
-  lng += 0.05420 * Math.sin(time / 6.83036 * 2.0 * Math.PI + 0.28351);
+  lng += 0.21351 * Math.sin(time / 13.77728 * 2.0 * Math.PI + 3.01782);
+  lng += 1.07060 * Math.sin(time / 6793.50000 * 2.0 * Math.PI + -2.73463);
+  lng += 360.0 * (time * -0.0000000004);
+  lng += 1.27410 * Math.sin(time / 31.81175 * 2.0 * Math.PI + -0.11732);
+  lng += 1.05554 * Math.sin(time / 13.63328 * 2.0 * Math.PI + -2.65816);
+  lng += 0.65545 * Math.sin(time / 14.76558 * 2.0 * Math.PI + -1.21402);
+  lng += 0.27527 * Math.sin(time / 27.09287 * 2.0 * Math.PI + 2.06589);
+  lng += 0.26831 * Math.sin(time / 9.13284 * 2.0 * Math.PI + 1.38936);
+  lng += 0.18415 * Math.sin(time / 364.97341 * 2.0 * Math.PI + 1.59008);
+  lng += 0.11590 * Math.sin(time / 26.98332 * 2.0 * Math.PI + 1.52922);
+  lng += 0.11482 * Math.sin(time / 9.12075 * 2.0 * Math.PI + 2.52228);
+  lng += 0.11107 * Math.sin(time / 13.60635 * 2.0 * Math.PI + -1.52384);
+  lng += 0.05937 * Math.sin(time / 23.94067 * 2.0 * Math.PI + -0.58410);
+  lng += 0.05864 * Math.sin(time / 205.97007 * 2.0 * Math.PI + 2.21949);
+  lng += 0.05680 * Math.sin(time / 34.84919 * 2.0 * Math.PI + 1.40680);
+  lng += 0.05148 * Math.sin(time / 6.83036 * 2.0 * Math.PI + 0.29880);
+  lng += 0.05286 * Math.sin(time / 9.61354 * 2.0 * Math.PI + 2.29183);
+  lng += 0.05286 * Math.sin(time / 9.55658 * 2.0 * Math.PI + 2.28054);
+  lng += 0.04601 * Math.sin(time / 15.38700 * 2.0 * Math.PI + -1.37694);
+  lng += 0.04564 * Math.sin(time / 13.68830 * 2.0 * Math.PI + 2.97397);
+  lng += 0.04440 * Math.sin(time / 6.82361 * 2.0 * Math.PI + 1.47146);
+  lng += 0.04116 * Math.sin(time / 29.80188 * 2.0 * Math.PI + -1.21912);
+  lng += 0.04078 * Math.sin(time / 177.93359 * 2.0 * Math.PI + -2.86284);
   lng = lng / 360;
   return (lng - Math.floor(lng)) * 360;
 }
