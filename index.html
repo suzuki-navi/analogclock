@@ -1072,6 +1072,7 @@ function createArrowHandElement(parentElement, {
         diskSetTimeCommon(moveDisk, this, time);
       }
       diskScrolled(count) {
+        this.angle = 0;
         changeIndicatingTime(3600 * count, true);
         setPulseMode({isPulseActive: false, isNow: false});
       }
@@ -1248,6 +1249,7 @@ const eclipticTop = 48 + southernLatToY(0);
         diskSetTimeCommon(moveDisk, this, time, 200);
       }
       diskScrolled(count) {
+        this.angle = 0;
         changeIndicatingTime(-86400 * count, true);
         setPulseMode({isPulseActive: false, isNow: false});
       }
@@ -1513,6 +1515,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         diskSetTimeCommon(moveDisk, this, time);
       }
       diskScrolled(count) {
+        this.angle = 0;
         changeIndicatingTime(3600 * count, true);
         setPulseMode({isPulseActive: false, isNow: false});
       }
@@ -1740,6 +1743,7 @@ let setCalendarHandRotation = null;
         diskSetTimeCommon(moveDisk, this, time);
       }
       diskScrolled(count) {
+        this.angle = 0;
         changeIndicatingTime(86400 * count, true);
         setPulseMode({isPulseActive: false, isNow: false});
       }
@@ -2152,6 +2156,7 @@ const year2000HandTop = 300;
         diskSetTimeCommon(moveDisk, this, time);
       }
       diskScrolled(count) {
+        this.angle = 0;
         let delta = calcSecondsPerYear(this.time, count);
         changeIndicatingTime(delta, true);
         setPulseMode({isPulseActive: false, isNow: false});
@@ -2183,17 +2188,17 @@ const year2000HandTop = 300;
       glass: true,
       rotation: 0,
     }, clip => {
-      clip.circleBegin (0, handleHeight, 0, +1);
-      clip.circleLineTo(90, handleHeight, 0, +1);
-      clip.circleLineTo(172, handleHeight, -1, +1);
-      clip.circleLineTo(172, 0, -1, +1);
-      clip.circleLineTo(177, 0, +1, +1);
-      clip.circleLineTo(177, handleHeight, +1, +1);
+      clip.circleBegin (180, handleHeight, 0, +1);
       clip.circleLineTo(270, handleHeight, 0, +1);
-      clip.circleLineTo(0, handleHeight, 0, +1);
+      clip.circleLineTo(  1, handleHeight, -1, +1);
+      clip.circleLineTo(  1, 0, -1, +1);
+      clip.circleLineTo(  6, 0, +1, +1);
+      clip.circleLineTo(  6, handleHeight, +1, +1);
+      clip.circleLineTo( 90, handleHeight, 0, +1);
+      clip.circleLineTo(180, handleHeight, 0, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = "linear-gradient(to bottom, " + colors.skyGradient2 + ", " + colors.skyGradient2 + " 40%, " + colors.skyGradient1 + " 75%, " + colors.skyGradient0 + " 95%, " + colors.skyGradient0 + ")";
+      bodyElement.style.background = "linear-gradient(to top, " + colors.skyGradient2 + ", " + colors.skyGradient2 + " 40%, " + colors.skyGradient1 + " 75%, " + colors.skyGradient0 + " 95%, " + colors.skyGradient0 + ")";
     });
   });
 })();
@@ -2267,6 +2272,7 @@ const year2000HandTop = 300;
       size: northernSkyElementSize + extWidth,
       shadow: true,
       glass: true,
+      rotation: 180,
     }, clip => {
       const start = 112;
       const end = 248;
@@ -2401,6 +2407,7 @@ const monthHandTop = 346;
         diskSetTimeCommon(moveDisk, this, time);
       }
       diskScrolled(count) {
+        this.angle = 0;
         let delta = calcSecondsPerMonth(this.time, count);
         changeIndicatingTime(delta, true);
         setPulseMode({isPulseActive: false, isNow: false});
@@ -2454,6 +2461,7 @@ const monthHandTop = 346;
         diskSetTimeCommon(moveDisk, this, time, 200);
       }
       diskScrolled(count) {
+        this.angle = 0;
         changeIndicatingTime(3600 * count, true);
         setPulseMode({isPulseActive: false, isNow: false});
       }
@@ -2506,6 +2514,7 @@ const monthHandTop = 346;
         diskSetTimeCommon(moveDisk, this, time);
       }
       diskScrolled(count) {
+        this.angle = 0;
         changeIndicatingTime(60 * count, true);
         setPulseMode({isPulseActive: false, isNow: false});
       }
@@ -2879,7 +2888,7 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
     }
     for (const [element, elementSize, convertLngLat, latToY, baseRotation] of [
       [southernSkyElement, southernSkyElementSize, convertSouthernLngLat, southernLatToY, 0],
-      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 180],
+      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 0],
     ]) {
       const [startLng2, startLat2] = convertLngLat(startLng + baseRotation, startLat);
       const [endLng2, endLat2] = convertLngLat(endLng + baseRotation, endLat);
@@ -2918,7 +2927,7 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
   function addText(lng, lat, text) {
     for (const [element, elementSize, convertLngLat, latToY, baseRotation, baseAngle] of [
       [southernSkyElement, southernSkyElementSize, convertSouthernLngLat, southernLatToY, 0, 180],
-      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 180, 0],
+      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 0, 0],
     ]) {
       const [lng2, lat2] = convertLngLat(lng, lat);
       const top = latToY(lat2);
@@ -2940,7 +2949,7 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
   function addStar(lng, lat, mag, color) {
     for (const [element, elementSize, convertLngLat, latToY, baseRotation, baseAngle] of [
       [southernSkyElement, southernSkyElementSize, convertSouthernLngLat, southernLatToY, 0, 180],
-      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 180, 0],
+      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 0, 0],
     ]) {
       const [lng2, lat2] = convertLngLat(lng, lat);
       const top = latToY(lat2);
