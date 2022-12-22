@@ -3629,7 +3629,7 @@ function createHelpElement(clockElement) {
     element.style.height = "100%";
     element.style.left = "0";
     element.style.width = "100%";
-    element.style.shapeOutside = "polygon(0% 0%, 0% 100%, 100% 100%, 60% 100%, 70% 97%, 86% 86%, 97% 70%, 100% 60%, 100% 40%, 97% 30%, 86% 14%, 70% 3%, 60% 0%)";
+    element.style.shapeOutside = "polygon(0% 0%, 0% 100%, 100% 100%, 60% 100%, 70% 97%, 86% 86%, 97% 70%, 100% 60%, 100% 40%, 97% 30%, 86% 14%, 70% 3%, 70% 0%)";
     element.style.float = "left";
   });
   const helpElement = createHTMLElement(element1, "div", element => {
@@ -3652,33 +3652,57 @@ function createHelpElement(clockElement) {
       helpElement.innerHTML = "";
 
       createHTMLElement(helpElement, "div", element1 => {
-        element1.style.textAlign = "right";
+        element1.style.position = "absolute";
+        element1.style.boxSizing = "border-box";
+        element1.style.top = "0px";
+        element1.style.left = "650px";
         function createButtonElement(html, eventListener) {
-          createHTMLElement(element1, "a", element => {
-            element.style.color = colors.font;
-            element.style.fontSize = "24px";
-            element.style.textDecoration = "none";
-            element.setAttribute("href", "");
-            element.innerHTML = html;
-            element.addEventListener("click", event => {
-              event.preventDefault();
-              eventListener(event);
+          if (eventListener == null) {
+            createHTMLElement(element1, "span", element => {
+              element.style.color = colors.background;
+              element.style.fontSize = "24px";
+              element.innerHTML = html;
             });
+          } else {
+            createHTMLElement(element1, "a", element => {
+              element.style.color = colors.font;
+              element.style.fontSize = "24px";
+              element.style.textDecoration = "none";
+              element.setAttribute("href", "");
+              element.innerHTML = html;
+              element.addEventListener("click", event => {
+                event.preventDefault();
+                eventListener(event);
+              });
+            });
+          }
+        }
+        if (getPrevLayerName(layerName) == null) {
+          createButtonElement("&#x25c0;", null);
+        } else {
+          createButtonElement("&#x25c0;", event => {
+            movePrevLayer();
           });
         }
-        createButtonElement("&#x25c0;", event => {
-          movePrevLayer();
-        });
-        createButtonElement("&#x25b6;", event => {
-          moveNextLayer();
-        });
+        if (getNextLayerName(layerName) == null) {
+          createButtonElement("&#x25b6;", null);
+        } else {
+          createButtonElement("&#x25b6;", event => {
+            moveNextLayer();
+          });
+        }
       });
 
       const help = getLayerHelpText(layerName);
+      const ps = [];
       for (const t of help) {
-        createHTMLElement(helpElement, "p", element => {
+        const element = createHTMLElement(helpElement, "p", element => {
           element.innerText = t;
         });
+        ps.push(element);
+      }
+      if (ps.length > 0) {
+        ps[0].style.marginTop = "0";
       }
     }
 
