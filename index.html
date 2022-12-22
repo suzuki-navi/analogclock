@@ -2004,17 +2004,19 @@ function printYear2000Disk(element, {
     }
 
     const warekiData = [
-      ["S", 1925],
-      ["H", 1988],
-      ["R", 2018],
+      ["S", "昭和", 1925],
+      ["H", "平成", 1988],
+      ["R", "令和", 2018],
     ];
     let warekiCh;
+    let warekiCh2;
     let warekiBaseYear;
-    for (const [ch, baseYear] of warekiData) {
+    for (const [ch, ch2, baseYear] of warekiData) {
       if (baseYear >= year) {
         break;
       }
       warekiCh = ch;
+      warekiCh2 = ch2;
       warekiBaseYear = baseYear;
     }
 
@@ -2035,10 +2037,13 @@ function printYear2000Disk(element, {
       rotation: (year - 1970) * 3  + 30,
     });
     if ((year - warekiBaseYear) == 1 || (year - warekiBaseYear) % 10 == 0 && year != 2018) {
-      const text = warekiCh + (year - warekiBaseYear);
+      let text = warekiCh + (year - warekiBaseYear);
+      let fontSize = 10;
       let rot2 = 3.8;
       if ((year - warekiBaseYear) == 1) {
-        rot2 = 3.0;
+        text = warekiCh2;
+        fontSize = 12;
+        rot2 = 4.0;
       }
       if (warekiCh == "H") {
         rot2 += 0.5;
@@ -2052,7 +2057,7 @@ function printYear2000Disk(element, {
         text,
         rotation: (year - 1970) * 3 + 30 + rot2,
       }, (element1, element2) => {
-        element2.style.fontSize = "10px";
+        element2.style.fontSize = fontSize + "px";
       });
     }
   }
