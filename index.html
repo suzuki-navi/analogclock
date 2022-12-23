@@ -1214,9 +1214,12 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
         });
       }
       for (const [lng, text] of [
+        [103, "地球遠日点"],
+        [283, "地球近日点"],
+        [156, "火星遠日点"],
+        [336, "火星近日点"],
         [178, "土星環消失"],
         [358, "土星環消失"],
-        [336, "火星近日点"],
       ]) {
         const lng2 = eclipticLngToEquatorial(lng);
         createTextElement(bodyElement, {
