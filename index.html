@@ -1113,7 +1113,6 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
   const help = [
     "白抜き文字で星座が書かれた透明の回転する円盤です。地球の公転に合わせて1年で反時計回りに1周します。",
     "下半分にある星座がその季節に夜間見えやすい星座です。外側の円盤の東京あるいはSouthern Skyと書かれた方向の星座がその時間帯に南の空に見える星座です。",
-    "このヘルプ表示では文字が見えるように背景に色を付けていますが、実際には透明です。",
   ];
   helpNames.push({name:layerName, help});
 
@@ -1250,8 +1249,8 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
     });
 
     for (const [lng, text, classNames, halfWidth] of [
-      [103, "地球遠日点", ["sun-help", "help"], 30],
-      [283, "地球近日点", ["sun-help", "help"], 30],
+      [103, "地球近日点", ["sun-opposition-help", "help"], 30],
+      [283, "地球遠日点", ["sun-opposition-help", "help"], 30],
       [156, "火星遠日点", ["mars-help", "help"], 40],
       [336, "火星近日点", ["mars-help", "help"], 40],
       [178, "土星環消失", ["saturn-help", "help"], 40],
@@ -1313,7 +1312,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
     const help = [
       "黄色の点線は太陽の通り道である黄道、赤色の点線は天の赤道を表します。灰色の点線は赤緯45度を表します。赤緯45度線は時計中央にある北天の星座表示にもあります。",
       "通常の星座早見盤と異なり、黄道が同心円で描かれ、赤道が歪んでいます。スペースの関係で星座は全体的に縦方向につぶされたように歪んで描かれています。特にオリオン座などは黄道から南に離れているため歪みが大きくなっています。また、はくちょう座など黄道から北に離れている夏の星座はこの円盤の範囲から外れ、時計中央にある北天の星座表示にあります。",
-      "夏の星座は南の空低くに黄道があり、それよりも低い位置の星空は東京から見えづらいので、夏の星座の縦方向の表示範囲が狭くなっています。",
+      "夏の星座は南の空低くに黄道があり、それよりも低い位置の星座は東京から見えづらいので、夏の星座の縦方向の表示範囲が狭くなっています。",
     ];
     helpNames.push({name:helpName, help, add:["southern-stars"]});
   })();
@@ -1321,8 +1320,8 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
   (() => {
     const helpName = "southern-stars-ecliptic";
     const help = [
-      "内側の領域には、太陽黄経、二十四節気、流星群の文字盤が書かれ、小窓から覗けるようになっています。内側に向いた黄色の小さな針がこの文字盤を指しています。太陽黄経と二十四節気は地球から見た太陽のある位置を示します。流星群は極大の時期を示します。",
-      "この円盤は赤経を基準に回転するため、太陽黄経の目盛りは等間隔からわずかにずれています。",
+      "内側の領域は、太陽黄経、二十四節気、流星群の文字盤で、小窓から覗けるようになっています。内側に向いた黄色の小さな針がこの文字盤を指しています。太陽黄経と二十四節気は地球から見た太陽の位置を示します。流星群は極大の時期を示します。",
+      "この円盤は赤経を基準に一定の速度で回転するため、太陽黄経の目盛りは等間隔からわずかにずれています。",
       "円盤自体は同じ速度で回転していますが、地球が楕円軌道を描いているための速度のムラは太陽の位置が左右に振れることで表現しています。",
     ];
     helpNames.push({name:helpName, help, add:["southern-stars"]});
@@ -1361,6 +1360,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
   ["sun", calcSunLng, null, starSize(-27), () => colors.sun, [
     "太陽の位置を示す針です。",
     "太陽が中央より左にあることが多いのですが、東京では12時より少し前に太陽が真南に来ることを示しています。",
+    "太陽と反対方向にも黄色の針があります。これはほかのパーツと組み合わせてさまざまな事象を示します。",
   ]],
   ["mercury", calcMercuryLng, calcMercuryPhase, starSize(1), () => colors.mercury, [
     "水星の位置を示す針です。常に太陽の近くにいます。4か月で太陽の周りを回っています。",
@@ -1459,7 +1459,8 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
       (() => {
         const helpName = "sun-opposition";
         const help = [
-          "太陽と反対方向にも黄色の針が伸びています。反対方向に月があると満月、惑星があると衝を示します。",
+          "太陽と反対方向の黄色の針に月があると満月、惑星があると衝を示します。",
+          "黄色の針が地球近日点を指している時期は地球が太陽に近いことを示します。地球は1月に太陽にもっとも近づきます。地球遠日点はその反対で7月です。",
         ];
         helpNames.push({name:helpName, help, add:["moon", "mars", "jupiter", "saturn"]});
       })();
@@ -2950,18 +2951,20 @@ const monthHandTop = 346;
       left: "0",
       width: "150px",
     }, element => {
-      element.style.padding = "4px";
+      element.style.boxSizing = "border-box";
+      element.style.border = "2px solid #000000";
+      element.style.borderRadius = "4px";
+      element.style.backgroundColor = colors.digitalBackground;
       element.style.fontSize = "16px";
       element.style.fontFamily = "dseg";
       element.style.lineHeight = "120%";
       element.style.textAlign = "right";
-      element.style.border = "2px solid #000000";
-      element.style.borderRadius = "4px";
-      element.style.backgroundColor = colors.digitalBackground;
       const backgroundElement = createHTMLElement(element, "div", element => {
         element.style.position = "absolute";
         element.style.top = "0";
         element.style.left = "0";
+        element.style.boxSizing = "border-box";
+        element.style.padding = "1px";
         element.style.color = "#00000020";
         element.innerText = backgroundText;
       });
@@ -2969,6 +2972,8 @@ const monthHandTop = 346;
         element.style.position = "absolute";
         element.style.top = "0";
         element.style.left = "0";
+        element.style.boxSizing = "border-box";
+        element.style.padding = "1px";
         element.style.color = colors.digitalSegmentOn;
       });
       digitalElement.addEventListener("click", event => {
@@ -3940,8 +3945,8 @@ function createHelpElement(clockElement) {
     element.style.float = "left";
   });
   const helpElement = createHTMLElement(element1, "div", element => {
-    element.style.fontSize = "14px";
-    element.style.lineHeight = "100%";
+    element.style.fontSize = "16px";
+    element.style.lineHeight = "120%";
   });
 
   function createHelpNaviButton(helpElement, helpName) {
@@ -3949,18 +3954,18 @@ function createHelpElement(clockElement) {
       element1.style.position = "absolute";
       element1.style.boxSizing = "border-box";
       element1.style.top = "0px";
-      element1.style.left = "650px";
+      element1.style.left = "636px";
       function createButtonElement(html, eventListener) {
         if (eventListener == null) {
           createHTMLElement(element1, "span", element => {
             element.style.color = colors.background;
-            element.style.fontSize = "24px";
+            element.style.fontSize = "36px";
             element.innerHTML = html;
           });
         } else {
           createHTMLElement(element1, "a", element => {
             element.style.color = colors.font;
-            element.style.fontSize = "24px";
+            element.style.fontSize = "36px";
             element.style.textDecoration = "none";
             element.setAttribute("href", "");
             element.innerHTML = html;
