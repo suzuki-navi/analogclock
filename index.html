@@ -3297,10 +3297,10 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
       }
     }
   }
-  function addStar(lng, lat, mag, color) {
-    for (const [element, elementSize, convertLngLat, latToY, baseRotation, baseAngle] of [
-      [southernSkyElement, southernSkyElementSize, convertSouthernLngLat, southernLatToY, 0, 180],
-      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 0, 0],
+  function addStar(lng, lat, mag, color, isMilkyWay = false) {
+    for (const [element, elementSize, convertLngLat, latToY, baseRotation, baseAngle, isNorth] of [
+      [southernSkyElement, southernSkyElementSize, convertSouthernLngLat, southernLatToY, 0, 180, false],
+      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 0, 0, true],
     ]) {
       const [lng2, lat2] = convertLngLat(lng, lat);
       const top = latToY(lat2);
@@ -3323,6 +3323,15 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
             element.style.backgroundColor = colors.starOrange;
           } else {
             element.style.backgroundColor = colors.star;
+          }
+          if (isMilkyWay) {
+            if (isNorth) {
+              element.style.backgroundColor = colors.star + "40";
+              element.style.filter = "blur(6px)";
+            } else {
+              element.style.backgroundColor = colors.star;
+              element.style.filter = "blur(10px)";
+            }
           }
         });
       }
@@ -3363,6 +3372,11 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
         });
       }
     }
+  }
+  for (let i = 0; i < 360; i += 2) {
+    const lng = milkyWayLng(i + 1);
+    const lat = milkyWayLat(i + 1);
+    addStar(lng, lat, 1, null, true);
   }
 
   for (const [lng, lat, text] of constellationData) {
@@ -3509,6 +3523,71 @@ function northernHorizontalLat(lng) {
     return sub(lng - 180);
   } else {
     return 0;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 天の川の計算
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const milkyWayLngData = [
+  0.00, 0.46, 0.91, 1.37, 1.83, 2.28, 2.74, 3.20, 3.67, 4.13,
+  4.60, 5.07, 5.54, 6.01, 6.49, 6.97, 7.45, 7.94, 8.43, 8.92,
+  9.42, 9.93, 10.44, 10.95, 11.48, 12.00, 12.54, 13.08, 13.63, 14.18,
+  14.75, 15.32, 15.90, 16.50, 17.10, 17.71, 18.33, 18.96, 19.61, 20.27,
+  20.94, 21.62, 22.32, 23.04, 23.77, 24.51, 25.28, 26.06, 26.86, 27.68,
+  28.52, 29.38, 30.27, 31.18, 32.11, 33.07, 34.06, 35.07, 36.12, 37.19,
+  38.30, 39.44, 40.62, 41.83, 43.07, 44.36, 45.68, 47.05, 48.46, 49.91,
+  51.40, 52.94, 54.53, 56.16, 57.84, 59.56, 61.33, 63.15, 65.01, 66.91,
+  68.86, 70.85, 72.87, 74.93, 77.02, 79.14, 81.28, 83.44, 85.62, 87.81,
+  90.00, 92.19,
+];
+const milkyWayLatData = [
+  0.00, 0.89, 1.78, 2.67, 3.56, 4.45, 5.34, 6.23, 7.12, 8.00,
+  8.89, 9.78, 10.66, 11.55, 12.43, 13.32, 14.20, 15.08, 15.96, 16.84,
+  17.72, 18.60, 19.47, 20.35, 21.22, 22.09, 22.96, 23.83, 24.70, 25.56,
+  26.42, 27.28, 28.14, 28.99, 29.85, 30.70, 31.54, 32.39, 33.23, 34.06,
+  34.89, 35.72, 36.55, 37.37, 38.19, 39.00, 39.81, 40.61, 41.41, 42.20,
+  42.98, 43.76, 44.53, 45.30, 46.06, 46.81, 47.55, 48.28, 49.00, 49.72,
+  50.42, 51.11, 51.80, 52.47, 53.12, 53.77, 54.39, 55.01, 55.61, 56.19,
+  56.75, 57.30, 57.83, 58.33, 58.82, 59.28, 59.72, 60.13, 60.52, 60.88,
+  61.22, 61.53, 61.80, 62.05, 62.27, 62.45, 62.60, 62.72, 62.80, 62.85,
+  62.87, 62.85,
+];
+
+function milkyWayLng(lng) {
+  function sub(x) {
+    return interpolation(milkyWayLngData, x);
+  }
+  let ret;
+  if (lng < 90) {
+    ret = sub(lng);
+  } else if (lng < 180) {
+    ret = 180 - sub(180 - lng);
+  } else if (lng < 270) {
+    ret = 180 + sub(lng - 180);
+  } else {
+    ret = 360 - sub(360 - lng);
+  }
+  ret = ret + 282.860;
+  if (ret >= 360) {
+    ret -= 360;
+  }
+  return ret;
+}
+
+function milkyWayLat(lng) {
+  function sub(x) {
+    return interpolation(milkyWayLatData, x);
+  }
+  if (lng < 90) {
+    return sub(lng);
+  } else if (lng < 180) {
+    return sub(180 - lng);
+  } else if (lng < 270) {
+    return -sub(lng - 180);
+  } else {
+    return -sub(360 - lng);
   }
 }
 
