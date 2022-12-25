@@ -21,9 +21,6 @@
   #clock {
     margin: 0 auto;
   }
-  #dummy {
-    background-color: #e36516;
-  }
 </style>
 <script>
 const initializeClock = (() => {
@@ -83,6 +80,7 @@ const darkColors = {
   font: "#cccccc",
   shadow: "#555555",
   face: "#000000",
+  face2: "#000000",
   scale: "#777777",
   firstHand: "#555555",
   secondHand: "#9b5050",
@@ -485,7 +483,6 @@ function createTextElement(parentElement, {
 function createSecondHandElement(parentElement, {
   layerName,
   top,
-  top2,
   shadow = true,
   glass = true,
   rotation = 0,
@@ -767,27 +764,27 @@ function createOppositionHandElement(parentElement, {
     glass: true,
     classNames,
   }, clip => {
-    clip.circleBegin (180,   0,  0, +1);
-    clip.circleLineTo(180,   0, +1, +1);
-    clip.circleLineTo(181,  56, +1, +1);
-    clip.circleLineTo(240,  56, +1, +1);
+    clip.circleBegin (180,  48,  0, +1);
+    clip.circleLineTo(180,  48, +1, +1);
+    clip.circleLineTo(181, 152, +1, +1);
+    clip.circleLineTo(225, 152, +1, +1);
     clip.circleLineTo(270,  -8, +1, +1);
     clip.circleLineTo(  0,  -8,  0, +1);
     clip.circleLineTo( 90,  -8, -1, +1);
-    clip.circleLineTo(120,  66, -1, +1);
-    clip.circleLineTo(123,  66, +1, +1);
-    clip.circleLineTo(170, -20, +1, +1);
-    clip.circleLineTo(190, -20, -1, +1);
-    clip.circleLineTo(237,  66, -1, -1);
-    clip.circleLineTo(181,  66, +1, -1);
-    clip.circleLineTo(180,  84, +1, -1);
-    clip.circleLineTo(180,  84,  0, -1);
-    clip.circleLineTo(180,  84, -1, -1);
-    clip.circleLineTo(179,  66, -1, -1);
-    clip.circleLineTo(120,  66, -1, -1);
-    clip.circleLineTo(120,  56, -1, +1);
-    clip.circleLineTo(179,  56, -1, +1);
-    clip.circleLineTo(180,   0, -1, +1);
+    clip.circleLineTo(135, 158, -1, +1);
+    clip.circleLineTo(137, 158, +1, +1);
+    clip.circleLineTo(140, -20, +1, +1);
+    clip.circleLineTo(220, -20, -1, +1);
+    clip.circleLineTo(223, 158, -1, -1);
+    clip.circleLineTo(181, 158, +1, -1);
+    clip.circleLineTo(180, 170, +1, -1);
+    clip.circleLineTo(180, 170,  0, -1);
+    clip.circleLineTo(180, 170, -1, -1);
+    clip.circleLineTo(179, 158, -1, -1);
+    clip.circleLineTo(135, 158, -1, -1);
+    clip.circleLineTo(135, 152, -1, +1);
+    clip.circleLineTo(179, 152, -1, +1);
+    clip.circleLineTo(180,  48, -1, +1);
     clip.end();
   }, (shadowElement, bodyElement, glassElement) => {
     bodyElement.style.backgroundColor = colors.opposition;
@@ -1102,10 +1099,70 @@ const worldCitiesTop = 16;
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// 12時間の目盛り
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const halfdayScaleTop = 44;
+
+(() => {
+  const layerName = "halfday-scale";
+  const help = [
+    "時計の目盛りが書かれた固定の文字盤です。カレンダーの曜日表記もこの文字盤です。",
+    "切り抜かれている箇所があり、太陽黄経や流星群の書かれた後ろの円盤が見えています。",
+  ];
+  helpNames.push({name:layerName, help, clip:-halfdayScaleTop});
+
+  layerInitializers.push(clockElement => {
+    createDiskElement(clockElement, {
+      layerName,
+      size: -halfdayScaleTop,
+      shadow: true,
+      glass: true,
+      rotation: 0,
+    }, clip => {
+      clip.circleBegin (180,  0,  0, +1);
+      clip.circleLineTo(330,  0,  0, +1);
+      clip.circleLineTo( 30,  0,  0, +1);
+      clip.circleLineTo(180,  0,  0, +1);
+      clip.circleLineTo(180, 20,  0, -1);
+      clip.circleLineTo(150, 20, +1, -1);
+      clip.circleLineTo(150, 48, +1, +1);
+      clip.circleLineTo(210, 48, -1, +1);
+      clip.circleLineTo(210, 20, -1, -1);
+      clip.circleLineTo(180, 20,  0, -1);
+      clip.end();
+    }, (shadowElement, bodyElement, glassElement) => {
+      bodyElement.style.border = "2px solid " + colors.scale;
+      bodyElement.style.background = colors.face2;
+
+      for (let i = 0; i < 60; i++) {
+        if (i % 5 == 0) {
+          createScaleElement(bodyElement, {
+            layerName,
+            top: 0,
+            height: 20,
+            halfWidth: 2,
+            rotation: i * 6,
+          });
+        } else {
+          createScaleElement(bodyElement, {
+            layerName,
+            top: 0,
+            height: 10,
+            halfWidth: 1,
+            rotation: i * 6,
+          });
+        }
+      }
+    });
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // 南の空の薄明背景
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const southernSkyTop = 44;
+const southernSkyTop = 64;
 
 (() => {
   const layerName = "southern-sky";
@@ -1159,6 +1216,8 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
 
   layerInitializers.push(clockElement => {
 
+    const smallWindowTop = 198;
+
     // ヘルプ表示用背景
     createDiskElement(clockElement, {
       layerName: layerName,
@@ -1182,7 +1241,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
     });
     createDiskElement(clockElement, {
       layerName: "southern-stars-ecliptic",
-      size: -(southernSkyTop + 132),
+      size: -(southernSkyTop + smallWindowTop),
       shadow: false,
       glass: false,
       isHelp: true,
@@ -1192,7 +1251,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
     });
     createDiskElement(clockElement, {
       layerName: "southern-stars-ecliptic",
-      size: -(southernSkyTop + 160),
+      size: -(southernSkyTop + smallWindowTop + 28),
       shadow: false,
       glass: false,
       isHelp: true,
@@ -1210,8 +1269,6 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
       classNames: ["scrollable"],
     }, clipDisk, (shadowElement, bodyElement, glassElement) => {
       drawNightSky(layerName, bodyElement, null);
-
-      const smallWindowTop = 132;
 
       // 太陽黄経
       for (let i = 0; i < 360; i += 5) {
@@ -1689,65 +1746,51 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// 12時間の目盛り
+// 曜日の文字盤
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const halfdayScaleTop = 156;
+const weekdayScaleTop = 176;
 
 (() => {
-  const layerName = "halfday-scale";
+  const layerName = "weekday-scale";
   const help = [
     "時計の目盛りが書かれた固定の文字盤です。カレンダーの曜日表記もこの文字盤です。",
     "切り抜かれている箇所があり、太陽黄経や流星群の書かれた後ろの円盤が見えています。",
   ];
-  helpNames.push({name:layerName, help, clip:-halfdayScaleTop});
+  helpNames.push({name:layerName, help, clip:-weekdayScaleTop});
 
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
       layerName,
-      size: -halfdayScaleTop,
+      size: -weekdayScaleTop,
       shadow: true,
       glass: true,
       rotation: 0,
     }, clip => {
-      clip.circleBegin (180,  0,  0, +1);
-      clip.circleLineTo(330,  0,  0, +1);
-      clip.circleLineTo( 30,  0,  0, +1);
-      clip.circleLineTo(180,  0,  0, +1);
-      clip.circleLineTo(180, 20,  0, -1);
-      clip.circleLineTo(150, 20, +1, -1);
-      clip.circleLineTo(150, 48, +1, +1);
-      clip.circleLineTo(210, 48, -1, +1);
-      clip.circleLineTo(210, 20, -1, -1);
-      clip.circleLineTo(180, 20,  0, -1);
+      const an1 = 9.5 * 360 / 42;
+      const an2 = 360 - 9.5 * 360 / 42;
+      clip.circleBegin (  0,  0,  0, +1);
+      clip.circleLineTo( 30,  0, +1, +1);
+      clip.circleLineTo( 30, 30, +1, +1);
+      clip.circleLineTo(an1, 30, +1, +1);
+      clip.circleLineTo(an1, 86, +1, +1);
+      clip.circleLineTo(150, 86, +1, +1);
+      clip.circleLineTo(150,114, +1, +1);
+      clip.circleLineTo(210,114, -1, +1);
+      clip.circleLineTo(210, 86, -1, +1);
+      clip.circleLineTo(an2, 86, -1, +1);
+      clip.circleLineTo(an2, 30, -1, +1);
+      clip.circleLineTo(330, 30, -1, +1);
+      clip.circleLineTo(330,  0, -1, +1);
+      clip.circleLineTo(  0,  0,  0, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.background = colors.face2;
-
-      for (let i = 0; i < 60; i++) {
-        if (i % 5 == 0) {
-          createScaleElement(bodyElement, {
-            layerName,
-            top: 0,
-            height: 20,
-            halfWidth: 2,
-            rotation: i * 6,
-          });
-        } else {
-          createScaleElement(bodyElement, {
-            layerName,
-            top: 5,
-            height: 10,
-            halfWidth: 1,
-            rotation: i * 6,
-          });
-        }
-      }
       for (let i = 0; i < 7; i++) {
         const t = ["月", "火", "水", "木", "金", "土", "日"][i];
         createTextElement(bodyElement, {
           layerName,
-          top: 30,
+          top: 10,
           halfWidth: 16,
           text: t,
           rotation: (i - 3) * 360 / 42,
@@ -1770,13 +1813,13 @@ const halfdayScaleTop = 156;
     "背景の星座とともに1年で反時計回りに1周しますが、それと同時に星座の中を少しずつ移動しており約9年かけて1周します。実際には単純に1周するだけでなく細かく振動しているのですが、この針では一定速度で回転しているものとして近似しているため、この針は誤差が大きいです。",
     "月が近地点付近ですといつもより大きめの月、遠地点付近ですといつもより小さめの月が見えます。",
   ];
-  helpNames.push({name:layerName, help, clip:-halfdayScaleTop});
+  helpNames.push({name:layerName, help, clip:-weekdayScaleTop});
 
   for (const [direction, text] of [[0, "近地点"], [180, "遠地点"]]) {
     layerInitializers.push(clockElement => {
       createDiskElement(clockElement, {
         layerName,
-        size: -halfdayScaleTop,
+        size: -weekdayScaleTop,
         shadow: true,
         glass: true,
         rotation: direction,
@@ -1849,13 +1892,13 @@ const halfdayScaleTop = 156;
     "月と太陽の両方が昇交点と降交点のいずれかに来たときに日食または月食になります。月と太陽が同じ方向のときは日食、反対方向のときは月食になります。",
     "昇交点または降交点に近いほど皆既日食または金環日食、皆既月食になりやすくなります。",
   ];
-  helpNames.push({name:layerName, help, clip:-halfdayScaleTop});
+  helpNames.push({name:layerName, help, clip:-weekdayScaleTop});
 
   for (const [direction, text] of [[0, "昇交点"], [180, "降交点"]]) {
     layerInitializers.push(clockElement => {
       createDiskElement(clockElement, {
         layerName,
-        size: -halfdayScaleTop,
+        size: -weekdayScaleTop,
         shadow: true,
         glass: true,
         rotation: direction,
@@ -1908,7 +1951,7 @@ const halfdayScaleTop = 156;
     const help = [
       "日食のときに、月が近地点に近い場合は皆既日食、遠地点に近い場合は金環日食になりやすくなります。",
     ];
-    helpNames.push({name:helpName, help, add:["eclipse", "perigee"], clip:-halfdayScaleTop});
+    helpNames.push({name:helpName, help, add:["eclipse", "perigee"], clip:-weekdayScaleTop});
   })();
 
   diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
@@ -1960,13 +2003,33 @@ const calendarTop = 206;
       shadow: true,
       glass: true,
       rotation: 0,
-    }, null, (shadowElement, bodyElement, glassElement) => {
+    }, clip => {
+      const an1 = 3.5 * 360 / 42;
+      const an2 = 360 - 9.5 * 360 / 42;
+      const an3 = 13.5 * 360 / 42;
+      const an4 = 360 - 16.5 * 360 / 42;
+      clip.circleBegin (  0,  0,  0, +1);
+      clip.circleLineTo(an1,  0, +1, +1);
+      clip.circleLineTo(an1, 56, +1, +1);
+      clip.circleLineTo(an3, 56, +1, +1);
+      clip.circleLineTo(an3, 84, +1, +1);
+      clip.circleLineTo(an4, 84, -1, +1);
+      clip.circleLineTo(an4, 56, -1, +1);
+      clip.circleLineTo(an2, 56, -1, +1);
+      clip.circleLineTo(an2,  0, -1, +1);
+      clip.circleLineTo(  0,  0,  0, +1);
+      clip.end();
+    }, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.background = colors.face;
 
       for (let i = 0; i < 6; i++) {
+        let js = 0;
         let je = 13;
-        if (i == 0) je = 42;
-        for (let j = 0; j < je; j++) {
+        if (i == 2) {
+          js = -8
+          je = 42 + js;
+        }
+        for (let j = js; j < je; j++) {
           const t = i * 7 + j - 5;
           if (t <= 0 || t > 31) continue;
           createTextElement(bodyElement, {
@@ -2259,8 +2322,10 @@ let setCalendarHandRotation = null;
 // カレンダーの左右を隠すマスク
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const yearScaleTop = calendarTop;
+
 (() => {
-  const layerName = "month-scale";
+  const layerName = "year-scale";
   const help = [
     "時計のメインの文字盤となる固定の円盤です。年、月、時の数字が書かれています。",
     "12月の表記だけ1枚後ろ側の円盤に書かれています。",
@@ -2268,30 +2333,31 @@ let setCalendarHandRotation = null;
     "年の記載は、この時計のサポート対象となる1970年から2069年の範囲です。",
     "太陽・月・惑星の位置計算は1980年から2050年の範囲で誤差が小さくなるように計算されています。その範囲から外れると誤差が大きい可能性があります。",
   ];
-  helpNames.push({name:layerName, help, clip:-calendarTop});
+  helpNames.push({name:layerName, help, clip:-yearScaleTop});
 
   layerInitializers.push(clockElement => {
     const element = createDiskElement(clockElement, {
       layerName,
-      size: -232,
+      size: -yearScaleTop,
       shadow: true,
       glass: true,
       rotation: 0,
     }, clip => {
-      clip.circleBegin (330,                140, +1, +1);
+      clip.circleBegin (330,                168, +1, +1);
+      clip.circleLineTo(330 + 2 * 360 / 42, 169, -1, +1);
       clip.circleLineTo(330 + 2 * 360 / 42, 140, -1, +1);
-      clip.circleLineTo(330 + 2 * 360 / 42, 112, -1, +1);
-      clip.circleLineTo( 30,                112, -1, +1);
-      clip.circleLineTo( 30,                  0, -1, +1);
-      clip.circleLineTo(180,                  0,  0, +1);
-      clip.circleLineTo(330,                  0, +1, +1);
-      clip.circleLineTo(330,                140, +1, +1);
+      clip.circleLineTo( 30,                140, -1, +1);
+      clip.circleLineTo( 30,                 84, -1, +1);
+      clip.circleLineTo(180,                 84,  0, +1);
+      clip.circleLineTo(330,                 84, +1, +1);
+      clip.circleLineTo(330,                168, +1, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.background = colors.face2;
     });
 
     // 時針の数字
+    /*
     for (i = 1; i <= 11; i++) {
       let rot = i * 30;
       if (i == 1) {
@@ -2312,17 +2378,18 @@ let setCalendarHandRotation = null;
         element2.style.fontStyle = "italic";
       });
     }
+    */
 
     // 西暦年
     printYear2000Disk(element, {
       layerName,
-      top: year2000HandTop - 228,
+      top: year2000HandTop - yearScaleTop + 4,
     });
 
     // 1月～12月
     printMonthsDisk(element, {
       layerName,
-      top: monthHandTop - 238,
+      top: monthHandTop - yearScaleTop - 6,
     })
   });
 })();
@@ -2479,7 +2546,7 @@ const year2000HandTop = 300;
   const help = [
     "西暦年と和暦を示す針です。マウスで動かすことができます。",
   ];
-  helpNames.push({name:layerName, help, add:["month-scale"], clip:-calendarTop});
+  helpNames.push({name:layerName, help, add:["year-scale"], clip:-yearScaleTop});
 
   layerInitializers.push(clockElement => {
     createArrowHandElement(clockElement, {
@@ -2735,7 +2802,7 @@ const monthHandTop = 346;
     "1年で1周する針です。マウスで動かすことができます。",
     "うるう年の2月のみ、通常28日かけて回転する角度を29日かけることになるため回転速度がわずかに遅くなるよう調整されています。",
   ];
-  helpNames.push({name:layerName, help, add:["month-scale"], clip:-calendarTop});
+  helpNames.push({name:layerName, help, add:["year-scale"], clip:-yearScaleTop});
 
   layerInitializers.push(clockElement => {
     createArrowHandElement(clockElement, {
@@ -2806,7 +2873,7 @@ const monthHandTop = 346;
     "時計の短針です。",
     "マウスで動かして時間調整できます。",
   ];
-  helpNames.push({name:layerName, help, add:["month-scale"], clip:-calendarTop});
+  helpNames.push({name:layerName, help, add:["year-scale"], clip:-yearScaleTop});
 
   layerInitializers.push(clockElement => {
     const element = createFirstHandElement(clockElement, {
@@ -2864,7 +2931,7 @@ const monthHandTop = 346;
   layerInitializers.push(clockElement => {
     const element = createFirstHandElement(clockElement, {
       layerName,
-      top: 176,
+      top: halfdayScaleTop + 20,
       halfWidth: 4,
     });
   });
@@ -2918,8 +2985,7 @@ const monthHandTop = 346;
   layerInitializers.push(clockElement => {
     const element = createSecondHandElement(clockElement, {
       layerName,
-      top: 158,
-      top2: 200,
+      top: halfdayScaleTop + 2,
     });
   });
 
@@ -3197,13 +3263,12 @@ const monthHandTop = 346;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function southernLatToY(lat) {
-  // 縦幅112px
+  const height = 198;
   const margin = 20;
-  //const latY = 45 * (1.0 + lat / 45.0);
   if (lat < -45) {
     return -1;
   }
-  const data = [0, 1, 2, 4, 8, 13, 20, 28, 36, 45, 54, 63, 71, 79, 86, 92, 98, 103, 108, 112, 116, 120, 124, 128, 132];
+  const data = [0, 1, 3, 7, 16, 26, 37, 49, 62, 75, 88, 101, 113, 125, 136, 146, 156, 165, 174, 182, 190, 198];
   const x1 = (lat + 45) / 5;
   const x1i = Math.floor(x1);
   if (x1i >= data.length - 1) {
@@ -3211,7 +3276,7 @@ function southernLatToY(lat) {
   }
   const x2 = x1 - x1i;
   const latY = (1 - x2) * data[x1i] + x2 * data[x1i + 1];
-  if (latY > 108 + margin) {
+  if (latY > height + margin) {
     return -1;
   }
   return latY;
