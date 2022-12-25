@@ -47,7 +47,8 @@ const normalColors = {
   background: "#ffffff",
   font: "#000000",
   shadow: "#999999",
-  face: "#ffffff",
+  face: "#eeeeee",
+  face2: "conic-gradient(#e3e3e3, #e3e3e3 10%, #ffffff 20%, #e3e3e3 30%, #e3e3e3 60%, #ffffff 70%, #e3e3e3 80%, #e3e3e3)",
   scale: "#aaaaaa",
   firstHand: "#999999",
   secondHand: "#ed8d8d",
@@ -56,7 +57,7 @@ const normalColors = {
   skyRedLine: "#ed8d8d",
   skyYelloLine: "#d7d163",
   skyGrayLine: "#999999",
-  skyGradient0: "#ffffff",
+  skyGradient0: "#dbedfb",
   skyGradient1: "#c1724a",
   skyGradient2: "#121b4a",
   skyFont: "#ffffff",
@@ -951,7 +952,7 @@ function createArrowHandElement(parentElement, {
       shadow: true,
       glass: true,
     }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = colors.face;
+      bodyElement.style.background = colors.face2;
 
       for (let i = 0; i < 24; i++) {
         createTextElement(bodyElement, {
@@ -972,14 +973,16 @@ function createArrowHandElement(parentElement, {
 // 世界の都市
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const worldCitiesTop = 16;
+
 (() => {
   const layerName = "world-cities";
   const help = [
-    "都市名の記載は、すぐ外側の円盤の数字を指し、各都市の現在時刻を示します。カッコ内の数字は世界協定時からの時間差を示します。*印は夏時間のある都市で、夏に1時間進みます。夏時間の時期は都市によって異なり、特に南半球での夏時間は北半球では冬であることに注意してください。",
-    "すぐ内側の円盤は空を表し、都市名の記載方向が南になります。この時計は東京が基準ですので、東京のところにSourthern Sky(南)の記載があります。",
+    "都市名の記載は、すぐ外側の円盤の数字を指し、各都市の現在時刻を示します。",
+    "カッコ内の数字は世界協定時からの時間差を示します。*印は夏時間のある都市で、夏に1時間進みます。夏時間の時期は都市によって異なり、特に南半球での夏時間は北半球では冬であることに注意してください。",
     "24時間で1回転する円盤です。マウスで動かして時間調整できます。時計中央の北の地平線を示すパーツと同期して回転します。",
   ];
-  helpNames.push({name:layerName, help, clip:-16});
+  helpNames.push({name:layerName, help, clip:-worldCitiesTop});
 
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
@@ -987,7 +990,7 @@ function createArrowHandElement(parentElement, {
       size: -16,
       shadow: true,
       glass: true,
-      classNames: ["scrollable"],
+      classNames: ["scrollable", "world-cities-sky-help"],
     }, null, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.background = colors.face;
 
@@ -1088,6 +1091,14 @@ function createArrowHandElement(parentElement, {
       }
     }();
   });
+
+  (() => {
+    const helpName = "world-cities-sky";
+    const help = [
+      "都市名の円盤のすぐ内側は空を表し、都市名の記載方向が各地での南になります。この時計は東京が基準ですので、東京のところにSourthern Sky(南)の記載があります。",
+    ];
+    helpNames.push({name:helpName, help, add:["world-cities", "southern-sky", "southern-stars"], clip:-worldCitiesTop});
+  })();
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1099,7 +1110,8 @@ const southernSkyTop = 44;
 (() => {
   const layerName = "southern-sky";
   const help = [
-    "南の空の背景を示した固定の円盤です。上半分が昼、下半分が夜を表します。白抜き文字で星座が書かれた透明の円盤が上から重ねられています。",
+    "南の空の背景を示した固定の円盤です。上半分が昼、下半分が夜を表します。",
+    "白抜き文字で星座が書かれた透明の円盤が上から重ねられます。",
   ];
   helpNames.push({name:layerName, help, clip:-southernSkyTop});
 
@@ -1149,6 +1161,16 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
 
     // ヘルプ表示用背景
     createDiskElement(clockElement, {
+      layerName: layerName,
+      size: -southernSkyTop,
+      shadow: false,
+      glass: false,
+      isHelp: true,
+      classNames: ["southern-stars-ecliptic-help", "sun-southern-ecliptic-help"],
+    }, clipDisk, (shadowElement, bodyElement, glassElement) => {
+      bodyElement.style.backgroundColor = colors.face;
+    });
+    createDiskElement(clockElement, {
       layerName,
       size: -southernSkyTop,
       shadow: false,
@@ -1157,15 +1179,6 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
       isHelp: true,
     }, clipDisk, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.backgroundColor = colors.skyGradient2;
-    });
-    createDiskElement(clockElement, {
-      layerName: "southern-stars-constellations",
-      size: -(southernSkyTop + 112),
-      shadow: false,
-      glass: false,
-      isHelp: true,
-    }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.backgroundColor = colors.face;
     });
     createDiskElement(clockElement, {
       layerName: "southern-stars-ecliptic",
@@ -1185,7 +1198,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
       isHelp: true,
       classNames: ["sun-southern-ecliptic-help"],
     }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.backgroundColor = colors.face;
+      bodyElement.style.background = colors.face;
     });
 
     // 円盤本体
@@ -1285,6 +1298,18 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
         element2.style.fontSize = "10px";
       });
     }
+
+    // ヘルプ表示用背景
+    createDiskElement(clockElement, {
+      layerName: "southern-stars-constellations",
+      size: -(southernSkyTop + 112),
+      shadow: false,
+      glass: false,
+      isHelp: true,
+      classNames: ["world-cities-sky-help"]
+    }, null, (shadowElement, bodyElement, glassElement) => {
+      bodyElement.style.background = colors.face;
+    });
   });
 
   diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
@@ -1350,18 +1375,21 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
   const helpName = "planets";
   const help = [
     "太陽、月、惑星が地球から見てどの方向に見えるかを示しています。太陽、月、惑星は黄道に沿って移動します。",
+    "太陽・月・惑星の位置計算は1980年から2050年の範囲で誤差が小さくなるように計算されています。その範囲から外れると誤差が大きい可能性があります。",
   ];
   helpNames.push({name:helpName, help, add:[], clip:-southernSkyTop});
 })();
 
+const planetHelpTop = eclipticTop - 12;
+
 for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, planetHelp] of [
   ["saturn", calcSaturnLng, null, 6, null, [
-    "土星の位置を示す針です。1年と13日で1周します。背景の星座に対しては約29年で1周します。",
+    "土星の位置を示す針です。1年と13日で反時計回りに1周します。背景の星座に対しては約29年で時計回りに1周します。",
     "下にある太陽と反対側にある黄色の針の位置に来るときが衝です。",
     "しし座とペガスス座付近に土星環消失の表記があります。土星がこの付近に来ると環が消失する現象が発生します。前後1年ぐらいの期間に複数回発生します。"
   ]],
   ["jupiter", calcJupiterLng, null, 12, null, [
-    "木星の位置を示す針です。1年1か月で1周します。背景の星座に対しては約12年で1周します。",
+    "木星の位置を示す針です。1年1か月で反時計回りに1周します。背景の星座に対しては約12年で時計回りに1周します。",
     "木星は全天で太陽、月、金星に次ぐ明るい星です。",
     "下にある黄色の針の位置に来るときが衝です。",
   ]],
@@ -1376,13 +1404,13 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
     "太陽と反対方向にも黄色の針があります。これはほかのパーツと組み合わせてさまざまな事象を示します。",
   ]],
   ["mercury", calcMercuryLng, calcMercuryPhase, 6, () => colors.mercury, [
-    "水星の位置を示す針です。常に太陽の近くにいます。4か月で太陽の周りを回っています。",
+    "水星の位置を示す針です。常に太陽の近くにいます。地球から見ると4か月で太陽の周りを往復しています。",
     "太陽の右にある時期は夕方西の空に見え、太陽の左にある時期は明け方東の空に見えます。",
     "満ち欠けも表現していますが、肉眼では満ち欠けを認識できません。",
     "満月状のとき、この時計では太陽の手前にありますが、実際は太陽より向こう側にいます。",
   ]],
   ["venus", calcVenusLng, calcVenusPhase, 8, () => colors.venus, [
-    "金星の位置を示す針です。1年7か月で太陽の周りを回っています。",
+    "金星の位置を示す針です。地球から見ると1年7か月で太陽の周りを往復しています。",
     "太陽の右にある時期は夕方西の空に見え、宵の明星と呼ばれます。太陽の左にある時期は明け方東の空に見え、明けの明星と呼ばれます。全天で太陽、月に次ぐ明るい星です。",
     "満ち欠けも表現していますが、肉眼では満ち欠けを認識できません。",
     "満月状のとき、この時計では太陽の手前にありますが、実際は太陽より向こう側にいます。",
@@ -1396,7 +1424,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
   (() => {
     const layerName = planetLayerName
     const help = planetHelp;
-    helpNames.push({name:layerName, help, clip:-southernSkyTop});
+    helpNames.push({name:layerName, help, clip:-planetHelpTop});
 
     let setPhase;
 
@@ -1467,7 +1495,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         const help = [
           "太陽が東西の地平線と重なる時間が日の出・日没です。",
         ];
-        helpNames.push({name:helpName, help, clip:-southernSkyTop});
+        helpNames.push({name:helpName, help, clip:-planetHelpTop});
       })();
       (() => {
         const helpName = "sun-opposition";
@@ -1475,7 +1503,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
           "太陽と反対方向の黄色の針に月があると満月、惑星があると衝を示します。",
           "黄色の針が地球近日点を指している時期は地球が太陽に近いことを示します。地球は1月に太陽にもっとも近づきます。地球遠日点はその反対で7月です。",
         ];
-        helpNames.push({name:helpName, help, add:["moon", "mars", "jupiter", "saturn"], clip:-southernSkyTop});
+        helpNames.push({name:helpName, help, add:["moon", "mars", "jupiter", "saturn"], clip:-planetHelpTop});
       })();
       (() => {
         const helpName = "sun-southern-ecliptic";
@@ -1491,7 +1519,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
         const help = [
           "月が太陽と同じ位置に来ると新月です。太陽と反対側にある黄色の針の位置に来ると満月です。",
         ];
-        helpNames.push({name:helpName, help, clip:-southernSkyTop});
+        helpNames.push({name:helpName, help, clip:-planetHelpTop});
       })();
     }
 
@@ -1534,7 +1562,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
 (() => {
   const layerName = "eastwest-horizon";
   const help = [
-    "東西の地平線を表す回転するパーツです。東西の地平線に一致するように移動します。地平線の形が恒星時によって異なるため、東西から離れた南東・南西や北東・北西では、誤差が大きくなります。地平線は東京基準です。",
+    "東西の地平線を表す回転するパーツです。東京での東西の地平線に一致するように移動します。地平線の形が恒星時によって異なるため、黄道から離れた方角では誤差が大きくなります。",
   ];
   helpNames.push({name:layerName, help, clip:-southernSkyTop});
 
@@ -1694,7 +1722,7 @@ const halfdayScaleTop = 156;
       clip.circleLineTo(180, 20,  0, -1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = colors.face;
+      bodyElement.style.background = colors.face2;
 
       for (let i = 0; i < 60; i++) {
         if (i % 5 == 0) {
@@ -2260,7 +2288,7 @@ let setCalendarHandRotation = null;
       clip.circleLineTo(330,                140, +1, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = colors.face;
+      bodyElement.style.background = colors.face2;
     });
 
     // 時針の数字
@@ -2506,12 +2534,13 @@ const northernSkyElementSize = 128;
 (() => {
   const layerName = "northern-sky";
   const help = [
-    "北の空の背景を示した固定の円盤です。白抜き文字で星座が書かれた透明の円盤が上から重ねられています。",
+    "北の空の背景を示した固定の円盤です。",
+    "白抜き文字で星座が書かれた透明の円盤が上から重ねられます。",
   ];
   helpNames.push({name:layerName, help, clip:northernSkyElementSize});
 
   layerInitializers.push(clockElement => {
-    const handleHeight = 20;
+    const handleHeight = 0;
     const element = createDiskElement(clockElement, {
       layerName,
       size: northernSkyElementSize + handleHeight,
@@ -4082,27 +4111,27 @@ function createHelpElement(clockElement) {
     createHTMLElement(helpElement, "div", element1 => {
       element1.style.textAlign = "right";
       function createButtonElement(html, eventListener) {
-        if (eventListener == null) {
-          createHTMLElement(element1, "span", element => {
-            element.style.paddingRight = "32px";
-            element.style.color = colors.background;
-            element.style.fontSize = "36px";
-            element.innerHTML = html;
-          });
-        } else {
-          createHTMLElement(element1, "a", element => {
-            element.style.paddingRight = "32px";
-            element.style.color = colors.font;
-            element.style.fontSize = "36px";
-            element.style.textDecoration = "none";
-            element.setAttribute("href", "");
-            element.innerHTML = html;
-            element.addEventListener("click", event => {
-              event.preventDefault();
-              eventListener(event);
+        createHTMLElement(element1, "span", element2 => {
+          element2.style.paddingRight = "32px";
+          element2.style.fontSize = "36px";
+          if (eventListener == null) {
+            createHTMLElement(element2, "span", element => {
+              element.style.color = colors.background;
+              element.innerHTML = html;
             });
-          });
-        }
+          } else {
+            createHTMLElement(element2, "a", element => {
+              element.style.color = colors.font;
+              element.style.textDecoration = "none";
+              element.setAttribute("href", "");
+              element.innerHTML = html;
+              element.addEventListener("click", event => {
+                event.preventDefault();
+                eventListener(event);
+              });
+            });
+          }
+        });
       }
       if (helpName == null) {
         createButtonElement("?", event => {
