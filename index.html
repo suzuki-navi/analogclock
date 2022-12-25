@@ -928,6 +928,7 @@ function createArrowHandElement(parentElement, {
   const help = [
     "時計のパーツをクリックするとその説明が表示されます。",
     "右上の◀▶をクリックすると次の説明文または前の説明文に移動できます。",
+    "時計の針はマウスで動かすことができます。",
   ];
   helpNames.push({name:helpName, help, add:["all"], clip:0});
 })();
@@ -974,10 +975,9 @@ function createArrowHandElement(parentElement, {
 (() => {
   const layerName = "world-cities";
   const help = [
-    "24時間で1回転する円盤です。都市名の記載は、すぐ外側の円盤の数字を指し、各都市の現在時刻を示します。カッコ内の数字は世界協定時からの時間差を示します。*印は夏時間のある都市で、夏に1時間進みます。夏時間の時期は都市によって異なり、特に南半球での夏時間は北半球では冬であることに注意してください。",
+    "都市名の記載は、すぐ外側の円盤の数字を指し、各都市の現在時刻を示します。カッコ内の数字は世界協定時からの時間差を示します。*印は夏時間のある都市で、夏に1時間進みます。夏時間の時期は都市によって異なり、特に南半球での夏時間は北半球では冬であることに注意してください。",
     "すぐ内側の円盤は空を表し、都市名の記載方向が南になります。この時計は東京が基準ですので、東京のところにSourthern Sky(南)の記載があります。",
-    "マウスで動かして時間調整できます。",
-    "時計中央の北の地平線を示すパーツと同期して回転します。",
+    "24時間で1回転する円盤です。マウスで動かして時間調整できます。時計中央の北の地平線を示すパーツと同期して回転します。",
   ];
   helpNames.push({name:layerName, help, clip:-16});
 
@@ -1360,37 +1360,37 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
     "下にある太陽と反対側にある黄色の針の位置に来るときが衝です。",
     "しし座とペガスス座付近に土星環消失の表記があります。土星がこの付近に来ると環が消失する現象が発生します。前後1年ぐらいの期間に複数回発生します。"
   ]],
-  ["jupiter", calcJupiterLng, null, starSize(-2), null, [
+  ["jupiter", calcJupiterLng, null, 12, null, [
     "木星の位置を示す針です。1年1か月で1周します。背景の星座に対しては約12年で1周します。",
     "木星は全天で太陽、月、金星に次ぐ明るい星です。",
     "下にある黄色の針の位置に来るときが衝です。",
   ]],
-  ["mars", calcMarsLng, null, starSize(1), null, [
-    "火星の位置を示す針です。2年2か月で1周します。",
+  ["mars", calcMarsLng, null, 8, null, [
+    "火星の位置を示す針です。2年2か月で反時計回りに1周します。",
     "下にある太陽と反対側にある黄色の針の位置に来るときが衝です。",
-    "みずがめ座付近に火星近日点の表記があります。この近日点付近で衝になるときに大接近となります。"
+    "みずがめ座付近に火星近日点の表記があります。この近日点付近で衝になるときに大接近となります。衝および合以外のときには火星近日点の表記は意味をなしません。"
   ]],
-  ["sun", calcSunLng, null, starSize(-27), () => colors.sun, [
+  ["sun", calcSunLng, null, 16, () => colors.sun, [
     "太陽の位置を示す針です。",
     "太陽が中央より左にあることが多いのですが、東京では12時より少し前に太陽が真南に来ることを示しています。",
     "太陽と反対方向にも黄色の針があります。これはほかのパーツと組み合わせてさまざまな事象を示します。",
   ]],
-  ["mercury", calcMercuryLng, calcMercuryPhase, starSize(1), () => colors.mercury, [
+  ["mercury", calcMercuryLng, calcMercuryPhase, 6, () => colors.mercury, [
     "水星の位置を示す針です。常に太陽の近くにいます。4か月で太陽の周りを回っています。",
     "太陽の右にある時期は夕方西の空に見え、太陽の左にある時期は明け方東の空に見えます。",
     "満ち欠けも表現していますが、肉眼では満ち欠けを認識できません。",
     "満月状のとき、この時計では太陽の手前にありますが、実際は太陽より向こう側にいます。",
   ]],
-  ["venus", calcVenusLng, calcVenusPhase, starSize(-4), () => colors.venus, [
+  ["venus", calcVenusLng, calcVenusPhase, 8, () => colors.venus, [
     "金星の位置を示す針です。1年7か月で太陽の周りを回っています。",
     "太陽の右にある時期は夕方西の空に見え、宵の明星と呼ばれます。太陽の左にある時期は明け方東の空に見え、明けの明星と呼ばれます。全天で太陽、月に次ぐ明るい星です。",
     "満ち欠けも表現していますが、肉眼では満ち欠けを認識できません。",
     "満月状のとき、この時計では太陽の手前にありますが、実際は太陽より向こう側にいます。",
     "金星は三日月状のときにもっとも明るくなります。",
   ]],
-  ["moon", calcMoonLng, calcMoonPhase, starSize(-13), () => colors.moon, [
-    "月の位置を示す針です。",
-    "月の満ち欠けも表現していますが、簡易的に太陽と月の赤経の差から満ち欠けを計算し表示しています。",
+  ["moon", calcMoonLng, calcMoonPhase, 14, () => colors.moon, [
+    "月の位置を示す針です。29日から30日で時計回りに1周します。",
+    "月の満ち欠けも表現しています。太陽と月の赤経の差から簡易的に位相角を計算し満ち欠けを表示しています。",
   ]],
 ]) {
   (() => {
@@ -1489,7 +1489,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
       (() => {
         const helpName = "moon-phase";
         const help = [
-          "月が太陽と同じ位置に来ると新月を意味します。太陽と反対側にある黄色の針の位置に来ると満月を意味します。",
+          "月が太陽と同じ位置に来ると新月です。太陽と反対側にある黄色の針の位置に来ると満月です。",
         ];
         helpNames.push({name:helpName, help, clip:-southernSkyTop});
       })();
@@ -1545,7 +1545,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, planetSize, planetColor, pla
       createDiskElement(clockElement, {
         layerName,
         size: -southernSkyTop,
-        shadow: true,
+        shadow: false,
         glass: true,
         rotation: 180 - 90 * sign,
         classNames: ["scrollable", "sun-eastwest-help"],
@@ -2613,7 +2613,7 @@ const northernSkyElementSize = 128;
     createDiskElement(clockElement, {
       layerName,
       size: northernSkyElementSize + extWidth,
-      shadow: true,
+      shadow: false,
       glass: true,
       rotation: 180,
     }, clip => {
@@ -3065,7 +3065,7 @@ const monthHandTop = 346;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 (() => {
-  const layerName = null;
+  const layerName = "digital";
 
   let linkElement;
 
@@ -3126,7 +3126,7 @@ const monthHandTop = 346;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 (() => {
-  const layerName = null;
+  const layerName = "digital";
 
   const linkHtml = "&#x263D;";
 
@@ -3194,11 +3194,7 @@ function northernLatToY(lat) {
 }
 
 function starSize(mag) {
-  if (mag <= -26) {
-    return 18;
-  } else if (mag <= -12) {
-    return 15;
-  } else if (mag < 0.5) {
+  if (mag < 0.5) {
     return 12;
   } else if (mag < 1.5) {
     return 8;
@@ -3429,7 +3425,7 @@ function interpolation(data, x) {
     throw "Error: " + x;
   }
   const x1 = Math.floor(x);
-  const x2 = x1 - x;
+  const x2 = x - x1;
   return (1 - x2) * data[x1] + x2 * data[x1 + 1];
 }
 
@@ -4067,7 +4063,7 @@ function createHelpElement(clockElement) {
     let clipSize;
     if (size <= 0) {
       clipSize = clockSize2 - (-size) + margin;
-    } else { 
+    } else {
       clipSize = size + margin;
     }
     for (let d = 0; d <= 180; d += 10) {
@@ -4084,18 +4080,18 @@ function createHelpElement(clockElement) {
 
   function createHelpNaviButton(helpElement, helpName) {
     createHTMLElement(helpElement, "div", element1 => {
-      element1.style.boxSizing = "border-box";
-      element1.style.top = "0px";
       element1.style.textAlign = "right";
       function createButtonElement(html, eventListener) {
         if (eventListener == null) {
           createHTMLElement(element1, "span", element => {
+            element.style.paddingRight = "32px";
             element.style.color = colors.background;
             element.style.fontSize = "36px";
             element.innerHTML = html;
           });
         } else {
           createHTMLElement(element1, "a", element => {
+            element.style.paddingRight = "32px";
             element.style.color = colors.font;
             element.style.fontSize = "36px";
             element.style.textDecoration = "none";
@@ -4110,7 +4106,11 @@ function createHelpElement(clockElement) {
       }
       if (helpName == null) {
         createButtonElement("?", event => {
-          setTransparentLayer(helpNames[0].name);
+          if (prevLayerName == null) {
+            setTransparentLayer(helpNames[0].name);
+          } else {
+            setTransparentLayer(prevLayerName);
+          }
         });
       } else {
         if (getPrevLayerName(helpName) == null) {
@@ -4132,14 +4132,14 @@ function createHelpElement(clockElement) {
   }
 
   let currentLayerName = null;
-  let transparentMode = 2; // 0 or 1 or 2
+  let prevLayerName = null;
 
   function setTransparentLayer(helpName) {
     if (helpName == null || helpName == "") {
       helpElement.innerHTML = "";
-      //transparentMode = 0;
       createHelpNaviButton(helpElement, null);
       setHelpClipSize(0);
+      prevLayerName = currentLayerName;
     } else {
       helpElement.innerHTML = "";
 
