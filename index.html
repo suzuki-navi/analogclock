@@ -48,7 +48,7 @@ const normalColors = {
   face2: "conic-gradient(#e3e3e3, #e3e3e3 10%, #ffffff 20%, #e3e3e3 30%, #e3e3e3 60%, #ffffff 70%, #e3e3e3 80%, #e3e3e3)",
   calendar: "#fff8f0",
   scale: "#aaaaaa",
-  firstHand: "#999999",
+  firstHand: "#666666",
   secondHand: "#ed8d8d",
   skyHand: "#999999",
   shaft: "#d7d163",
@@ -1052,7 +1052,7 @@ const worldCitiesTop = 16;
       // 南の地平線
       createTextElement(bodyElement, {
         layerName,
-        top: 14,
+        top: 18,
         halfWidth: 80,
         text: "E← Southern Sky →W",
         rotation: 180,
@@ -1436,7 +1436,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
       for (const [lng, text] of meteorShowerData) {
         const lng2 = eclipticLngToEquatorial(lng) + 180;
         writeScale(14, lng2);
-        writeText(18, lng2, 50, text);
+        writeText(18, lng2, 80, text);
       }
     })();
 
@@ -2541,7 +2541,7 @@ const yearScaleTop = calendarTop;
         createScaleElement(element, {
           layerName,
           top: 0,
-          height: 20,
+          height: 15,
           halfWidth: 2,
           rotation: i * 6,
         });
@@ -2559,12 +2559,14 @@ const yearScaleTop = calendarTop;
     // 時針の数字
     for (i = 1; i <= 12; i++) {
       let rot = i * 30;
-      let top = 28;
+      let top = 24;
       if (i == 4) {
         rot += 0.3;
       } else if (i == 5) {
         top -= 2;
         rot += 0.3;
+      } else if (i == 6) {
+        continue;
       } else if (i == 7) {
         top -= 2;
       } else if (i == 8) {
@@ -3125,6 +3127,8 @@ const monthHandTop = 346;
 // 分針
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const minuteHandTop = halfdayScaleTop + 15;
+
 (() => {
   const layerName = "minute-hand";
   const help = [
@@ -3136,7 +3140,7 @@ const monthHandTop = 346;
   layerInitializers.push(clockElement => {
     const element = createFirstHandElement(clockElement, {
       layerName,
-      top: halfdayScaleTop + 20,
+      top: minuteHandTop,
       halfWidth: 4,
     });
   });
