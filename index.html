@@ -1167,18 +1167,6 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
     const smallWindowTop = 198;
 
     // ヘルプ表示用背景
-    /*
-    createDiskElement(clockElement, {
-      layerName: layerName,
-      size: -southernSkyTop,
-      shadow: false,
-      glass: false,
-      isHelp: true,
-      classNames: ["southern-stars-ecliptic-help", "sun-southern-ecliptic-help"],
-    }, clipDisk, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = colors.face;
-    });
-    */
     createDiskElement(clockElement, {
       layerName,
       size: -southernSkyTop,
@@ -1199,30 +1187,6 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
     }, clipDisk, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.background = colors.skyGradient2;
     });
-    /*
-    createDiskElement(clockElement, {
-      layerName: "southern-stars-ecliptic",
-      size: -southernSkyTop,
-      shadow: false,
-      glass: false,
-      isHelp: true,
-      classNames: [layerName + "-rotation"],
-    }, clipDisk, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = colors.background;
-    });
-    */
-    /*
-    createDiskElement(clockElement, {
-      layerName: "southern-stars-constellations",
-      size: -(southernSkyTop + smallWindowTop),
-      shadow: false,
-      glass: false,
-      isHelp: true,
-      classNames: ["world-cities-sky-help"]
-    }, null, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = colors.background;
-    });
-    */
     createDiskElement(clockElement, {
       layerName: "southern-stars-ecliptic",
       size: -southernSkyTop,
@@ -3417,21 +3381,6 @@ const minuteHandTop = halfdayScaleTop + 15;
         element.innerHTML = linkHtml;
       });
     });
-    /*
-    createClockElement(clockElement, {
-      layerName,
-      top: "980px",
-      height: "",
-      left: "160px",
-      width: "",
-    }, element => {
-      element.style.display = "none";
-      element.style.fontSize = "20px";
-      createHTMLElement(element, "span", element => {
-        element.innerHTML = linkHtml;
-      });
-    });
-    */
   });
 
   diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
@@ -3481,21 +3430,6 @@ const minuteHandTop = halfdayScaleTop + 15;
         });
       });
     });
-    /*
-    createClockElement(clockElement, {
-      layerName,
-      top: "980px",
-      height: "",
-      left: "200px",
-      width: "",
-    }, element => {
-      element.style.display = "none";
-      element.style.fontSize = "28px";
-      createHTMLElement(element, "span", element => {
-        element.innerHTML = linkHtml;
-      });
-    });
-    */
   });
 })();
 
@@ -4362,7 +4296,6 @@ function initializeTimeControl(clockElement) {
     } else {
       fireTimeResetEvent(indicatingTime);
     }
-    //setDisplay(indicatingTime);
   }
 
   function changeIndicatingTime(time, isRelative) {
@@ -4379,7 +4312,6 @@ function initializeTimeControl(clockElement) {
       indicatingTime = maxTime - 1;
     }
     fireTimeResetEvent(indicatingTime);
-    //setDisplay(indicatingTime);
   }
 
   setTimeout(() => wheelLoop(1), 20);
@@ -4401,12 +4333,10 @@ function createHelpElement(clockElement) {
     element.style.width = "100%";
   });
   const clipElement = createHTMLElement(element1, "div", element => {
-    //element.style.position = "absolute";
     element.style.top = "0";
     element.style.height = "100%";
     element.style.left = "0";
     element.style.width = "100%";
-    //element.style.shapeOutside = "polygon(0% 0%, 0% 100%, 100% 100%, 60% 100%, 70% 97%, 86% 86%, 97% 70%, 100% 60%, 100% 40%, 97% 30%, 86% 14%, 70% 3%, 70% 0%)";
     element.style.float = "left";
   });
   const helpElement = createHTMLElement(element1, "div", element => {
@@ -4764,9 +4694,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setTrans
   });
 
   document.addEventListener("click", event => {
-    //if (!isMouseEventPositionInCircle(event)) {
-      setTransparentLayer(null);
-    //}
+    setTransparentLayer(null);
   });
 
 }
