@@ -58,7 +58,8 @@ const normalColors = {
   shaft: "#d7d163",
   skyRedLine: "#ed8d8d",
   skyYelloLine: "#d7d163",
-  skyConstellationLine: "#999999",
+  skyConstellationLine: "#dbedfb",
+  skyConstellationFont: "#dbedfb",
   skyGrayLine: "#999999",
   skyGradient0: "#dbedfb",
   skyGradient1: "#c1724a",
@@ -96,7 +97,8 @@ const darkColors = {
   shaft: "#9c9738",
   skyRedLine: "#9b5050",
   skyYelloLine: "#9c9738",
-  skyConstellationLine: "#555555",
+  skyConstellationLine: "#cccccc",
+  skyConstellationFont: "#cccccc",
   skyGrayLine: "#555555",
   skyGradient0: "#000000",
   skyGradient1: "#000000",
@@ -1461,7 +1463,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
   (() => {
     const helpName = "southern-stars-constellations";
     const help = [
-      "黄色の点線は太陽の通り道である黄道、赤色の点線は天の赤道です。灰色の点線は赤緯45度線です。赤緯45度線は時計中央にある北天の星座表示にもあります。",
+      "黄色の点線は太陽の通り道である黄道、赤色の点線は天の赤道です。灰色の点線は赤緯45度線です。赤緯45度線は時計中央にある北天の星座表示にもあります。天の川も描かれています。",
       "通常の星座早見盤と異なり、黄道が同心円で描かれ、天の赤道が歪んだ円形になっています。スペースの関係で星座は全体的に縦方向につぶされた形で描かれています。",
     ];
     helpNames.push({name:helpName, help, add:["southern-stars"], clip:-southernSkyTop});
@@ -2845,7 +2847,7 @@ const northernSkyElementSize = 128;
   const layerName = "northern-stars";
   const help = [
     "北の空で見られる星座が白抜き文字で書かれた透明の回転する円盤です。地球の公転に合わせて反時計回りに1年で1回転します。",
-    "下半分にある星座がその季節に夜間見えやすい星座です。",
+    "下半分にある星座がその季節に夜間見えやすい星座です。天の川も描かれています。",
     "灰色の点線は赤緯45度線です。赤緯45度線は時計の外周にある南天の星座表示にもありますので、赤緯45度付近は重複して表示されます。",
   ];
   helpNames.push({name:layerName, help, clip:northernSkyElementSize});
@@ -3377,7 +3379,7 @@ const minuteHandTop = halfdayScaleTop + 15;
   layerInitializers.push(clockElement => {
     createClockElement(clockElement, {
       layerName,
-      top: "970px",
+      top: "976px",
       height: "",
       left: "160px",
       width: "",
@@ -3423,7 +3425,7 @@ const minuteHandTop = halfdayScaleTop + 15;
   layerInitializers.push(clockElement => {
     createClockElement(clockElement, {
       layerName,
-      top: "970px",
+      top: "976px",
       height: "",
       left: "220px",
       width: "",
@@ -3522,15 +3524,18 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
     function convertSouthernLngLat(lng, lat) {
       return equatorialLngLatToXY(lng, lat, isEc);
     }
-    for (const [element, elementSize, convertLngLat, latToY, baseRotation] of [
-      [southernSkyElement, southernSkyElementSize, convertSouthernLngLat, southernLatToY, 0],
-      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 0],
+    for (const [element, elementSize, convertLngLat, latToY, baseRotation, isNorth] of [
+      [southernSkyElement, southernSkyElementSize, convertSouthernLngLat, southernLatToY, 0, false],
+      [northernSkyElement, northernSkyElementSize, convertNorthernLngLat, northernLatToY, 0, true],
     ]) {
       const [startLng2, startLat2] = convertLngLat(startLng + baseRotation, startLat);
       const [endLng2, endLat2] = convertLngLat(endLng + baseRotation, endLat);
       const startLatY2 = latToY(startLat2);
       const endLatY2 = latToY(endLat2);
-      if (startLatY2 >= 0 && endLatY2 >= 0 && element) {
+      if (element && (
+        (startLatY2 >= 0 && endLatY2 >= 0) ||
+        (isNorth && (startLatY2 >= 0 || endLatY2 >= 0))
+      )) {
         const startX = (elementSize - startLatY2) * Math.sin(startLng2 * Math.PI / 180);
         const startY = (elementSize - startLatY2) * Math.cos(startLng2 * Math.PI / 180);
         const endX = (elementSize - endLatY2) * Math.sin(endLng2 * Math.PI / 180);
@@ -3576,7 +3581,7 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
           rotation: lng2 + baseRotation,
           angle: baseAngle,
         }, (element1, element2) => {
-          element2.style.color = colors.skyFont;
+          element2.style.color = colors.skyConstellationFont;
           element2.style.fontSize = "12px";
           if (elementInitializer) {
             elementInitializer(element2);
