@@ -2,8 +2,9 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>情報量の多いアナログ時計</title>
+<title>アナログ時計</title>
 <meta name="viewport" content="width=1000" >
+<meta name="description" content="天文時計・星座早見盤・世界時計・万年カレンダーを兼ねたアナログ時計です。">
 </head>
 <body>
 <div id="clockwrapper">
@@ -1093,6 +1094,7 @@ const worldCitiesTop = 16;
     const helpName = "world-cities-sky";
     const help = [
       "都市名の円盤のすぐ内側は空を表し、都市名の記載方向が各地での南になります。この時計は東京が基準ですので、東京のところにSourthern Sky(南)の記載があります。",
+      "上半分に来ている都市は現在昼であり、下半分は夜であることを示します。",
     ];
     helpNames.push({name:helpName, help, add:["world-cities", "southern-sky", "southern-stars"], clip:-worldCitiesTop});
   })();
@@ -1483,10 +1485,10 @@ const weekdayScaleTop = 176;
   const layerName = "perigee";
   const help = [
     "月の近地点と遠地点の位置を示す針です。",
-    "背景の星座とともに1年で反時計回りに1周しますが、それと同時に星座の中を少しずつ移動しており約9年かけて1周します。実際には単純に1周するだけでなく細かく振動しているのですが、この針では一定速度で回転しているものとして近似しているため、この針は誤差が大きいです。",
+    "背景の星座とともに1年で反時計回りに1周しますが、それと同時に星座の中を少しずつ移動しており約9年かけて1周します。実際には単純に1周するだけでなく細かく振動しているのですが、この針では一定速度で回転しているものとして近似しているため、誤差が大きいです。",
     "月が近地点付近ですといつもより大きめの月、遠地点付近ですといつもより小さめの月が見えます。",
   ];
-  helpNames.push({name:layerName, help, clip:-weekdayScaleTop});
+  helpNames.push({name:layerName, help, clip:-weekdayScaleTop, add:["moon"]});
 
   for (const [direction, text] of [[0, "近地点"], [180, "遠地点"]]) {
     layerInitializers.push(clockElement => {
@@ -1565,7 +1567,7 @@ const weekdayScaleTop = 176;
     "月と太陽の両方が昇交点と降交点のいずれかに来たときに日食または月食になります。月と太陽が同じ方向のときは日食、反対方向のときは月食になります。",
     "昇交点または降交点に近いほど皆既日食または金環日食、皆既月食になりやすくなります。",
   ];
-  helpNames.push({name:layerName, help, clip:-weekdayScaleTop});
+  helpNames.push({name:layerName, help, clip:-weekdayScaleTop, add:["moon"]});
 
   for (const [direction, text] of [[0, "昇交点"], [180, "降交点"]]) {
     layerInitializers.push(clockElement => {
@@ -1624,7 +1626,7 @@ const weekdayScaleTop = 176;
     const help = [
       "日食のときに、月が近地点に近い場合は皆既日食、遠地点に近い場合は金環日食になりやすくなります。",
     ];
-    helpNames.push({name:helpName, help, add:["eclipse", "perigee"], clip:-weekdayScaleTop});
+    helpNames.push({name:helpName, help, add:["eclipse", "perigee", "moon"], clip:-weekdayScaleTop});
   })();
 
   diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
@@ -1732,6 +1734,8 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
         if (layerName == "sun") {
           element1.classList.add("sun-eastwest-help");
           element1.classList.add("moon-phase-help");
+          element1.classList.add("eclipse-help");
+          element1.classList.add("eclipse-2-help");
         } else if (layerName == "moon") {
           element1.classList.add("moon-phase-help");
         }
@@ -2743,10 +2747,10 @@ const year2000HandTop = 302;
 (() => {
   const layerName = "year2000-hand";
   const help = [
-    "西暦年と和暦を示す針です。マウスで動かすことができます。",
-    "木星または土星をマウスで動かしても年を調整できます。",
+    "西暦年と和暦を示す針です。マウスで動かすと1年ずつ時間を調整できます。",
+    "木星または土星をマウスで動かしても1年ずつ時間を調整できます。",
   ];
-  helpNames.push({name:layerName, help, add:["year-scale"], clip:-yearScaleTop});
+  helpNames.push({name:layerName, help, add:["year-scale"], clip:-halfdayScaleTop});
 
   layerInitializers.push(clockElement => {
     createArrowHandElement(clockElement, {
@@ -3369,12 +3373,12 @@ const minuteHandTop = halfdayScaleTop + 15;
   layerInitializers.push(clockElement => {
     createClockElement(clockElement, {
       layerName,
-      top: "980px",
+      top: "970px",
       height: "",
       left: "160px",
       width: "",
     }, element => {
-      element.style.fontSize = "20px";
+      element.style.fontSize = "36px";
       linkElement = createHTMLElement(element, "a", element => {
         element.style.textDecoration = "none";
         element.setAttribute("target", "_blank");
@@ -3415,13 +3419,13 @@ const minuteHandTop = halfdayScaleTop + 15;
   layerInitializers.push(clockElement => {
     createClockElement(clockElement, {
       layerName,
-      top: "980px",
+      top: "970px",
       height: "",
-      left: "200px",
+      left: "220px",
       width: "",
       classNames: ["help-no"],
     }, element => {
-      element.style.fontSize = "28px";
+      element.style.fontSize = "48px";
       createHTMLElement(element, "span", element => {
         element.style.cursor = "pointer";
         element.innerHTML = linkHtml;
@@ -4369,11 +4373,12 @@ function createHelpElement(clockElement) {
 
   function createHelpNaviButton(helpElement, helpName) {
     createHTMLElement(helpElement, "div", element1 => {
+      element1.style.paddingTop = "16px";
       element1.style.textAlign = "right";
       function createButtonElement(html, eventListener) {
         createHTMLElement(element1, "span", element2 => {
           element2.style.paddingRight = "32px";
-          element2.style.fontSize = "36px";
+          element2.style.fontSize = "60px";
           if (eventListener == null) {
             createHTMLElement(element2, "span", element => {
               element.style.color = colors.background;
