@@ -640,7 +640,7 @@ function createCircleHandElement(parentElement, {
     width: "calc(2 * " + halfWidth + "px)",
   }, element => {
     element.style.borderRadius = "50%";
-    element.style.border = "2px solid " + colors.secondHand;
+    element.style.border = "3px solid " + colors.secondHand;
   });
   const element3s = createClockElement(element1, {
     layerName: null,
@@ -681,77 +681,40 @@ function createCircleHandElement(parentElement, {
 
 function createMdayHandElement(parentElement, {
   layerName,
-  top,
-  top2,
-  halfWidth,
-  shadow = true,
-  glass = true,
-  rotation = 0,
+  tops,
+  rotation,
 }) {
-  let setAngle;
-  createCircleHandElement(parentElement, {
+  const halfWidth = 14;
+  let parent = parentElement;
+  let setAngle = [];
+  createCircleHandElement(parent, {
     layerName,
-    top: top2,
+    top: tops[0],
     halfWidth,
-    shadow,
-    glass,
+    shadow: true,
+    glass: false,
     rotation,
-  }, (_element1, _element2s, _element2, _element3s, _element3, _glassElement) => {
-    _element2.style.border = "3px solid " + colors.secondHand;
-    const element1 = createClockElement(_element1, {
-      layerName: null,
-      top: (-(top2 - top)) + "px",
-      height: (top2 - top + halfWidth) + "px",
-      left: "calc(50% - " + halfWidth + "px)",
-      width: "calc(2 * " + halfWidth + "px)",
-      classNames: ["scrollable", "rotation-fixed"],
-    }, element => {
-      element.style.transformOrigin = "50% 100%";
-    });
-    const element2s = createClockElement(element1, {
-      layerName: null,
-      top: "0",
-      height: "calc(2 * " + halfWidth + "px)",
-      left: "0",
-      width: "calc(2 * " + halfWidth + "px)",
-    }, element => {
-      element.style.borderRadius = "50%";
-      element.style.border = colors.shadow;
-      element.style.boxShadow = boxShadow();
-    });
-    const element2 = createClockElement(element1, {
-      layerName: null,
-      top: "0",
-      height: "calc(2 * " + halfWidth + "px)",
-      left: "0",
-      width: "calc(2 * " + halfWidth + "px)",
-    }, element => {
-      element.style.borderRadius = "50%";
-      element.style.border = "3px solid " + colors.secondHand;
-    });
-    const element3s = createClockElement(element1, {
-      layerName: null,
-      top: "calc(2 * " + halfWidth + "px)",
-      height: "calc(100% - 4 * " + halfWidth + "px)",
-      left: "calc(50% - 1px)",
-      width: "2px",
-    }, element => {
-      element.style.backgroundColor = colors.shadow;
-      element.style.boxShadow = boxShadow();
-    });
-    const element3 = createClockElement(element1, {
-      layerName: null,
-      top: "calc(2 * " + halfWidth + "px)",
-      height: "calc(100% - 3 * " + halfWidth + "px)",
-      left: "calc(50% - 1px)",
-      width: "2px",
-    }, element => {
-      element.style.backgroundColor = colors.secondHand;
-    });
-    setAngle = function(angle) {
-      element1.style.transform = "rotateZ(" + (angle) + "deg)";
-    }
+  }, (element1, element2s, element2, element3s, element3, glassElement) => {
+    parent = element2;
   });
+  for (let i = 1; i < tops.length; i++) {
+    createCircleHandElement(parent, {
+      layerName,
+      top: -(tops[i-1] - tops[i]) - 3,
+      halfWidth,
+      shadow: true,
+      glass: false,
+      rotation: 0,
+    }, (element1, element2s, element2, element3s, element3, glassElement) => {
+      element1.classList.remove("rotation");
+      element3s.style.height = "calc(100% - 3 * " + halfWidth + "px + 1px)";
+      element3.style.height = "calc(100% - 3 * " + halfWidth + "px + 1px)";
+      parent = element2;
+      setAngle.push(function(angle) {
+        element1.style.transform = "rotateZ(" + (angle) + "deg)";
+      });
+    });
+  }
   return setAngle;
 }
 
@@ -1505,7 +1468,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
     const helpName = "southern-stars-constellations";
     const help = [
       "黄色の点線は太陽の通り道である黄道、赤色の点線は天の赤道です。灰色の点線は赤緯45度線です。赤緯45度線は時計中央にある北天の星座表示にもあります。",
-      "通常の星座早見盤と異なり、黄道が同心円で描かれ、赤道が歪んだ円形になっています。スペースの関係で星座は全体的に縦方向につぶされた形で描かれています。",
+      "通常の星座早見盤と異なり、黄道が同心円で描かれ、天の赤道が歪んだ円形になっています。スペースの関係で星座は全体的に縦方向につぶされた形で描かれています。",
     ];
     helpNames.push({name:helpName, help, add:["southern-stars"], clip:-southernSkyTop});
   })();
@@ -2211,20 +2174,58 @@ let setCalendarHandRotation = null;
     "日付と曜日を示す針です。マウスで動かすことができます。",
     "太陽黄経や流星群の表示されているエリアを隠さないように、針が途中で折れ曲がるようになっています。",
   ];
-  helpNames.push({name:layerName, help, clip:-calendarTop});
+  helpNames.push({name:layerName, help, clip:-calendarTop, add:["calendar"]});
 
   let setAngle = [];
 
   layerInitializers.push(clockElement => {
     setAngle = [];
     for (let i = 0; i < 6; i++) {
-      setAngle.push(createMdayHandElement(clockElement, {
+      let tops =  [];
+      if (i <= 1) {
+        tops.push(206 + 28 * 6);
+      }
+      tops.push(206 + 28 * i);
+      tops.push(176);
+      let setAngle1 = createMdayHandElement(clockElement, {
         layerName,
-        top: 176,
-        top2: 206 + 28 * i,
-        halfWidth: 14,
+        tops,
         rotation: -3 * 360 / 42 - 60 * i,
-      }));
+      });
+      function calcAngle(ratio) {
+        const adj = [
+          0.6,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+        ][i];
+        if (ratio < 0.5) {
+          ratio = adj * ratio * 2.0;
+        } else {
+          ratio = adj + (1.0 - adj) * (ratio - 0.5) * 2.0;
+        }
+        if (i <= 1) {
+          let a1 = ratio * 89;
+          let a2 = ratio * 150;
+          return [-a1, -a2];
+        } else {
+          const maxRotation = 150 - i * 10.5;
+          let a = ratio * maxRotation;
+          return [-a];
+        }
+      }
+      setAngle.push(ratio => {
+        const angles = calcAngle(ratio);
+        for (let j = 0; j < angles.length; j++) {
+          let a = angles[j];
+          if (a < 0) {
+            a += 360;
+          }
+          setAngle1[j](a);
+        }
+      });
     }
   });
 
@@ -2234,15 +2235,14 @@ let setCalendarHandRotation = null;
       if (rot < 0) {
         rot += 360;
       }
-      const maxRotation = 150 - i * 12;
       if (rot < 101) {
         setAngle[i](0);
       } else if (rot < 116) {
-        setAngle[i](360 - (rot - 101) * (maxRotation / 15));
+        setAngle[i]((rot - 101) / 15);
       } else if (rot <= 330) {
-        setAngle[i](360 - maxRotation);
+        setAngle[i](1.0);
       } else if (rot <= 345) {
-        setAngle[i](360 - (345 - rot) * (maxRotation / 15));
+        setAngle[i]((345 - rot) / 15);
       } else {
         setAngle[i](0);
       }
@@ -2473,13 +2473,13 @@ const yearScaleTop = calendarTop;
       clip.circleLineTo(330 + 2 * 360 / 42, 169 + calendarDelta, -1, +1);
       clip.circleLineTo(330 + 2 * 360 / 42, 140 + calendarDelta, -1, +1);
       clip.circleLineTo( 30,                140 + calendarDelta, -1, +1);
-      clip.circleLineTo( 30,                 84 + calendarDelta, -1, +1);
-      clip.circleLineTo( 30,                 56 + calendarDelta, -1, +1);
-      clip.circleLineTo( 32,                 56 + calendarDelta, +1, +1);
-      clip.circleLineTo( 32,                 84 + calendarDelta, +1, +1);
-      clip.circleLineTo( 29 + 6 * 360 / 42,  84 + calendarDelta, -1, +1);
-      clip.circleLineTo( 29 + 6 * 360 / 42,  56 + calendarDelta, -1, -1);
-      clip.circleLineTo( 30,                 56 + calendarDelta, -1, -1);
+      clip.circleLineTo( 30,                 88 + calendarDelta, -1, +1);
+      clip.circleLineTo( 30,                 52 + calendarDelta, -1, +1);
+      clip.circleLineTo( 32,                 52 + calendarDelta, +1, +1);
+      clip.circleLineTo( 32,                 88 + calendarDelta, +1, +1);
+      clip.circleLineTo( 29 + 6 * 360 / 42,  88 + calendarDelta, -1, +1);
+      clip.circleLineTo( 29 + 6 * 360 / 42,  52 + calendarDelta, -1, -1);
+      clip.circleLineTo( 30,                 52 + calendarDelta, -1, -1);
       clip.circleLineTo( 30,                  4 + calendarDelta, -1, +1);
       clip.circleLineTo( 30.6 + 6 * 360 / 42,   4 + calendarDelta, -1, +1);
 
@@ -2501,9 +2501,9 @@ const yearScaleTop = calendarTop;
       }
       clip.circleLineTo( 31 + 6 * 360 / 42,  20,                 +1, -1);
 
-      clip.circleLineTo( 31 + 6 * 360 / 42,  84 + calendarDelta, +1, +1);
-      clip.circleLineTo(180,                 84 + calendarDelta,  0, +1);
-      clip.circleLineTo(329 - 6 * 360 / 42,  84 + calendarDelta, -1, +1);
+      clip.circleLineTo( 31 + 6 * 360 / 42,  88 + calendarDelta, +1, +1);
+      clip.circleLineTo(180,                 88 + calendarDelta,  0, +1);
+      clip.circleLineTo(329 - 6 * 360 / 42,  88 + calendarDelta, -1, +1);
 
       clip.circleLineTo(329 - 6 * 360 / 42,  20,                 -1, -1);
       for (let i = 0; i <= 2; i++) {
@@ -2525,13 +2525,13 @@ const yearScaleTop = calendarTop;
 
       clip.circleLineTo(329.4 - 6 * 360 / 42,  32 + calendarDelta, +1, +1);
       clip.circleLineTo(330,                 32  + calendarDelta, +1, +1);
-      clip.circleLineTo(330,                 56 + calendarDelta, +1, -1);
-      clip.circleLineTo(331 - 6 * 360 / 42,  56 + calendarDelta, +1, -1);
-      clip.circleLineTo(331 - 6 * 360 / 42,  84 + calendarDelta, +1, +1);
-      clip.circleLineTo(328,                 84 + calendarDelta, -1, +1);
-      clip.circleLineTo(328,                 56 + calendarDelta, -1, +1);
-      clip.circleLineTo(330,                 56 + calendarDelta, +1, +1);
-      clip.circleLineTo(330,                 84 + calendarDelta, +1, +1);
+      clip.circleLineTo(330,                 52 + calendarDelta, +1, -1);
+      clip.circleLineTo(331 - 6 * 360 / 42,  52 + calendarDelta, +1, -1);
+      clip.circleLineTo(331 - 6 * 360 / 42,  88 + calendarDelta, +1, +1);
+      clip.circleLineTo(328,                 88 + calendarDelta, -1, +1);
+      clip.circleLineTo(328,                 52 + calendarDelta, -1, +1);
+      clip.circleLineTo(330,                 52 + calendarDelta, +1, +1);
+      clip.circleLineTo(330,                 88 + calendarDelta, +1, +1);
       clip.circleLineTo(330,                168 + calendarDelta, +1, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
@@ -2750,7 +2750,7 @@ function printMonthsDisk(element, {
 // 西暦年の針
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const year2000HandTop = 296;
+const year2000HandTop = 302;
 
 (() => {
   const layerName = "year2000-hand";
@@ -4607,7 +4607,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setTrans
   clockElement.addEventListener("mousemove", event => {
     const dx = event.pageX - scrollStartPositionX;
     const dy = event.pageY - scrollStartPositionY;
-    if (!scrollMoved && dx * dx + dy * dy >= 10 * 10) {
+    if (!scrollMoved && dx * dx + dy * dy >= 6 * 6) {
       scrollMoved = true;
     }
 
@@ -4629,6 +4629,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setTrans
       angle -= 360;
     }
     if (angle >= scrollAngleUnit * 0.5) {
+      scrollMoved = true;
       while (angle >= scrollAngleUnit * 0.5) {
         scrollCount++;
         scrollDisk.diskScrolled(+1);
@@ -4640,6 +4641,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setTrans
         scrollDirection = +1;
       }
     } else if (angle <= -scrollAngleUnit * 0.5) {
+      scrollMoved = true;
       while (angle <= -scrollAngleUnit * 0.5) {
         scrollCount--;
         scrollDisk.diskScrolled(-1);
