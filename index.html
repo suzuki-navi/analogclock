@@ -115,6 +115,18 @@ const darkColors = {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// #####     #####   ##   ##
+//  ## ##   ##   ##  ### ###
+//  ##  ##  ##   ##  #######
+//  ##  ##  ##   ##  #######
+//  ##  ##  ##   ##  ## # ##
+//  ## ##   ##   ##  ##   ##
+// #####     #####   ##   ##
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // HTML要素生成
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -894,6 +906,18 @@ function createArrowHandElement(parentElement, {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// ####       ##     ##  ##   ### ###  ### ##
+//  ##         ##    ##  ##    ##  ##   ##  ##
+//  ##       ## ##   ##  ##    ##       ##  ##
+//  ##       ##  ##   ## ##    ## ##    ## ##
+//  ##       ## ###    ##      ##       ## ##
+//  ##  ##   ##  ##    ##      ##  ##   ##  ##
+// ### ###  ###  ##    ##     ### ###  #### ##
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // 最初のヘルプ
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1407,12 +1431,12 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
     })();
 
     for (const [lng, text, classNames, top, halfWidth] of [
-      [103, "地球近日点", ["sun-opposition-help", "help"], 184, 30],
-      [283, "地球遠日点", ["sun-opposition-help", "help"], 214, 30],
-      [156, "火星遠日点", ["mars-help", "help"], 184, 40],
-      [336, "火星近日点", ["mars-help", "help"], 184, 40],
-      [178, "土星環消失", ["saturn-help", "help"], 184, 40],
-      [358, "土星環消失", ["saturn-help", "help"], 184, 40],
+      [103, "地球近日点", ["sun-opposition-help", "help", "help-sun-opposition"], 184, 30],
+      [283, "地球遠日点", ["sun-opposition-help", "help", "help-sun-opposition"], 214, 30],
+      [156, "火星遠日点", ["mars-help", "help", "help-mars"], 184, 40],
+      [336, "火星近日点", ["mars-help", "help", "help-mars"], 184, 40],
+      [178, "土星環消失", ["saturn-help", "help", "help-saturn"], 184, 40],
+      [358, "土星環消失", ["saturn-help", "help", "help-saturn"], 184, 40],
     ]) {
       const lng2 = eclipticLngToEquatorial(lng);
       createTextElement(clockElement, {
@@ -3393,6 +3417,7 @@ const minuteHandTop = halfdayScaleTop + 15;
         element.innerHTML = linkHtml;
       });
     });
+    /*
     createClockElement(clockElement, {
       layerName,
       top: "980px",
@@ -3406,6 +3431,7 @@ const minuteHandTop = halfdayScaleTop + 15;
         element.innerHTML = linkHtml;
       });
     });
+    */
   });
 
   diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
@@ -3444,6 +3470,7 @@ const minuteHandTop = halfdayScaleTop + 15;
       height: "",
       left: "200px",
       width: "",
+      classNames: ["help-no"],
     }, element => {
       element.style.fontSize = "28px";
       createHTMLElement(element, "span", element => {
@@ -3454,6 +3481,7 @@ const minuteHandTop = halfdayScaleTop + 15;
         });
       });
     });
+    /*
     createClockElement(clockElement, {
       layerName,
       top: "980px",
@@ -3467,8 +3495,21 @@ const minuteHandTop = halfdayScaleTop + 15;
         element.innerHTML = linkHtml;
       });
     });
+    */
   });
 })();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  #####   ######     ##     ######    #####
+// ##   ##  # ## #    ####     ##  ##  ##   ##
+// #          ##     ##  ##    ##  ##  #
+//  #####     ##     ##  ##    #####    #####
+//      ##    ##     ######    ## ##        ##
+// ##   ##    ##     ##  ##    ##  ##  ##   ##
+//  #####    ####    ##  ##   #### ##   #####
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 星空
@@ -3892,6 +3933,18 @@ function milkyWayLat(lng) {
     return -sub(360 - lng);
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  #####   ######   ##   ##  #######  ######    #####
+// ##   ##  # ## #   ##   ##   ##   #   ##  ##  ##   ##
+// ##   ##    ##     ##   ##   ## #     ##  ##  #
+// ##   ##    ##     #######   ####     #####    #####
+// ##   ##    ##     ##   ##   ## #     ## ##        ##
+// ##   ##    ##     ##   ##   ##   #   ##  ##  ##   ##
+//  #####    ####    ##   ##  #######  #### ##   #####
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 日時計算ライブラリ
@@ -4441,7 +4494,11 @@ function createHelpElement(clockElement) {
   let prevLayerName = null;
 
   function setTransparentLayer(helpName) {
-    if (helpName == null || helpName == "") {
+    console.log(helpName);
+    if (helpName == "") {
+      helpName = null;
+    }
+    if (helpName == null) {
       helpElement.innerHTML = "";
       createHelpNaviButton(helpElement, null);
       setHelpClipSize(0);
@@ -4466,7 +4523,7 @@ function createHelpElement(clockElement) {
     }
 
     let additionalLayers;
-    if (helpName == null || helpName == "") {
+    if (helpName == null) {
       additionalLayers = [];
     } else {
       additionalLayers = getLayerHelpAdditionalLayers(helpName);
@@ -4557,6 +4614,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setTrans
 
   let scrollDiskName = null;
   let scrollDisk = null;
+  let scrollHelpName = null;
   let scrollAngleUnit = 0;
   let scrollCount = 0;
   let scrollStartPosition = null;
@@ -4567,6 +4625,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setTrans
 
   for (const elem of clockElement.getElementsByClassName("layer")) {
     const diskName = getLayerNameFromElement(elem);
+    const helpName = getHelpNameFromElement(elem);
     let disk = null;
     let angleUnit = null;
     if (diskScrollListener[diskName]) {
@@ -4581,6 +4640,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setTrans
     elem.addEventListener("mousedown", event => {
       event.preventDefault();
       scrollDiskName = diskName;
+      scrollHelpName = helpName;
       scrollStartPosition = getMouseEventPosition(event);
       scrollStartPositionX = event.pageX;
       scrollStartPositionY = event.pageY;
@@ -4688,7 +4748,7 @@ function initializeMouseEvent(clockElement, circleElement, helpElement, setTrans
       scrollDisk.diskScrolling(0);
     }
     if (!scrollMoved) {
-      setTransparentLayer(scrollDiskName);
+      setTransparentLayer(scrollHelpName);
     }
     scrollDiskName = null;
     scrollDisk = null;
@@ -4812,11 +4872,14 @@ function getLayerNameFromElement(elem) {
 
 function getHelpNameFromElement(elem) {
   for(const cls of elem.classList) {
-    if (cls.endsWith("-help")) {
-      return cls.substring(0, cls.length - 5);
+    if (cls.startsWith("help-")) {
+      if (cls == "help-no") {
+        return "";
+      }
+      return cls.substring(5);
     }
   }
-  return "";
+  return getLayerNameFromElement(elem);
 }
 
 function initializeHelpHidden(clockElement, setTransparentLayer) {
@@ -4915,6 +4978,18 @@ function resetClock(clockElement) {
 
   initializeMouseEvent(clockElement, circleElement, helpElement, setTransparentLayer, setPulseMode, diskScrollListener);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// #####      ##     ######     ##
+//  ## ##    ####    # ## #    ####
+//  ##  ##  ##  ##     ##     ##  ##
+//  ##  ##  ##  ##     ##     ##  ##
+//  ##  ##  ######     ##     ######
+//  ## ##   ##  ##     ##     ##  ##
+// #####    ##  ##    ####    ##  ##
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 天体の位置計算
