@@ -482,17 +482,29 @@ function createTextElement(parentElement, {
   }, element => {
     element.style.transformOrigin = "50% 100%";
   });
-  const element2 = createClockElement(element1, {
-    layerName: null,
-    top: "0",
-    left: "0",
-    width: "100%",
-    rotation: angle,
-    classNames: ["rotation-fixed"],
-  }, element => {
-    element.style.textAlign = "center";
-    element.innerText = text;
-  });
+  const element2 = (() => { if (angle == 0) {
+    return createClockElement(element1, {
+      layerName: null,
+      top: "0",
+      left: "0",
+      width: "100%",
+    }, element => {
+      element.style.textAlign = "center";
+      element.innerText = text;
+    });
+  } else {
+    return createClockElement(element1, {
+      layerName: null,
+      top: "0",
+      left: "0",
+      width: "100%",
+      rotation: angle,
+      classNames: ["rotation-fixed"],
+    }, element => {
+      element.style.textAlign = "center";
+      element.innerText = text;
+    });
+  } })();
   if (elementInitializer) {
     elementInitializer(element1, element2);
   }
@@ -2114,15 +2126,23 @@ const calendarTop = 206;
         }
         for (let j = js; j < je; j++) {
           const t = i * 7 + j - 5;
+          let top = i * 28 + 9;
+          if (i == 5) {
+            top = top - 1;
+          }
           if (t <= 0 || t > 31) continue;
           createTextElement(bodyElement, {
             layerName,
-            top: i * 28 + 9,
+            top,
             halfWidth: 16,
             text: t,
             rotation: (j - 9) * 360 / 42,
           }, (element1, element2) => {
-            element2.style.fontSize = "20px";
+            if (i == 5) {
+              element2.style.fontSize = "18px";
+            } else {
+              element2.style.fontSize = "20px";
+            }
           });
         }
       }
@@ -2182,7 +2202,11 @@ let setCalendarHandRotation = null;
       if (i <= 1) {
         tops.push(206 + 28 * 6);
       }
-      tops.push(206 + 28 * i);
+      if (i == 5) {
+        tops.push(206 + 28 * i - 2);
+      } else {
+        tops.push(206 + 28 * i);
+      }
       tops.push(176);
       let setAngle1 = createMdayHandElement(clockElement, {
         layerName,
