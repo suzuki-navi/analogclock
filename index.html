@@ -941,10 +941,25 @@ function createArrowHandElement(parentElement, {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 (() => {
-  const helpName = "intro";
+  const helpName = "intro-1";
   const help = [
     "時計のパーツをクリックするとその説明が表示されます。",
     "右上の◀▶をクリックすると次の説明文または前の説明文に移動できます。",
+  ];
+  helpNames.push({name:helpName, help, add:["all"], clip:0});
+})();
+
+(() => {
+  const helpName = "intro-2";
+  const help = [
+    "時計のソースコードおよび詳細な説明は<a href=\"https://github.com/suzuki-navi/analogclock\" target=\"_blank\">GitHub</a>にもあります。",
+  ];
+  helpNames.push({name:helpName, help, add:["all"], clip:0});
+})();
+
+(() => {
+  const helpName = "intro-3";
+  const help = [
     "時計の針はマウスで動かすことができます。",
   ];
   helpNames.push({name:helpName, help, add:["all"], clip:0});
@@ -1484,7 +1499,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
   (() => {
     const helpName = "southern-stars-ecliptic";
     const help = [
-      "星座が書かれた透明の回転する円盤の内側または外側は、太陽黄経、二十四節気、流星群の文字盤です。黄色の針がこの文字盤を指しています。太陽黄経と二十四節気は地球から見た太陽の位置を示します。流星群は極大の時期を示します。",
+      "星座が書かれた透明の回転する円盤の内側または外側は、太陽黄経、二十四節気、流星群の文字盤です。黄色の針がこの文字盤を指しています。太陽黄経と二十四節気は地球から見た太陽の位置を示します。流星群は極大の時期を示します。春から夏は外側、秋から冬は内側に文字盤があります。",
       "この円盤は赤経を基準に一定の速度で回転していますが、地球が楕円軌道および地軸の傾きに起因する太陽黄経の速度のムラは太陽の位置が左右に振れることで表現しています。",
     ];
     helpNames.push({name:helpName, help, add:["southern-stars"], clip:-southernSkyTop});
@@ -1897,7 +1912,8 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
 (() => {
   const layerName = "eastwest-horizon";
   const help = [
-    "東西の地平線を表す回転するパーツです。東京での東西の地平線に一致するように移動します。地平線の形が恒星時によって異なるため、黄道から離れた方角では誤差が大きくなります。",
+    "東西の地平線を表す回転するパーツです。東京での東西の地平線に一致するように移動します。",
+    "黄道が同心円で描かれ天の赤道が歪んだ円形のため、地平線の形は恒星時によって異なります。このパーツは形が変わりませんので、黄道から離れた方角では誤差が大きくなります。",
   ];
   helpNames.push({name:layerName, help, clip:-southernSkyTop});
 
@@ -3299,7 +3315,7 @@ const minuteHandTop = halfdayScaleTop + 15;
     "上から順に、日付、時刻、Unix Time、修正ユリウス日が表示されています。",
     "Unix Timeは1970年1月1日0時UTCからの秒数（うるう秒をカウントせず）です。コンピュータの中で日時を表現するために使われます。",
     "修正ユリウス日は1858年11月17日0時UTCからの日数で、ユリウス日から2400000.5を引いた値です。天文学でよく使われます。",
-    "デジタル時計の右にある望遠鏡のアイコンは、国立天文台のページへのリンクです。月のアイコンはダークモードへの切り替えです。",
+    "デジタル時計の右にある望遠鏡のアイコンは、国立天文台のページへのリンクです。月のアイコンはナイトモードへの切り替えです。",
   ];
   helpNames.push({name:layerName, help, clip:1});
 
@@ -3407,6 +3423,7 @@ const minuteHandTop = halfdayScaleTop + 15;
       height: "",
       left: "160px",
       width: "",
+      classNames: ["help-no"],
     }, element => {
       element.style.fontSize = "36px";
       linkElement = createHTMLElement(element, "a", element => {
@@ -4505,7 +4522,7 @@ function createHelpElement(clockElement) {
       const ps = [];
       for (const t of help) {
         const element = createHTMLElement(helpElement, "p", element => {
-          element.innerText = t;
+          element.innerHTML = t;
         });
         ps.push(element);
       }
