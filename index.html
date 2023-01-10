@@ -4431,8 +4431,9 @@ function isSmallScreen() {
 }
 
 function createHelpElement(clockElement, helpSpElement) {
-  helpSpElement.style.fontSize = "28px";
   helpSpElement.style.margin = "10px";
+  helpSpElement.style.fontSize = "36px";
+  helpSpElement.style.textSizeAdjust = "none";
 
   const element1 = createHTMLElement(clockElement, "div", element => {
     element.style.position = "absolute";
