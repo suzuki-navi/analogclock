@@ -10,12 +10,13 @@
 <div id="clockwrapper">
   <div id="clock"></div>
 </div>
+<div id="help-sp"></div>
 <style>
   body {
     margin: 0;
   }
   #clockwrapper {
-    margin-top: max(0px, calc(50vh - 500px - 16px));
+    margin-top: max(0px, min(20px, calc(50vh - 500px - 16px)));
     width: max(1000px, 100%);
     padding-top: 16px;
     padding-bottom: 16px;
@@ -4421,7 +4422,18 @@ function initializeTimeControl(clockElement) {
 // ヘルプ表示
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function createHelpElement(clockElement) {
+function isSmallScreen() {
+  if (window.screen.width < 1000) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function createHelpElement(clockElement, helpSpElement) {
+  helpSpElement.style.fontSize = "28px";
+  helpSpElement.style.margin = "10px";
+
   const element1 = createHTMLElement(clockElement, "div", element => {
     element.style.position = "absolute";
     element.style.boxSizing = "border-box";
@@ -4443,6 +4455,12 @@ function createHelpElement(clockElement) {
   });
 
   function setHelpClipSize(size) {
+    if (isSmallScreen()) {
+      helpElement.style.paddingTop = "910px";
+    } else {
+      helpElement.style.paddingTop = "";
+    }
+
     let shapeOutside = "polygon(0% 0%, 0% 100%, 100% 100%, 50% 100%, ";
     const clockSize = 1000;
     const clockSize2 = clockSize / 2;
@@ -4472,7 +4490,11 @@ function createHelpElement(clockElement) {
       function createButtonElement(html, eventListener) {
         createHTMLElement(element1, "span", element2 => {
           element2.style.paddingRight = "32px";
-          element2.style.fontSize = "60px";
+          if (isSmallScreen()) {
+            element2.style.fontSize = "90px";
+          } else {
+            element2.style.fontSize = "60px";
+          }
           if (eventListener == null) {
             createHTMLElement(element2, "span", element => {
               element.style.color = colors.background;
@@ -4529,24 +4551,32 @@ function createHelpElement(clockElement) {
     }
     if (helpName == null) {
       helpElement.innerHTML = "";
+      helpSpElement.innerHTML = "";
       createHelpNaviButton(helpElement, null);
       setHelpClipSize(0);
       prevLayerName = currentLayerName;
     } else {
       helpElement.innerHTML = "";
+      helpSpElement.innerHTML = "";
 
       createHelpNaviButton(helpElement, helpName);
       setHelpClipSize(getLayerHelpClipSize(helpName));
 
       const help = getLayerHelpText(helpName);
       const ps = [];
+      let elem;
+      if (isSmallScreen()) {
+        elem = helpSpElement;
+      } else {
+        elem = helpElement;
+      }
       for (const t of help) {
-        const element = createHTMLElement(helpElement, "p", element => {
+        const element = createHTMLElement(elem, "p", element => {
           element.innerHTML = t;
         });
         ps.push(element);
       }
-      if (ps.length > 0) {
+      if (!isSmallScreen() && ps.length > 0) {
         ps[0].style.marginTop = "0";
       }
     }
@@ -4975,20 +5005,21 @@ function createClockCircleElement(clockElement) {
   });
 }
 
-function initializeClock(clockElementId) {
+function initializeClock(clockElementId, helpSpElementId) {
   addDsegFontStyle();
 
   loadColorMode();
 
   const clockElement = document.getElementById(clockElementId);
-  resetClock(clockElement);
+  const helpSpElement = document.getElementById(helpSpElementId);
+  resetClock(clockElement, helpSpElement);
 }
 
-function resetClock(clockElement) {
+function resetClock(clockElement, helpSpElement) {
   initializeClockElement(clockElement);
   const circleElement = createClockCircleElement(clockElement);
 
-  const [helpElement, setTransparentLayer] = createHelpElement(clockElement);
+  const [helpElement, setTransparentLayer] = createHelpElement(clockElement, helpSpElement);
 
   for (const g of layerInitializers) {
     g(clockElement);
@@ -6988,7 +7019,7 @@ const dseg_base64 =
 return initializeClock;
 })();
 window.addEventListener("load", (event) => {
-  initializeClock("clock");
+  initializeClock("clock", "help-sp");
 });
 </script>
 </body>
