@@ -2078,12 +2078,12 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
         const t = ["月", "火", "水", "木", "金", "土", "日"][i];
         createTextElement(bodyElement, {
           layerName,
-          top: 10,
+          top: 12,
           halfWidth: 16,
           text: t,
           rotation: (i - 3) * 360 / 42,
         }, (element1, element2) => {
-          element2.style.fontSize = "20px";
+          element2.style.fontSize = "24px";
         });
       }
     });
@@ -2223,7 +2223,7 @@ let setCalendarHandRotation = null;
       } else {
         tops.push(206 + 28 * i);
       }
-      tops.push(176);
+      tops.push(178);
       let setAngle1 = createMdayHandElement(clockElement, {
         layerName,
         tops,
