@@ -2235,9 +2235,11 @@ const calendarTop = weekdayScaleTop + 32;
             rotation: (j - 9) * 360 / 42,
           }, (element1, element2) => {
             if (i == 5) {
-              element2.style.fontSize = "18px";
-            } else {
               element2.style.fontSize = "20px";
+              element2.style.fontFamily = "sourceserifpro";
+            } else {
+              element2.style.fontSize = "22px";
+              element2.style.fontFamily = "sourceserifpro";
             }
           });
         }
@@ -2598,15 +2600,15 @@ const yearScaleTop = calendarTop;
       clip.circleLineTo(180,                  0,                 +1, +1);
       clip.circleLineTo(180,                 20,                 +1, -1);
       for (let i = 2; i >= 0; i--) {
-        clip.circleLineTo(90 + i * 30 + 2.1, 20,   +1, -1);
-        clip.circleLineTo(90 + i * 30 + 2.1, 48,   +1, -1);
+        clip.circleLineTo(90 + i * 30 + 2.4, 20,   +1, -1);
+        clip.circleLineTo(90 + i * 30 + 2.4, 48,   +1, -1);
         clip.circleLineTo(90 + i * 30 + 1.3, 52,   +1, -1);
         clip.circleLineTo(90 + i * 30 + 0.8, 53.5, +1, -1);
         clip.circleLineTo(90 + i * 30,       54,    0, -1);
         clip.circleLineTo(90 + i * 30 - 0.8, 53.5, -1, -1);
         clip.circleLineTo(90 + i * 30 - 1.3, 52,   -1, -1);
-        clip.circleLineTo(90 + i * 30 - 2.1, 48,   -1, -1);
-        clip.circleLineTo(90 + i * 30 - 2.1, 20,   -1, -1);
+        clip.circleLineTo(90 + i * 30 - 2.4, 48,   -1, -1);
+        clip.circleLineTo(90 + i * 30 - 2.4, 20,   -1, -1);
       }
       clip.circleLineTo( 31 + 6 * 360 / 42,  20,                 +1, -1);
 
@@ -2616,15 +2618,15 @@ const yearScaleTop = calendarTop;
 
       clip.circleLineTo(329 - 6 * 360 / 42,  20,                 -1, -1);
       for (let i = 0; i <= 2; i++) {
-        clip.circleLineTo(270 - i * 30 + 2.1, 20,   +1, -1);
-        clip.circleLineTo(270 - i * 30 + 2.1, 48,   +1, -1);
+        clip.circleLineTo(270 - i * 30 + 2.4, 20,   +1, -1);
+        clip.circleLineTo(270 - i * 30 + 2.4, 48,   +1, -1);
         clip.circleLineTo(270 - i * 30 + 1.3, 52,   +1, -1);
         clip.circleLineTo(270 - i * 30 + 0.8, 53.5, +1, -1);
         clip.circleLineTo(270 - i * 30,       54,    0, -1);
         clip.circleLineTo(270 - i * 30 - 0.8, 53.5, -1, -1);
         clip.circleLineTo(270 - i * 30 - 1.3, 52,   -1, -1);
-        clip.circleLineTo(270 - i * 30 - 2.1, 48,   -1, -1);
-        clip.circleLineTo(270 - i * 30 - 2.1, 20,   -1, -1);
+        clip.circleLineTo(270 - i * 30 - 2.4, 48,   -1, -1);
+        clip.circleLineTo(270 - i * 30 - 2.4, 20,   -1, -1);
       }
       clip.circleLineTo(180,                 20,                 -1, -1);
       clip.circleLineTo(180,                  0,                 -1, +1);
@@ -2663,20 +2665,18 @@ const yearScaleTop = calendarTop;
 
     // 時針の数字
     for (i = 1; i <= 12; i++) {
+      if (i == 6) {
+        continue;
+      }
       let rot = i * 30;
       let top = 30;
-      if (i == 4) {
+      if (i == 3) {
+        rot += 0.2;
+      } else if (i == 4) {
         rot += 0.3;
       } else if (i == 5) {
-        top -= 2;
         rot += 0.3;
-      } else if (i == 6) {
-        continue;
       } else if (i == 7) {
-        top -= 2;
-      } else if (i == 8) {
-        top -= 2;
-      } else if (i == 9) {
         top -= 2;
       }
       const text = i;
@@ -2689,7 +2689,7 @@ const yearScaleTop = calendarTop;
         angle: -rot,
       }, (element1, element2) => {
         element2.style.fontSize = "40px";
-        element2.style.fontStyle = "italic";
+        element2.style.fontFamily = "sourceserifpro";
       });
     }
 
@@ -5051,7 +5051,7 @@ function createClockCircleElement(clockElement) {
 }
 
 function initializeClock(clockElementId, helpSpElementId) {
-  addDsegFontStyle();
+  addFontStyle();
 
   loadColorMode();
 
@@ -6920,14 +6920,55 @@ const saturn_png_base64 =
 // 7セグメントのフォントデータ
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function addDsegFontStyle() {
+function addFontStyle() {
   const fontStyle = document.createElement("style");
   document.head.appendChild(fontStyle);
   fontStyle.sheet.insertRule(
     "@font-face {" +
+    "font-family: \"sourceserifpro\";" +
+    "src: url(\"data:application/font-woff; charset=utf-8; base64," + sourceserifpro_base64 + "\") format(\"woff\");}", 0);
+    fontStyle.sheet.insertRule(
+    "@font-face {" +
     "font-family: \"dseg\";" +
     "src: url(\"data:application/font-woff; charset=utf-8; base64," + dseg_base64 + "\") format(\"woff\");}", 0);
 }
+
+// https://fonts.google.com/specimen/Source+Serif+Pro?preview.text=0123456789&preview.text_type=custom
+// https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+const sourceserifpro_base64 =
+  "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";
 
 // Font "DSEG" by けしかん
 // https://www.keshikan.net/fonts.html
