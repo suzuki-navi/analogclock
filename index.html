@@ -51,6 +51,7 @@ const normalColors = {
   face: "#eeeeee",
   face2: "conic-gradient(#e3e3e3, #e3e3e3 10%, #ffffff 20%, #e3e3e3 30%, #e3e3e3 60%, #ffffff 70%, #e3e3e3 80%, #e3e3e3)",
   calendar: "#fff8f0",
+  calendarTransparent: "#e0d8d020",
   scale: "#aaaaaa",
   firstHand: "#666666",
   firstHandBorder: "#eeeeee",
@@ -90,6 +91,7 @@ const darkColors = {
   face: "#000000",
   face2: "#000000",
   calendar: "#000000",
+  calendarTransparent: "#00000020",
   scale: "#777777",
   firstHand: "#555555",
   firstHandBorder: "#555555",
@@ -1201,7 +1203,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
 
   layerInitializers.push(clockElement => {
 
-    const smallWindowTop = 198;
+    const smallWindowTop = calendarTop - southernSkyTop + 56;
 
     // ヘルプ表示用背景
     createDiskElement(clockElement, {
@@ -2061,6 +2063,71 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// カレンダー3段目の背景盤
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const calendarTop = weekdayScaleTop + 32;
+
+(() => {
+  const layerName = "calendar-third-background";
+  const help = [
+    "カレンダーの3段目の背景となるパーツです。日付が書かれているパーツが透明のため3段目だけ別途白い背景が用意されています。",
+  ];
+  helpNames.push({name:layerName, help, clip:-calendarTop});
+
+  layerInitializers.push(clockElement => {
+    createDiskElement(clockElement, {
+      layerName,
+      size: -calendarTop,
+      shadow: true,
+      glass: true,
+      rotation: 0,
+    }, clip => {
+      const an3 = 13.5 * 360 / 42;
+      const an4 = 360 - 17.5 * 360 / 42;
+      clip.circleBegin (  0, 56,  0, +1);
+      clip.circleLineTo(an3, 56, +1, +1);
+      clip.circleLineTo(an3,168, +1, +1);
+      clip.circleLineTo(an4,168, -1, +1);
+      clip.circleLineTo(an4, 56, -1, +1);
+      clip.circleLineTo(  0, 56,  0, +1);
+      clip.end();
+    }, (shadowElement, bodyElement, glassElement) => {
+      bodyElement.style.background = colors.calendar;
+    });
+  });
+
+  diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
+    new class {
+      constructor() {
+        this.value = null;
+        this.angle = 0;
+        addTimeResetEventListener(this);
+        addMoveEventListener("hour-hand", this);
+      }
+      name() {
+        return layerName;
+      }
+      timeToValue(time) {
+        let [year, yday]  = timeToYear(time);
+        let [month, mday, daysOfMonth] = ydayToMonth(yday);
+        let monthWday = timeToWday(time - (mday - 1) * 86400);
+        if (monthWday == 0) {
+          monthWday = 7;
+        }
+        return monthWday;
+      }
+      valueToAngle(value) {
+        return (value - 1) * 360 / 42;
+      }
+      setTime(time) {
+        diskSetTimeCommon(moveDisk, this, time, 60);
+      }
+    }();
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // 曜日の文字盤
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2079,17 +2146,11 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
       glass: true,
       rotation: 0,
     }, clip => {
-      const an1 = 9.5 * 360 / 42;
-      const an2 = 360 - 9.5 * 360 / 42;
       clip.circleBegin (  0,  0,  0, +1);
       clip.circleLineTo( 30,  0, +1, +1);
-      clip.circleLineTo( 30, 86, +1, +1);
-      clip.circleLineTo(an1, 86, +1, +1);
-      clip.circleLineTo(an1,114, +1, +1);
-      clip.circleLineTo(180,114,  0, +1);
-      clip.circleLineTo(an2,114, -1, +1);
-      clip.circleLineTo(an2, 86, -1, +1);
-      clip.circleLineTo(330, 86, -1, +1);
+      clip.circleLineTo( 30,198, +1, +1);
+      clip.circleLineTo(180,198,  0, +1);
+      clip.circleLineTo(330,198, -1, +1);
       clip.circleLineTo(330,  0, -1, +1);
       clip.circleLineTo(  0,  0,  0, +1);
       clip.end();
@@ -2115,12 +2176,10 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
 // カレンダー
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const calendarTop = 206;
-
 (() => {
   const layerName = "calendar";
   const help = [
-    "万年カレンダーです。",
+    "万年カレンダーの日付が書かれている透明のパーツです。",
     "毎月の曜日配置に応じて回転します。",
   ];
   helpNames.push({name:layerName, help, clip:-calendarTop});
@@ -2142,8 +2201,8 @@ const calendarTop = 206;
       clip.circleLineTo(an1,  0, +1, +1);
       clip.circleLineTo(an1, 56, +1, +1);
       clip.circleLineTo(an3, 56, +1, +1);
-      clip.circleLineTo(an3, 84, +1, +1);
-      clip.circleLineTo(an4, 84, -1, +1);
+      clip.circleLineTo(an3,168, +1, +1);
+      clip.circleLineTo(an4,168, -1, +1);
       clip.circleLineTo(an4, 56, -1, +1);
       clip.circleLineTo(an2, 56, -1, +1);
       clip.circleLineTo(an2, 28, -1, +1);
@@ -2152,7 +2211,7 @@ const calendarTop = 206;
       clip.circleLineTo(  0,  0,  0, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
-      bodyElement.style.background = colors.calendar;
+      bodyElement.style.background = colors.calendarTransparent;
 
       for (let i = 0; i < 6; i++) {
         let js = 0;
@@ -2226,7 +2285,7 @@ let setCalendarHandRotation = null;
   const layerName = "mday-hand";
   const help = [
     "日付と曜日を示す針です。マウスで動かすことができます。",
-    "太陽黄経や流星群の表示されているエリアを隠さないように、針が途中で折れ曲がるようになっています。",
+    "星座早見盤のエリアを隠さないように、針が途中で折れ曲がるようになっています。",
   ];
   helpNames.push({name:layerName, help, clip:-calendarTop, add:["calendar"]});
 
@@ -2532,16 +2591,8 @@ const yearScaleTop = calendarTop;
       clip.circleLineTo(330 + 2 * 360 / 42, 140 + calendarDelta, -1, +1);
       clip.circleLineTo( 30,                140 + calendarDelta, -1, +1);
       clip.circleLineTo( 30,                 88 + calendarDelta, -1, +1);
-      clip.circleLineTo( 30,                 52 + calendarDelta, -1, +1);
-      clip.circleLineTo( 32,                 52 + calendarDelta, +1, +1);
-      clip.circleLineTo( 32,                 88 + calendarDelta, +1, +1);
-      clip.circleLineTo( 29 + 6 * 360 / 42,  88 + calendarDelta, -1, +1);
-      clip.circleLineTo( 29 + 6 * 360 / 42,  52 + calendarDelta, -1, -1);
-      clip.circleLineTo( 30,                 52 + calendarDelta, -1, -1);
-      clip.circleLineTo( 30,                  4 + calendarDelta, -1, +1);
-      clip.circleLineTo( 30.6 + 6 * 360 / 42,   4 + calendarDelta, -1, +1);
-
-      clip.circleLineTo( 30.6 + 6 * 360 / 42,  56,                 -1, -1);
+      clip.circleLineTo( 30 + 6 * 360 / 42,  88 + calendarDelta, -1, +1);
+      clip.circleLineTo( 30.6 + 6 * 360 / 42,56,                 -1, -1);
       clip.circleLineTo(  0,                 56,                 -1, -1);
       clip.circleLineTo(  0,                  0,                 -1, +1);
       clip.circleLineTo(180,                  0,                 +1, +1);
@@ -2579,16 +2630,9 @@ const yearScaleTop = calendarTop;
       clip.circleLineTo(180,                  0,                 -1, +1);
       clip.circleLineTo(  0,                  0,                 +1, +1);
       clip.circleLineTo(  0,                 56,                 +1, -1);
-      clip.circleLineTo(329.4 - 6 * 360 / 42,  56,                 +1, -1);
+      clip.circleLineTo(329.4 - 6 * 360 / 42,56,                 +1, -1);
 
-      clip.circleLineTo(329.4 - 6 * 360 / 42,  32 + calendarDelta, +1, +1);
-      clip.circleLineTo(330,                 32  + calendarDelta, +1, +1);
-      clip.circleLineTo(330,                 52 + calendarDelta, +1, -1);
-      clip.circleLineTo(331 - 6 * 360 / 42,  52 + calendarDelta, +1, -1);
-      clip.circleLineTo(331 - 6 * 360 / 42,  88 + calendarDelta, +1, +1);
-      clip.circleLineTo(328,                 88 + calendarDelta, -1, +1);
-      clip.circleLineTo(328,                 52 + calendarDelta, -1, +1);
-      clip.circleLineTo(330,                 52 + calendarDelta, +1, +1);
+      clip.circleLineTo(330 - 6 * 360 / 42,  88 + calendarDelta, +1, +1);
       clip.circleLineTo(330,                 88 + calendarDelta, +1, +1);
       clip.circleLineTo(330,                168 + calendarDelta, +1, +1);
       clip.end();
@@ -2808,7 +2852,7 @@ function printMonthsDisk(element, {
 // 西暦年の針
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const year2000HandTop = 302;
+const year2000HandTop = 306;
 
 (() => {
   const layerName = "year2000-hand";
