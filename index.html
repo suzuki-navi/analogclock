@@ -946,8 +946,8 @@ function createArrowHandElement(parentElement, {
 (() => {
   const helpName = "intro-1";
   const help = [
-    "時計のパーツをクリックするとその説明が表示されます。",
     "右上の◀▶をクリックすると次の説明文または前の説明文に移動できます。",
+    "時計のソースコードおよび詳細な説明は<a href=\"https://github.com/suzuki-navi/analogclock\" target=\"_blank\">GitHub</a>にもあります。",
   ];
   helpNames.push({name:helpName, help, add:["all"], clip:0});
 })();
@@ -955,7 +955,7 @@ function createArrowHandElement(parentElement, {
 (() => {
   const helpName = "intro-2";
   const help = [
-    "時計のソースコードおよび詳細な説明は<a href=\"https://github.com/suzuki-navi/analogclock\" target=\"_blank\">GitHub</a>にもあります。",
+    "この時計には、カレンダーがあり、星座早見盤もあり、月の満ち欠けがわかり、惑星の位置もわかり、日食・月食や流星群の時期もわかります。世界時計、万年カレンダー、天文時計、星座早見盤を兼ねた情報量の多いアナログ時計です。",
   ];
   helpNames.push({name:helpName, help, add:["all"], clip:0});
 })();
@@ -963,8 +963,8 @@ function createArrowHandElement(parentElement, {
 (() => {
   const helpName = "intro-3";
   const help = [
-    "これは世界時計、万年カレンダー、天文時計、星座早見盤を兼ねた情報量の多いアナログ時計です。",
     "時計の針はマウスで動かすことができます。",
+    "時計のパーツをクリックするとその説明が表示されます。",
   ];
   helpNames.push({name:helpName, help, add:["all"], clip:0});
 })();
@@ -1172,7 +1172,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
 (() => {
   const layerName = "southern-stars";
   const help = [
-    "白抜き文字で星座が書かれた透明の回転する円盤です。地球の公転に合わせて反時計回りに1年で1周します。",
+    "白抜き文字で星座が書かれた透明の回転する円盤です。反時計回りに1年で1周します。",
     "下半分にある星座がその季節に夜間見えやすい星座です。外側の円盤の東京あるいはSouthern Skyと書かれた方向の星座がその時間に南の空に見える星座です。",
   ];
   helpNames.push({name:layerName, help, clip:-southernSkyTop});
@@ -1212,7 +1212,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
       shadow: false,
       glass: false,
       isHelp: true,
-      //classNames: ["southern-stars-ecliptic-help"],
+      classNames: ["southern-stars-revolution-help"],
     }, null, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.background = colors.skyGradient2;
     });
@@ -1522,10 +1522,20 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
   (() => {
     const helpName = "southern-stars-ecliptic";
     const help = [
-      "星座が書かれた透明の回転する円盤の内側または外側は、太陽黄経、二十四節気、流星群の文字盤です。黄色の針がこの文字盤を指しています。太陽黄経と二十四節気は地球から見た太陽の位置を示します。流星群は極大の時期を示します。春から夏は外側、秋から冬は内側に文字盤があります。",
-      "この円盤は赤経を基準に一定の速度で回転していますが、地球が楕円軌道および地軸の傾きに起因する太陽黄経の速度のムラは太陽の位置が左右に振れることで表現しています。",
+      "星座の円盤の内側または外側は、太陽黄経、二十四節気、流星群の文字盤です。黄色の針がこの文字盤を指しています。",
+      "太陽黄経と二十四節気は地球から見た太陽の位置を表します。星座の円盤は赤経を基準にしているため黄経の目盛りは一定間隔ではありません。",
+      "流星群は極大の時期を示します。",
+      "春から夏は外側、秋から冬は内側に文字盤があります。",
     ];
     helpNames.push({name:helpName, help, add:["southern-stars"], clip:-southernSkyTop});
+  })();
+
+  (() => {
+    const helpName = "southern-stars-revolution";
+    const help = [
+      "星座の円盤は地球の公転に合わせて反時計回りに1年で1周します。地球の公転軌道上の速度は一定ではありませんが、この円盤は一定速度で回転します。地球の楕円軌道および地軸の傾きに起因する速度のムラは均時差の原因であり、この時計では太陽とその反対にある黄色の針が1年かけて左右に揺れることで表現しています。",
+    ];
+    helpNames.push({name:helpName, help, add:["southern-stars", "sun"], clip:-southernSkyTop});
   })();
 
 })();
@@ -1747,7 +1757,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
   ]],
   ["sun", calcSunLng, null, 0, 16, () => colors.sun, [
     "太陽の位置を示す針です。",
-    "太陽が中央より左にあることが多いのですが、東京では12時より少し前に太陽が真南に来ることを示しています。",
+    "太陽が中央より左にありますが、東京では12時より少し前に太陽が真南に来ることを示しています。11月ごろにもっとも左に来ます。",
     "太陽と反対方向にも黄色の針があります。これはほかのパーツと組み合わせてさまざまな事象を示します。",
   ]],
   ["mercury", calcMercuryLng, calcMercuryPhase, 0, 6, () => colors.mercury, [
@@ -2071,7 +2081,7 @@ const calendarTop = weekdayScaleTop + 32;
 (() => {
   const layerName = "calendar-third-background";
   const help = [
-    "カレンダーの3段目の背景となるパーツです。日付が書かれているパーツが透明のため3段目だけ別途白い背景が用意されています。",
+    "カレンダーの3段目の背景となるパーツです。日付が書かれているパーツが透明で3段目の表示エリアが回転するため、3段目専用の背景があります。",
   ];
   helpNames.push({name:layerName, help, clip:-calendarTop});
 
@@ -2479,7 +2489,7 @@ let setCalendarHandRotation = null;
 (() => {
   const layerName = "calendar-december";
   const help = [
-    "「12月」という表記だけの文字盤です。30日または31日が月曜または火曜のときは場所が重なるため隠れます。",
+    "「12月」という表記だけの文字盤です。30日または31日が月曜または火曜のときはカレンダーの6段目と重なるため隠れます。",
   ];
   helpNames.push({name:layerName, help, clip:-calendarTop});
 
@@ -2568,11 +2578,11 @@ const halfdayScaleTop = 44;
 const yearScaleTop = calendarTop;
 
 (() => {
-  const layerName = "year-scale";
+  const layerName = "main-scale";
   const help = [
     "時計のメインの文字盤となる固定の円盤です。目盛り、年、月、時の数字が書かれています。",
     "月の記載は、12月の表記だけ1枚後ろ側の円盤に書かれています。",
-    "南天の星座表記を優先のため、時の記載は6のみ省略されています。",
+    "南天の星座表記を優先するため、6時の表記は省略されています。",
     "年の記載は、この時計のサポート対象となる1970年から2069年の範囲です。",
     "太陽・月・惑星の位置計算は1980年から2050年の範囲で誤差が小さくなるように計算されています。その範囲から外れると誤差が大きい可能性があります。",
   ];
@@ -2860,7 +2870,7 @@ const year2000HandTop = 306;
     "西暦年と和暦を示す針です。マウスで動かすと1年ずつ時間を調整できます。",
     "木星または土星をマウスで動かしても1年ずつ時間を調整できます。",
   ];
-  helpNames.push({name:layerName, help, add:["year-scale"], clip:-halfdayScaleTop});
+  helpNames.push({name:layerName, help, add:["main-scale"], clip:-halfdayScaleTop});
 
   layerInitializers.push(clockElement => {
     createArrowHandElement(clockElement, {
@@ -3114,7 +3124,7 @@ const monthHandTop = 346;
     "1年で1周する針です。マウスで動かすことができます。",
     "うるう年の2月のみ、通常28日かけて回転する角度を29日かけることになるため回転速度がわずかに遅くなるよう調整されています。",
   ];
-  helpNames.push({name:layerName, help, add:["year-scale"], clip:-halfdayScaleTop});
+  helpNames.push({name:layerName, help, add:["main-scale"], clip:-halfdayScaleTop});
 
   layerInitializers.push(clockElement => {
     createArrowHandElement(clockElement, {
@@ -3185,7 +3195,7 @@ const monthHandTop = 346;
     "時計の短針です。",
     "マウスで動かして時間調整できます。",
   ];
-  helpNames.push({name:layerName, help, add:["year-scale"], clip:-halfdayScaleTop});
+  helpNames.push({name:layerName, help, add:["main-scale"], clip:-halfdayScaleTop});
 
   layerInitializers.push(clockElement => {
     const element = createFirstHandElement(clockElement, {
@@ -3240,7 +3250,7 @@ const minuteHandTop = halfdayScaleTop + 15;
     "時計の長針です。",
     "マウスで動かして時間調整できます。",
   ];
-  helpNames.push({name:layerName, help, add:["year-scale"], clip:-halfdayScaleTop});
+  helpNames.push({name:layerName, help, add:["main-scale"], clip:-halfdayScaleTop});
 
   layerInitializers.push(clockElement => {
     const element = createFirstHandElement(clockElement, {
@@ -3294,7 +3304,7 @@ const minuteHandTop = halfdayScaleTop + 15;
     "マウスで動かして時間調整できます。時間調整すると時計が止まります。",
     "時計が止まっているときに秒針を時計回りに少し動かすと時計が動き出します。半周以上回転すると自動で現在時刻が設定されます。",
   ];
-  helpNames.push({name:layerName, help, add:["year-scale"], clip:-halfdayScaleTop});
+  helpNames.push({name:layerName, help, add:["main-scale"], clip:-halfdayScaleTop});
 
   layerInitializers.push(clockElement => {
     const element = createSecondHandElement(clockElement, {
