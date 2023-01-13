@@ -82,6 +82,7 @@ const normalColors = {
   digitalBackground: "#fb7c00",
   digitalSegmentOn: "#000000",
   glass: "#d0d0d0",
+  help: "#ff0000",
 }
 
 const darkColors = {
@@ -122,6 +123,7 @@ const darkColors = {
   digitalBackground: "#000000",
   digitalSegmentOn: "#784b1e",
   glass: "#737373",
+  help: "#ff0000",
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -472,6 +474,7 @@ function createTextElement(parentElement, {
   text,
   rotation = 0,
   angle = 0,
+  isHelp,
   classNames = [],
 }, elementInitializer = null) {
   const element1 = createClockElement(parentElement, {
@@ -481,6 +484,7 @@ function createTextElement(parentElement, {
     left: "calc(50% - " + halfWidth + "px)",
     width: "calc(2 * " + halfWidth + "px)",
     rotation,
+    isHelp,
     classNames: [...classNames, "rotation-fixed"],
   }, element => {
     element.style.transformOrigin = "50% 100%";
@@ -934,6 +938,58 @@ function createArrowHandElement(parentElement, {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// ヘルプの赤枠要素
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function createHelpRectangleElement(parentElement, {
+  layerName,
+  classNames,
+}, clipper) {
+  createDiskElement(parentElement, {
+    layerName,
+    size: 0,
+    shadow: false,
+    glass: false,
+    isHelp: true,
+    classNames,
+  }, clipper, (shadowElement, bodyElement, glassElement) => {
+    bodyElement.classList.remove(layerName + "-help");
+    bodyElement.style.background = colors.help;
+  });
+}
+
+function createHelpTextElement(parentElement, {
+  layerName,
+  top,
+  halfWidth,
+  text,
+  angle,
+  rotation,
+  fontSize,
+  classNames,
+}) {
+  createTextElement(parentElement, {
+    layerName,
+    top,
+    halfWidth,
+    text,
+    angle,
+    rotation,
+    isHelp: true,
+    classNames: [layerName + "-rotation", "rotation", ...classNames],
+  }, (element1, element2) => {
+    element1.classList.remove(layerName + "-help");
+    element2.classList.remove(layerName + "-help");
+    element1.classList.remove("rotation-fixed");
+    //element2.classList.remove("rotation-fixed");
+    element2.style.fontWeight = "bold";
+    element2.style.fontSize = fontSize + "px";
+    element2.style.lineHeight = "100%";
+    element2.style.color = colors.help;
+  });
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // ####       ##     ##  ##   ### ###  ### ##
 //  ##         ##    ##  ##    ##  ##   ##  ##
@@ -945,35 +1001,102 @@ function createArrowHandElement(parentElement, {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const worldCitiesTop = 16;
+const southernSkyTop = 64;
+const eclipticTop = southernSkyTop + southernLatToY(0);
+const planetHelpTop = eclipticTop - 12;
+const weekdayScaleTop = 176;
+const calendarTop = weekdayScaleTop + 32;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 最初のヘルプ
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-(() => {
-  const helpName = "intro-1";
-  const help = [
-    "右上の◀▶をクリックすると次の説明文または前の説明文に移動できます。",
-    "時計のソースコードおよび詳細な説明は<a href=\"https://github.com/suzuki-navi/analogclock\" target=\"_blank\">GitHub</a>にもあります。",
-  ];
-  helpNames.push({name:helpName, help, add:["all"], clip:0});
-})();
+helpNames.push({name: "intro-1", help: [
+  "右上の◀▶をクリックすると次の説明文または前の説明文に移動できます。",
+  "時計のソースコードおよび詳細な説明は<a href=\"https://github.com/suzuki-navi/analogclock\" target=\"_blank\">GitHub</a>にもあります。",
+], add:["all"], clip:0});
 
-(() => {
-  const helpName = "intro-2";
-  const help = [
-    "この時計には、カレンダーがあり、星座早見盤もあり、月の満ち欠けがわかり、惑星の位置もわかり、日食・月食や流星群の時期もわかります。世界時計、万年カレンダー、天文時計、星座早見盤を兼ねた情報量の多いアナログ時計です。",
-  ];
-  helpNames.push({name:helpName, help, add:["all"], clip:0});
-})();
+helpNames.push({name: "intro-2", help: [
+  "この時計には、カレンダーがあり、星座早見盤もあり、月の満ち欠けがわかり、惑星の位置もわかり、日食・月食や流星群の時期もわかります。",
+  "世界時計、万年カレンダー、星座早見盤、天文時計を兼ねた情報量の多いアナログ時計です。",
+], add:["all"], clip:0});
 
-(() => {
-  const helpName = "intro-3";
-  const help = [
-    "時計の針はマウスで動かすことができます。",
-    "時計のパーツをクリックするとその説明が表示されます。",
-  ];
-  helpNames.push({name:helpName, help, add:["all"], clip:0});
-})();
+helpNames.push({name: "intro-3", help: [
+  "時計の針はマウスで動かすことができます。",
+  "時計のパーツをクリックするとその説明が表示されます。",
+], add:["all"], clip:0});
+
+helpNames.push({name: "world-cities-time", help: [
+  "外側の円盤に対して都市名は、各都市の現在時刻を示します。",
+  "カッコ内の数字は世界協定時からの時間差を示します。*印は夏時間のある都市で、夏に1時間進みます。夏時間の時期は都市によって異なり、特に南半球での夏時間は北半球では冬であることに注意してください。",
+], add:["day-scale", "world-cities"], clip:0});
+
+helpNames.push({name: "world-cities-sky", help: [
+  "外側の円盤に対して都市名は、各都市での南の方向に見える星座を示します。",
+  "この時計は東京が基準ですので、東京のところにSourthern Sky(南)の記載があります。",
+  "上半分に来ている都市は現在昼であり、下半分は夜であることを示します。",
+], add:["world-cities", "southern-sky", "southern-stars"], clip:0});
+
+helpNames.push({name: "perpetual-calendar", help: [
+  "万年カレンダーです。",
+  "毎月の曜日配置に応じて日付の記載されたパーツが回転します。",
+  "日付を指す針の星座早見盤との干渉を少しでも軽減するために、針が途中で折れ曲がるようになっています。",
+], add:["calendar-third-background", "weekday-scale", "calendar-mdays", "mday-hand", "calendar-lower-mask"], clip:-weekdayScaleTop});
+
+helpNames.push({name: "planisphere", help: [
+  "星座早見盤です。通常の星座早見盤と異なり、外周の南天エリアと中央の北天エリアに分かれています。",
+  "茶色の曲線は地平線で、1日で1回転します。",
+  "下半分は夜間に見えやすい星座です。上のほうの星座は太陽に近いため見えません。",
+], add:["southern-horizon", "planisphere-common", "southern-stars", "eastwest-horizon", "northern-stars", "northern-horizon"], clip:-southernSkyTop});
+
+helpNames.push({name: "southern-stars-constellations", help: [
+  "南天にある黄色の点線は太陽の通り道である黄道、赤色の点線は天の赤道です。南天と北天の両方にある灰色の点線は赤緯45度線です。",
+  "天の川も描かれています。",
+  "通常の星座早見盤と異なり、南天は黄道が同心円で描かれ、天の赤道が歪んだ円形になっています。スペースの関係で特に南天で星座が縦方向につぶされた形で描かれています。",
+], add:["southern-stars", "northern-background", "northern-stars"], clip:-southernSkyTop});
+
+helpNames.push({name: "planisphere-planets", help: [
+  "太陽、月、惑星が地球から見てどの方向に見えるかを示しています。",
+  "太陽、月、惑星は星座の中を黄道に沿って移動します。",
+  "太陽・月・惑星の位置計算は1980年から2050年の範囲で誤差が小さくなるように計算しています。その範囲から外れると誤差が大きい可能性があります。",
+], add:["southern-horizon", "planisphere-common", "southern-stars", "eastwest-horizon", "northern-stars", "northern-horizon"], clip:-southernSkyTop});
+
+helpNames.push({name: "sun-eastwest", help: [
+  "太陽が東西の地平線と重なる時間が日の出・日没です。",
+], add:["southern-horizon", "planisphere-common", "southern-stars", "eastwest-horizon", "northern-stars", "northern-horizon"], clip:-southernSkyTop});
+
+helpNames.push({name: "sun-opposition", help: [
+  "太陽と反対方向の黄色の針に月が来ると満月です。惑星が来ると衝といい、惑星が地球に近く一晩中見やすい時期を示します。",
+  "逆に月が太陽と同じ方向に来ると新月です。",
+], add:["southern-horizon", "planisphere-common", "planisphere-planets", "southern-stars", "eastwest-horizon", "northern-stars", "northern-horizon"], clip:-southernSkyTop});
+
+helpNames.push({name: "perihelion", help: [
+  "黄色の針が地球近日点を指している時期は地球が太陽に近いです。毎年1月ごろです。",
+  "逆に遠日点の時期は地球が太陽から遠いです。毎年7月ごろです。",
+], add:["planisphere-common", "southern-stars", "northern-stars"], clip:-southernSkyTop});
+
+helpNames.push({name: "sun-southern-ecliptic", help: [
+  "黄色の針は太陽黄経、二十四節気、流星群も指しています。春から夏は外側、秋から冬は内側に文字盤があります。",
+  "太陽黄経は地球から見た太陽の方向を示します。星座の円盤は赤経を基準にしているため黄経の目盛りは一定間隔ではありません。",
+  "流星群は極大の時期を示します。",
+], add:["southern-stars"], clip:-southernSkyTop});
+
+helpNames.push({name: "southern-stars-revolution", help: [
+  "星座の円盤は地球の公転に合わせて反時計回りに1年で1周します。地球の公転軌道上の速度は一定ではありませんが、この円盤は一定速度で回転します。地球の楕円軌道および地軸の傾きに起因する速度のムラは均時差の原因であり、この時計では太陽とその反対にある黄色の針が1年かけて左右に揺れることで表現しています。",
+], add:["planisphere-common", "southern-stars", "northern-stars"], clip:-southernSkyTop});
+
+helpNames.push({name: "eclipse-2", help: [
+  "日食や月食もわかります。",
+  "月と太陽の両方が昇交点と降交点のいずれかに来たときに日食または月食になります。月と太陽が同じ方向のときは日食、反対方向のときは月食になります。",
+  "昇交点または降交点に近いほど皆既日食、金環日食、または皆既月食になりやすくなります。",
+  "日食のときに、月が近地点に近い場合は皆既日食、遠地点に近い場合は金環日食になりやすくなります。",
+], add:["eclipse", "moon", "sun", "perigee"], clip:-planetHelpTop});
+
+helpNames.push({name: "super-moon", help: [
+  "月が近地点のあたりですといつもより大きめの月、遠地点のあたりですといつもより小さめの月が見えます。",
+  "近地点に近いときに満月になるとスーパームーンと呼ばれることがあります。スーパームーンはいつもよりも大きな満月です。",
+], add:["perigee", "moon"], clip:-planetHelpTop});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 外周の24時間の目盛り
@@ -1014,24 +1137,20 @@ function createArrowHandElement(parentElement, {
 // 世界の都市
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const worldCitiesTop = 16;
-
 (() => {
   const layerName = "world-cities";
   const help = [
-    "都市名の記載は、すぐ外側の円盤の数字を指し、各都市の現在時刻を示します。",
-    "カッコ内の数字は世界協定時からの時間差を示します。*印は夏時間のある都市で、夏に1時間進みます。夏時間の時期は都市によって異なり、特に南半球での夏時間は北半球では冬であることに注意してください。",
-    "24時間で1回転する円盤です。マウスで動かして時間調整できます。時計中央の北の地平線を示すパーツと同期して回転します。",
+    "都市名の書かれた24時間で1回転する円盤です。マウスで動かして時間調整できます。時計中央の北の地平線を示すパーツと同期して回転します。",
   ];
   helpNames.push({name:layerName, help, clip:-worldCitiesTop});
 
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
       layerName,
-      size: -16,
+      size: -worldCitiesTop,
       shadow: true,
       glass: true,
-      classNames: ["scrollable", "world-cities-sky-help"],
+      classNames: ["scrollable"],
     }, null, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.background = colors.face;
 
@@ -1082,22 +1201,23 @@ const worldCitiesTop = 16;
       addCity("<span style=\"font-weight:bold;\">東京</span>・서울 (+9)", +9, 1, true);
       addCity("Sydney (+10*)", +10, 1);
       addCity("Auckland (+12*)", +12, 1);
+    });
 
-      // 南の地平線
-      createTextElement(bodyElement, {
-        layerName,
-        top: 18,
-        halfWidth: 80,
-        text: "E← Southern Sky →W",
-        rotation: 180,
-        angle: 180,
-      }, (element1, element2) => {
-        element2.style.background = colors.horizon;
-        element2.style.color = colors.horizonFont;
-        element2.style.fontSize = "12px";
-        element2.style.paddingTop = "12px";
-        element2.style.paddingBottom = "2px";
-      });
+    // 南の地平線
+    createTextElement(clockElement, {
+      layerName,
+      top: worldCitiesTop + 18,
+      halfWidth: 80,
+      text: "E← Southern Sky →W",
+      rotation: 180,
+      angle: 180,
+      classNames: [layerName + "-rotation", "rotation", "southern-horizon-layer"],
+    }, (element1, element2) => {
+      element2.style.background = colors.horizon;
+      element2.style.color = colors.horizonFont;
+      element2.style.fontSize = "12px";
+      element2.style.paddingTop = "12px";
+      element2.style.paddingBottom = "2px";
     });
   });
 
@@ -1132,28 +1252,17 @@ const worldCitiesTop = 16;
       }
     }();
   });
-
-  (() => {
-    const helpName = "world-cities-sky";
-    const help = [
-      "都市名の円盤のすぐ内側は空を表し、都市名の記載方向が各地での南になります。この時計は東京が基準ですので、東京のところにSourthern Sky(南)の記載があります。",
-      "上半分に来ている都市は現在昼であり、下半分は夜であることを示します。",
-    ];
-    helpNames.push({name:helpName, help, add:["world-cities", "southern-sky", "southern-stars"], clip:-worldCitiesTop});
-  })();
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 南の空の薄明背景
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const southernSkyTop = 64;
-
 (() => {
   const layerName = "southern-sky";
   const help = [
     "南の空の背景を示した固定の円盤です。上半分が昼、下半分が夜、左が朝、右が夕方を表します。",
-    "白抜き文字で星座が書かれた透明の円盤が上から重ねられます。",
+    "白い文字で星座が書かれた透明の円盤が上から重ねられます。",
   ];
   helpNames.push({name:layerName, help, clip:-southernSkyTop});
 
@@ -1173,13 +1282,10 @@ const southernSkyTop = 64;
 // 南の空の星座
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const eclipticTop = southernSkyTop + southernLatToY(0);
-
 (() => {
   const layerName = "southern-stars";
   const help = [
-    "白抜き文字で星座が書かれた透明の回転する円盤です。反時計回りに1年で1周します。",
-    "下半分にある星座がその季節に夜間見えやすい星座です。外側の円盤の東京あるいはSouthern Skyと書かれた方向の星座がその時間に南の空に見える星座です。",
+    "白い文字で星座が書かれた透明の回転する円盤です。反時計回りに1年で1周します。",
   ];
   helpNames.push({name:layerName, help, clip:-southernSkyTop});
 
@@ -1218,7 +1324,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
       shadow: false,
       glass: false,
       isHelp: true,
-      classNames: ["southern-stars-revolution-help"],
+      classNames: ["southern-stars-revolution-help", "planisphere-common-layer"],
     }, null, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.background = colors.skyGradient2;
     });
@@ -1439,13 +1545,13 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
       }
     })();
 
-    for (const [lng, text, classNames, top, halfWidth] of [
-      [103, "地球近日点", ["sun-opposition-help", "help", "help-sun-opposition"], 184, 30],
-      [283, "地球遠日点", ["sun-opposition-help", "help", "help-sun-opposition"], 214, 30],
-      [156, "火星遠日点", ["mars-help", "help", "help-mars"], 0, 40],
-      [336, "火星近日点", ["mars-help", "help", "help-mars"], 184, 40],
-      [178, "土星環消失", ["saturn-help", "help", "help-saturn"], 0, 40],
-      [358, "土星環消失", ["saturn-help", "help", "help-saturn"], 184, 40],
+    for (const [lng, text, classNames, helpClassNames, top, halfWidth] of [
+      [103, "地球近日点", ["help-perihelion"], ["perihelion-help"], 184, 30],
+      [283, "地球遠日点", ["help-perihelion"], ["perihelion-help"], 214, 30],
+      [156, "火星遠日点", ["mars-help", "help", "help-mars"], [], 0, 40],
+      [336, "火星近日点", ["mars-help", "help", "help-mars"], [], 184, 40],
+      [178, "土星環消失", ["saturn-help", "help", "help-saturn"], [], 0, 40],
+      [358, "土星環消失", ["saturn-help", "help", "help-saturn"], [], 184, 40],
     ]) {
       const lng2 = eclipticLngToEquatorial(lng);
       createTextElement(clockElement, {
@@ -1460,6 +1566,24 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
         element2.style.background = colors.eclipse + "70";
         element2.style.color = colors.eclipseFont;
         element2.style.fontSize = "10px";
+      });
+      createHelpRectangleElement(clockElement, {
+        layerName,
+        classNames: helpClassNames,
+      }, clip => {
+        clip.circleBegin (lng2      , -6 + southernSkyTop + top,               0, +1);
+        clip.circleLineTo(lng2 +  11, -6 + southernSkyTop + top,              +1, +1);
+        clip.circleLineTo(lng2 +  11, 16 + southernSkyTop + top, +1, -1);
+        clip.circleLineTo(lng2 -  11, 16 + southernSkyTop + top,    -1, -1);
+        clip.circleLineTo(lng2 -  11, -6 + southernSkyTop + top,              -1, +1);
+        clip.circleLineTo(lng2      , -6 + southernSkyTop + top,               0, +1);
+        clip.circleLineTo(lng2      , -2 + southernSkyTop + top,               0, -1);
+        clip.circleLineTo(lng2 -  10, -2 + southernSkyTop + top,              +1, -1);
+        clip.circleLineTo(lng2 -  10, 12 + southernSkyTop + top,    +1, +1);
+        clip.circleLineTo(lng2 +  10, 12 + southernSkyTop + top,    -1, +1);
+        clip.circleLineTo(lng2 +  10, -2 + southernSkyTop + top,              -1, -1);
+        clip.circleLineTo(lng2      , -2 + southernSkyTop + top,               0, -1);
+        clip.end();
       });
     }
 
@@ -1481,6 +1605,7 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
         element2.style.fontSize = "14px";
       });
     })();
+
   });
 
   diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
@@ -1515,51 +1640,19 @@ const eclipticTop = southernSkyTop + southernLatToY(0);
       }
     }();
   });
-
-  (() => {
-    const helpName = "southern-stars-constellations";
-    const help = [
-      "黄色の点線は太陽の通り道である黄道、赤色の点線は天の赤道です。灰色の点線は赤緯45度線です。赤緯45度線は時計中央にある北天の星座表示にもあります。天の川も描かれています。",
-      "通常の星座早見盤と異なり、黄道が同心円で描かれ、天の赤道が歪んだ円形になっています。スペースの関係で星座は全体的に縦方向につぶされた形で描かれています。",
-    ];
-    helpNames.push({name:helpName, help, add:["southern-stars"], clip:-southernSkyTop});
-  })();
-
-  (() => {
-    const helpName = "southern-stars-ecliptic";
-    const help = [
-      "星座の円盤の内側または外側は、太陽黄経、二十四節気、流星群の文字盤です。黄色の針がこの文字盤を指しています。",
-      "太陽黄経と二十四節気は地球から見た太陽の位置を表します。星座の円盤は赤経を基準にしているため黄経の目盛りは一定間隔ではありません。",
-      "流星群は極大の時期を示します。",
-      "春から夏は外側、秋から冬は内側に文字盤があります。",
-    ];
-    helpNames.push({name:helpName, help, add:["southern-stars"], clip:-southernSkyTop});
-  })();
-
-  (() => {
-    const helpName = "southern-stars-revolution";
-    const help = [
-      "星座の円盤は地球の公転に合わせて反時計回りに1年で1周します。地球の公転軌道上の速度は一定ではありませんが、この円盤は一定速度で回転します。地球の楕円軌道および地軸の傾きに起因する速度のムラは均時差の原因であり、この時計では太陽とその反対にある黄色の針が1年かけて左右に揺れることで表現しています。",
-    ];
-    helpNames.push({name:helpName, help, add:["southern-stars", "sun"], clip:-southernSkyTop});
-  })();
-
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 月の近地点・遠地点
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const weekdayScaleTop = 176;
-
 (() => {
   const layerName = "perigee";
   const help = [
     "月の近地点と遠地点の位置を示す針です。",
     "背景の星座とともに1年で反時計回りに1周しますが、それと同時に星座の中を少しずつ移動しており約9年かけて1周します。実際には単純に1周するだけでなく細かく振動しているのですが、この針では一定速度で回転しているものとして近似しているため、誤差が大きいです。",
-    "月が近地点付近ですといつもより大きめの月、遠地点付近ですといつもより小さめの月が見えます。",
   ];
-  helpNames.push({name:layerName, help, clip:-weekdayScaleTop, add:["moon"]});
+  helpNames.push({name:layerName, help, clip:-weekdayScaleTop});
 
   for (const [direction, text] of [[0, "近地点"], [180, "遠地点"]]) {
     layerInitializers.push(clockElement => {
@@ -1635,10 +1728,8 @@ const weekdayScaleTop = 176;
   const help = [
     "月の黄道に対する昇交点と降交点の位置を示す針です。",
     "背景の星座とともに1年で反時計回りに1周しますが、それと同時に星座の中を少しずつ移動しており18.6年かけて1周します。",
-    "月と太陽の両方が昇交点と降交点のいずれかに来たときに日食または月食になります。月と太陽が同じ方向のときは日食、反対方向のときは月食になります。",
-    "昇交点または降交点に近いほど皆既日食または金環日食、皆既月食になりやすくなります。",
   ];
-  helpNames.push({name:layerName, help, clip:-weekdayScaleTop, add:["moon"]});
+  helpNames.push({name:layerName, help, clip:-weekdayScaleTop});
 
   for (const [direction, text] of [[0, "昇交点"], [180, "降交点"]]) {
     layerInitializers.push(clockElement => {
@@ -1692,14 +1783,6 @@ const weekdayScaleTop = 176;
     });
   }
 
-  (() => {
-    const helpName = "eclipse-2";
-    const help = [
-      "日食のときに、月が近地点に近い場合は皆既日食、遠地点に近い場合は金環日食になりやすくなります。",
-    ];
-    helpNames.push({name:helpName, help, add:["eclipse", "perigee", "moon"], clip:-weekdayScaleTop});
-  })();
-
   diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
     new class {
       constructor() {
@@ -1731,17 +1814,6 @@ const weekdayScaleTop = 176;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 太陽・月・惑星
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const planetHelpTop = eclipticTop - 12;
-
-(() => {
-  const helpName = "planets";
-  const help = [
-    "太陽、月、惑星が地球から見てどの方向に見えるかを示しています。太陽、月、惑星は黄道に沿って移動します。",
-    "太陽・月・惑星の位置計算は1980年から2050年の範囲で誤差が小さくなるように計算されています。その範囲から外れると誤差が大きい可能性があります。",
-  ];
-  helpNames.push({name:helpName, help, add:[], clip:-planetHelpTop});
-})();
 
 for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, planetColor, planetHelp] of [
   ["saturn", calcSaturnLng, null, 12, 6, null, [
@@ -1797,16 +1869,15 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
         layerName,
         top: eclipticTop - planetSize,
         halfWidth: planetSize,
-        classNames: ["planets-help"],
+        classNames: ["planisphere-planets-layer", "planisphere-planets-help"],
       }, (element1, element2s, element2, element3s, element3, glassElement) => {
         if (scrollAngle == 0) {
           element1.classList.remove("scrollable");
         }
         if (layerName == "sun") {
+          element1.classList.add("planisphere-help");
           element1.classList.add("sun-eastwest-help");
           element1.classList.add("moon-phase-help");
-          element1.classList.add("eclipse-help");
-          element1.classList.add("eclipse-2-help");
         } else if (layerName == "moon") {
           element1.classList.add("moon-phase-help");
         }
@@ -1852,44 +1923,10 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
       if (layerName == "sun") {
         createOppositionHandElement(clockElement, {
           layerName,
-          classNames: ["southern-stars-ecliptic-help", "sun-opposition-help", "sun-southern-ecliptic-help", "moon-phase-help", "mars-help", "jupiter-help", "saturn-help"],
+          classNames: ["southern-stars-ecliptic-help", "sun-opposition-help", "perihelion-help", "sun-southern-ecliptic-help", "moon-phase-help", "mars-help", "jupiter-help", "saturn-help"],
         });
       }
     });
-
-    if (layerName == "sun") {
-      (() => {
-        const helpName = "sun-eastwest";
-        const help = [
-          "太陽が東西の地平線と重なる時間が日の出・日没です。",
-        ];
-        helpNames.push({name:helpName, help, clip:-planetHelpTop});
-      })();
-      (() => {
-        const helpName = "sun-opposition";
-        const help = [
-          "太陽と反対方向の黄色の針に月があると満月、惑星があると衝を示します。",
-          "黄色の針が地球近日点を指している時期は地球が太陽に近いことを示します。地球は1月に太陽にもっとも近づきます。地球遠日点はその反対で7月です。",
-        ];
-        helpNames.push({name:helpName, help, add:["moon", "mars", "jupiter", "saturn"], clip:-planetHelpTop});
-      })();
-      (() => {
-        const helpName = "sun-southern-ecliptic";
-        const help = [
-          "太陽と反対方向の黄色の針は太陽黄経、二十四節気、流星群も指しています。太陽黄経と二十四節気は地球から見た太陽のある位置を示します。流星群は極大の時期を示します。",
-        ];
-        helpNames.push({name:helpName, help, add:["southern-stars"], clip:-southernSkyTop});
-      })();
-    }
-    if (layerName == "moon") {
-      (() => {
-        const helpName = "moon-phase";
-        const help = [
-          "月が太陽と同じ位置に来ると新月です。太陽と反対側にある黄色の針の位置に来ると満月です。",
-        ];
-        helpNames.push({name:helpName, help, clip:-planetHelpTop});
-      })();
-    }
 
     diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
       new class {
@@ -1952,7 +1989,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
   const layerName = "eastwest-horizon";
   const help = [
     "東西の地平線を表す回転するパーツです。東京での東西の地平線に一致するように移動します。",
-    "黄道が同心円で描かれ天の赤道が歪んだ円形のため、地平線の形は恒星時によって異なります。このパーツは形が変わりませんので、黄道から離れた方角では誤差が大きくなります。",
+    "黄道が同心円で描かれ天の赤道が歪んだ円形のため、地平線の形は恒星時によって異なります。このパーツは形を変えられませんので、黄道沿い以外では誤差が大きくなります。",
   ];
   helpNames.push({name:layerName, help, clip:-southernSkyTop});
 
@@ -1966,7 +2003,7 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
         shadow: false,
         glass: true,
         rotation: 180 - 90 * sign,
-        classNames: ["scrollable", "sun-eastwest-help"],
+        classNames: ["scrollable"],
       }, clip => {
         const start = -28;
         const end = +44;
@@ -2082,8 +2119,6 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
 // カレンダー3段目の背景盤
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const calendarTop = weekdayScaleTop + 32;
-
 (() => {
   const layerName = "calendar-third-background";
   const help = [
@@ -2193,7 +2228,7 @@ const calendarTop = weekdayScaleTop + 32;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 (() => {
-  const layerName = "calendar";
+  const layerName = "calendar-mdays";
   const help = [
     "万年カレンダーの日付が書かれている透明のパーツです。",
     "毎月の曜日配置に応じて回転します。",
@@ -2303,9 +2338,9 @@ let setCalendarHandRotation = null;
   const layerName = "mday-hand";
   const help = [
     "日付と曜日を示す針です。マウスで動かすことができます。",
-    "星座早見盤のエリアを隠さないように、針が途中で折れ曲がるようになっています。",
+    "星座早見盤との干渉を少しでも軽減するために、針が途中で折れ曲がるようになっています。",
   ];
-  helpNames.push({name:layerName, help, clip:-calendarTop, add:["calendar"]});
+  helpNames.push({name:layerName, help, clip:-calendarTop, add:["calendar-mday"]});
 
   let setAngle = [];
 
@@ -2939,7 +2974,7 @@ const northernSkyElementSize = 128;
   const layerName = "northern-sky";
   const help = [
     "北の空の背景を示した固定の円盤です。",
-    "白抜き文字で星座が書かれた透明の円盤が上から重ねられます。",
+    "白い文字で星座が書かれた透明の円盤が上から重ねられます。",
   ];
   helpNames.push({name:layerName, help, clip:northernSkyElementSize});
 
@@ -2974,7 +3009,7 @@ const northernSkyElementSize = 128;
 (() => {
   const layerName = "northern-stars";
   const help = [
-    "北の空で見られる星座が白抜き文字で書かれた透明の回転する円盤です。地球の公転に合わせて反時計回りに1年で1回転します。",
+    "北の空で見られる星座が白い文字で書かれた透明の回転する円盤です。地球の公転に合わせて反時計回りに1年で1回転します。",
     "下半分にある星座がその季節に夜間見えやすい星座です。天の川も描かれています。",
     "灰色の点線は赤緯45度線です。赤緯45度線は時計の外周にある南天の星座表示にもありますので、赤緯45度付近は重複して表示されます。",
   ];
@@ -2988,6 +3023,7 @@ const northernSkyElementSize = 128;
       shadow: false,
       glass: false,
       isHelp: true,
+      classNames: ["planisphere-common-layer", "northern-background-layer"],
     }, null, (shadowElement, bodyElement, glassElement) => {
       bodyElement.style.backgroundColor = colors.skyGradient2;
     });
@@ -3569,6 +3605,248 @@ const minuteHandTop = halfdayScaleTop + 15;
         });
       });
     });
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// ##   ##  #######  ####     ######
+// ##   ##   ##   #   ##       ##  ##
+// ##   ##   ## #     ##       ##  ##
+// #######   ####     ##       #####
+// ##   ##   ## #     ##   #   ##
+// ##   ##   ##   #   ##  ##   ##
+// ##   ##  #######  #######  ####
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 世界時計
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  layerInitializers.push(clockElement => {
+
+    function createRectangle(rotation, timeText, timeN, skyText) {
+      createHelpRectangleElement(clockElement, {
+        layerName: "world-cities",
+        classNames: ["world-cities-time-help"],
+      }, clip => {
+        clip.circleBegin (rotation      ,  0 + 0,               0, +1);
+        clip.circleLineTo(rotation +  11,  0 + 0,              +1, +1);
+        clip.circleLineTo(rotation +  11, 8 + 14 * timeN + worldCitiesTop, +1, -1);
+        clip.circleLineTo(rotation -  11, 8 + 14 * timeN + worldCitiesTop,    -1, -1);
+        clip.circleLineTo(rotation -  11,  0 + 0,              -1, +1);
+        clip.circleLineTo(rotation      ,  0 + 0,               0, +1);
+
+        clip.circleLineTo(rotation      ,  2 + 0,               0, -1);
+        clip.circleLineTo(rotation -  10,  2 + 0,              +1, -1);
+        clip.circleLineTo(rotation -  10, 14 * timeN + worldCitiesTop,    +1, +1);
+        clip.circleLineTo(rotation +  10, 14 * timeN + worldCitiesTop,    -1, +1);
+        clip.circleLineTo(rotation +  10,  2 + 0,              -1, -1);
+        clip.circleLineTo(rotation      ,  2 + 0,               0, -1);
+        clip.end();
+      });
+      createHelpTextElement(clockElement, {
+        layerName: "world-cities",
+        top: worldCitiesTop + 48,
+        halfWidth: 80,
+        text: timeText,
+        angle: 0,
+        rotation: rotation,
+        fontSize: 24,
+        classNames: ["world-cities-time-help"],
+      });
+
+      createHelpRectangleElement(clockElement, {
+        layerName: "world-cities",
+        classNames: ["world-cities-sky-help"],
+      }, clip => {
+        clip.circleBegin (rotation      , -8 + worldCitiesTop,  0, +1);
+        clip.circleLineTo(rotation +  11, -8 + worldCitiesTop, +1, +1);
+        clip.circleLineTo(rotation +  11, 56 + calendarTop,    +1, -1);
+        clip.circleLineTo(rotation -  11, 56 + calendarTop,    -1, -1);
+        clip.circleLineTo(rotation -  11, -8 + worldCitiesTop, -1, +1);
+        clip.circleLineTo(rotation      , -8 + worldCitiesTop,  0, +1);
+
+        clip.circleLineTo(rotation      ,  0 + worldCitiesTop,  0, -1);
+        clip.circleLineTo(rotation -  10,  0 + worldCitiesTop, +1, -1);
+        clip.circleLineTo(rotation -  10, 48 + calendarTop,    +1, +1);
+        clip.circleLineTo(rotation +  10, 48 + calendarTop,    -1, +1);
+        clip.circleLineTo(rotation +  10,  0 + worldCitiesTop, -1, -1);
+        clip.circleLineTo(rotation      ,  0 + worldCitiesTop,  0, -1);
+        clip.end();
+      });
+      createHelpTextElement(clockElement, {
+        layerName: "world-cities",
+        top: southernSkyTop + 20,
+        halfWidth: 80,
+        text: skyText,
+        angle: 180,
+        rotation: rotation,
+        fontSize: 24,
+        classNames: ["world-cities-sky-help"],
+      });
+    }
+    createRectangle(180, "東京の\n時間", 1, "東京の\n南の空");
+    createRectangle(45, "ロンドンの\n時間", 2, "ロンドンの\n南の空");
+
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 万年カレンダー
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  layerInitializers.push(clockElement => {
+
+    createHelpRectangleElement(clockElement, {
+      layerName: "",
+      classNames: ["perpetual-calendar-help"],
+    }, clip => {
+      clip.circleBegin (  0,   -10 + weekdayScaleTop,  0, +1);
+      clip.circleLineTo( 31.4, -10 + weekdayScaleTop, +1, +1);
+      clip.circleLineTo( 33.0, 176 + calendarTop, +1, -1);
+      clip.circleLineTo(-33.0, 176 + calendarTop, -1, -1);
+      clip.circleLineTo(-31.4, -10 + weekdayScaleTop, -1, +1);
+      clip.circleLineTo(  0,   -10 + weekdayScaleTop,  0, +1);
+      clip.circleLineTo(  0,    -2 + weekdayScaleTop,  0, -1);
+      clip.circleLineTo(-30.2,  -2 + weekdayScaleTop, +1, -1);
+      clip.circleLineTo(-30.2, 168 + calendarTop, +1, +1);
+      clip.circleLineTo( 30.2, 168 + calendarTop, -1, +1);
+      clip.circleLineTo( 30.2,  -2 + weekdayScaleTop, -1, -1);
+      clip.circleLineTo(  0,    -2 + weekdayScaleTop,  0, -1);
+      clip.end();
+    });
+
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 惑星
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  layerInitializers.push(clockElement => {
+    function createRectangle(layerName, text, classNames = []) {
+      createHelpRectangleElement(clockElement, {
+        layerName: layerName,
+        classNames: ["planisphere-planets-help", ...classNames],
+      }, clip => {
+        clip.circleBegin (  0,   -26 + eclipticTop,  0, +1);
+        clip.circleLineTo(  6.4, -26 + eclipticTop, +1, +1);
+        clip.circleLineTo(  6.4, +26 + eclipticTop, +1, -1);
+        clip.circleLineTo( -6.4, +26 + eclipticTop, -1, -1);
+        clip.circleLineTo( -6.4, -26 + eclipticTop, -1, +1);
+        clip.circleLineTo(  0,   -26 + eclipticTop,  0, +1);
+        clip.circleLineTo(  0,   -18 + eclipticTop,  0, -1);
+        clip.circleLineTo( -5.2, -18 + eclipticTop, +1, -1);
+        clip.circleLineTo( -5.2, +18 + eclipticTop, +1, +1);
+        clip.circleLineTo(  5.2, +18 + eclipticTop, -1, +1);
+        clip.circleLineTo(  5.2, -18 + eclipticTop, -1, -1);
+        clip.circleLineTo(  0,   -18 + eclipticTop,  0, -1);
+        clip.end();
+      });
+      createHelpTextElement(clockElement, {
+        layerName: layerName,
+        top: eclipticTop - 54,
+        halfWidth: 40,
+        text: text,
+        angle: 180,
+        rotation: 0,
+        fontSize: 24,
+        classNames: ["planisphere-planets-help", ...classNames],
+      });
+    }
+    createRectangle("sun", "太陽", ["sun-eastwest-help"]);
+    createRectangle("moon", "月");
+    createRectangle("mercury", "水星");
+    createRectangle("venus", "金星");
+    createRectangle("mars", "火星");
+    createRectangle("jupiter", "木星");
+    createRectangle("saturn", "土星");
+
+    createHelpRectangleElement(clockElement, {
+      layerName: "sun",
+      classNames: ["sun-opposition-help", "perihelion-help"]
+    }, clip => {
+      clip.circleBegin (180 +  0,    0 + southernSkyTop,  0, +1);
+      clip.circleLineTo(180 +  6.4,  0 + southernSkyTop, +1, +1);
+      clip.circleLineTo(180 +  7.0, 56 + calendarTop, +1, -1);
+      clip.circleLineTo(180 + -7.0, 56 + calendarTop, -1, -1);
+      clip.circleLineTo(180 + -6.4,  0 + southernSkyTop, -1, +1);
+      clip.circleLineTo(180 +  0,    0 + southernSkyTop,  0, +1);
+      clip.circleLineTo(180 +  0,    8 + southernSkyTop,  0, -1);
+      clip.circleLineTo(180 + -5.2,  8 + southernSkyTop, +1, -1);
+      clip.circleLineTo(180 + -5.2, 48 + calendarTop, +1, +1);
+      clip.circleLineTo(180 +  5.2, 48 + calendarTop, -1, +1);
+      clip.circleLineTo(180 +  5.2,  8 + southernSkyTop, -1, -1);
+      clip.circleLineTo(180 +  0,    8 + southernSkyTop,  0, -1);
+      clip.end();
+    });
+
+    createHelpRectangleElement(clockElement, {
+      layerName: "sun",
+      classNames: ["sun-southern-ecliptic-help"]
+    }, clip => {
+      clip.circleBegin (180 +  0,   40 + calendarTop,  0, +1);
+      clip.circleLineTo(180 +  6.4, 40 + calendarTop, +1, +1);
+      clip.circleLineTo(180 +  7.0, 92 + calendarTop, +1, -1);
+      clip.circleLineTo(180 + -7.0, 92 + calendarTop, -1, -1);
+      clip.circleLineTo(180 + -6.4, 40 + calendarTop, -1, +1);
+      clip.circleLineTo(180 +  0,   40 + calendarTop,  0, +1);
+      clip.circleLineTo(180 +  0,   48 + calendarTop,  0, -1);
+      clip.circleLineTo(180 + -5.2, 48 + calendarTop, +1, -1);
+      clip.circleLineTo(180 + -5.2, 84 + calendarTop, +1, +1);
+      clip.circleLineTo(180 +  5.2, 84 + calendarTop, -1, +1);
+      clip.circleLineTo(180 +  5.2, 48 + calendarTop, -1, -1);
+      clip.circleLineTo(180 +  0,   48 + calendarTop,  0, -1);
+      clip.end();
+    });
+    createHelpRectangleElement(clockElement, {
+      layerName: "sun",
+      classNames: ["sun-southern-ecliptic-help"]
+    }, clip => {
+      clip.circleBegin (180 +  0,   -8 + southernSkyTop,  0, +1);
+      clip.circleLineTo(180 +  6.4, -8 + southernSkyTop, +1, +1);
+      clip.circleLineTo(180 +  7.0, 36 + southernSkyTop, +1, -1);
+      clip.circleLineTo(180 + -7.0, 36 + southernSkyTop, -1, -1);
+      clip.circleLineTo(180 + -6.4, -8 + southernSkyTop, -1, +1);
+      clip.circleLineTo(180 +  0,   -8 + southernSkyTop,  0, +1);
+      clip.circleLineTo(180 +  0,    0 + southernSkyTop,  0, -1);
+      clip.circleLineTo(180 + -5.2,  0 + southernSkyTop, +1, -1);
+      clip.circleLineTo(180 + -5.2, 28 + southernSkyTop, +1, +1);
+      clip.circleLineTo(180 +  5.2, 28 + southernSkyTop, -1, +1);
+      clip.circleLineTo(180 +  5.2,  0 + southernSkyTop, -1, -1);
+      clip.circleLineTo(180 +  0,    0 + southernSkyTop,  0, -1);
+      clip.end();
+    });
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 東西の地平線
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  layerInitializers.push(clockElement => {
+    function createRectangle(rotation, text) {
+      const layerName = "eastwest-horizon";
+      createHelpTextElement(clockElement, {
+        layerName: layerName,
+        top: eclipticTop - 70,
+        halfWidth: 80,
+        text: text,
+        angle: 180,
+        rotation,
+        fontSize: 24,
+        classNames: ["sun-eastwest-help"],
+      });
+    }
+    createRectangle( 90, "西の地平線");
+    createRectangle(270, "東の地平線");
+
   });
 })();
 
