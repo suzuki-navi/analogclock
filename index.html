@@ -53,7 +53,7 @@ const normalColors = {
   calendar: "#fff8f0",
   calendarTransparent: "#e0d8d020",
   scale: "#aaaaaa",
-  firstHand: "#666666",
+  firstHand: "#666666e0",
   firstHandBorder: "#eeeeee",
   secondHand: "#ed8d8d",
   skyHand: "#999999",
@@ -93,7 +93,7 @@ const darkColors = {
   calendar: "#000000",
   calendarTransparent: "#00000020",
   scale: "#777777",
-  firstHand: "#555555",
+  firstHand: "#555555a0",
   firstHandBorder: "#555555",
   secondHand: "#9b5050",
   skyHand: "#555555",
@@ -605,7 +605,7 @@ function createFirstHandElement(parentElement, {
     left: "0",
     width: "100%",
   }, element => {
-    element.style.backgroundColor = colors.firstHand + "d0";
+    element.style.backgroundColor = colors.firstHand;
     element.style.borderRadius = halfWidth + "px";
     element.style.border = "1px solid " + colors.firstHandBorder;
   });
@@ -719,6 +719,7 @@ function createMdayHandElement(parentElement, {
   rotation,
 }) {
   const halfWidth = 14;
+  const halfWidth2 = 16;
   let parent = parentElement;
   let setAngle = [];
   createCircleHandElement(parent, {
@@ -732,17 +733,22 @@ function createMdayHandElement(parentElement, {
     parent = element2;
   });
   for (let i = 1; i < tops.length; i++) {
+    let top = -(tops[i-1] - tops[i]) - 3;
+    let h = halfWidth;
+    if (i == tops.length - 1) {
+      h = halfWidth2;
+    }
     createCircleHandElement(parent, {
       layerName,
-      top: -(tops[i-1] - tops[i]) - 3,
-      halfWidth,
+      top,
+      halfWidth: h,
       shadow: true,
       glass: false,
       rotation: 0,
     }, (element1, element2s, element2, element3s, element3, glassElement) => {
       element1.classList.remove("rotation");
-      element3s.style.height = "calc(100% - 3 * " + halfWidth + "px + 1px)";
-      element3.style.height = "calc(100% - 3 * " + halfWidth + "px + 1px)";
+      element3s.style.height = "calc(100% - 3 * " + h + "px + 1px)";
+      element3.style.height = "calc(100% - 3 * " + h + "px + 1px)";
       parent = element2;
       setAngle.push(function(angle) {
         element1.style.transform = "rotateZ(" + (angle) + "deg)";
@@ -2683,11 +2689,18 @@ const yearScaleTop = calendarTop;
       if (i == 3) {
         rot += 0.2;
       } else if (i == 4) {
-        rot += 0.3;
+        rot += 0.4;
       } else if (i == 5) {
         rot += 0.3;
       } else if (i == 7) {
         top -= 2;
+        rot -= 0.3;
+      } else if (i == 8) {
+        rot -= 0.2;
+      } else if (i == 9) {
+        rot -= 0.2;
+      } else if (i == 12) {
+        top += 4;
       }
       const text = i;
       createTextElement(element, {
@@ -3201,7 +3214,7 @@ const monthHandTop = 346;
     const element = createFirstHandElement(clockElement, {
       layerName,
       top: 220,
-      halfWidth: 8,
+      halfWidth: 12,
     });
   });
 
@@ -3256,7 +3269,7 @@ const minuteHandTop = halfdayScaleTop + 15;
     const element = createFirstHandElement(clockElement, {
       layerName,
       top: minuteHandTop,
-      halfWidth: 4,
+      halfWidth: 6,
     });
   });
 
@@ -3746,15 +3759,6 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
       }
     }
   }
-  for (const [lng, lat, mag, name, color] of starData) {
-    addStar(lng, lat, mag, color);
-    if (name != undefined && name[0] >= 'A' && name[0] <= 'Z' && name[1] != ' ') {
-      const deltaY = 8;
-      addText(lng, lat, name, deltaY, element => {
-        element.style.fontSize = "8px";
-      });
-    }
-  }
 
   for (const [starName1, starName2] of starLineData) {
     const star1 = starFromName(starName1);
@@ -3769,6 +3773,16 @@ function drawNightSky(layerName, southernSkyElement, northernSkyElement) {
         element.style.backgroundColor = colors.skyConstellationLine;
       });
     });
+  }
+
+  for (const [lng, lat, mag, name, color] of starData) {
+    addStar(lng, lat, mag, color);
+    if (name != undefined && name[0] >= 'A' && name[0] <= 'Z' && name[1] != ' ') {
+      const deltaY = 8;
+      addText(lng, lat, name, deltaY, element => {
+        element.style.fontSize = "8px";
+      });
+    }
   }
 
   for (let i = 0; i < 360; i += 5) {
