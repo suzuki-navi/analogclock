@@ -678,7 +678,7 @@ function createCircleHandElement(parentElement, {
     width: "calc(2 * " + halfWidth + "px)",
   }, element => {
     element.style.borderRadius = "50%";
-    element.style.border = "3px solid " + colors.secondHand;
+    element.style.border = "4px solid " + colors.secondHand;
   });
   const element3s = createClockElement(element1, {
     layerName: null,
@@ -722,8 +722,8 @@ function createMdayHandElement(parentElement, {
   tops,
   rotation,
 }) {
-  const halfWidth = 14;
-  const halfWidth2 = 16;
+  const halfWidth = 16;
+  const halfWidth2 = 18;
   let parent = parentElement;
   let setAngle = [];
   createCircleHandElement(parent, {
@@ -737,7 +737,7 @@ function createMdayHandElement(parentElement, {
     parent = element2;
   });
   for (let i = 1; i < tops.length; i++) {
-    let top = -(tops[i-1] - tops[i]) - 3;
+    let top = -(tops[i-1] - tops[i]) - 4;
     let h = halfWidth;
     if (i == tops.length - 1) {
       h = halfWidth2;
@@ -2312,14 +2312,16 @@ let setCalendarHandRotation = null;
     for (let i = 0; i < 6; i++) {
       let tops =  [];
       if (i <= 1) {
-        tops.push(206 + 28 * 6);
+        tops.push(204 + 28 * 6);
       }
       if (i == 5) {
-        tops.push(206 + 28 * i - 2);
+        tops.push(204 + 28 * i - 2);
+      } else if (i == 0) {
+        tops.push(204 + 28 * i + 2);
       } else {
-        tops.push(206 + 28 * i);
+        tops.push(204 + 28 * i);
       }
-      tops.push(178);
+      tops.push(174);
       let setAngle1 = createMdayHandElement(clockElement, {
         layerName,
         tops,
