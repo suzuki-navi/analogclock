@@ -1122,12 +1122,13 @@ helpNames.push({name: "super-moon", help: [
       for (let i = 0; i < 24; i++) {
         createTextElement(bodyElement, {
           layerName,
-          top: 2,
+          top: 4,
           halfWidth: 40,
           text: i,
           rotation: 180 + 15 * i,
         }, (element1, element2) => {
-          element2.style.fontSize = "12px";
+          element2.style.fontSize = "16px";
+          element2.style.fontFamily = "sourceserifpro";
         });
       }
     });
