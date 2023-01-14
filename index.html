@@ -659,6 +659,25 @@ function createCircleHandElement(parentElement, {
   }, element => {
     element.style.transformOrigin = "50% calc(100% - 1px)";
   });
+  const element3s = createClockElement(element1, {
+    layerName: null,
+    top: "calc(2 * " + halfWidth + "px)",
+    height: "calc(100% - 2 * " + halfWidth + "px + 1px)",
+    left: "calc(50% - 1px)",
+    width: "2px",
+  }, element => {
+    element.style.backgroundColor = colors.shadow;
+    element.style.boxShadow = boxShadow();
+  });
+  const element3 = createClockElement(element1, {
+    layerName: null,
+    top: "calc(2 * " + halfWidth + "px)",
+    height: "calc(100% - 2 * " + halfWidth + "px + 1px)",
+    left: "calc(50% - 1px)",
+    width: "2px",
+  }, element => {
+    element.style.backgroundColor = colors.secondHand;
+  });
   const element2s = createClockElement(element1, {
     layerName: null,
     top: "0",
@@ -679,25 +698,6 @@ function createCircleHandElement(parentElement, {
   }, element => {
     element.style.borderRadius = "50%";
     element.style.border = "4px solid " + colors.secondHand;
-  });
-  const element3s = createClockElement(element1, {
-    layerName: null,
-    top: "calc(2 * " + halfWidth + "px)",
-    height: "calc(100% - 2 * " + halfWidth + "px + 1px)",
-    left: "calc(50% - 1px)",
-    width: "2px",
-  }, element => {
-    element.style.backgroundColor = colors.shadow;
-    element.style.boxShadow = boxShadow();
-  });
-  const element3 = createClockElement(element1, {
-    layerName: null,
-    top: "calc(2 * " + halfWidth + "px)",
-    height: "calc(100% - 2 * " + halfWidth + "px + 1px)",
-    left: "calc(50% - 1px)",
-    width: "2px",
-  }, element => {
-    element.style.backgroundColor = colors.secondHand;
   });
   const glassElement = createClockElement(parentElement, {
     layerName,
@@ -910,30 +910,33 @@ function createArrowHandElement(parentElement, {
   createCircleHandElement(parentElement, {
     layerName,
     top,
-    halfWidth: 12,
+    halfWidth: 8,
   }, (element1, element2s, element2, element3s, element3, glassElement) => {
-    element2s.style.borderRadius = null;
-    element2s.style.top = "24px";
-    element2s.style.height = "0";
-    element2s.style.left = "12px";
-    element2s.style.width = "0";
+    element2s.style.display = "none";
+    //element2s.style.borderRadius = null;
+    //element2s.style.top = "0";
+    //element2s.style.height = "0";
+    //element2s.style.left = "8px";
+    //element2s.style.width = "0";
     element2.style.borderRadius = null;
-    element2.style.top = "16px";
+    element2.style.top = "0";
     element2.style.height = "16px";
-    element2.style.left = "6px";
-    element2.style.width = "12px";
-    element2.style.borderTop = "4px solid transparent";
-    element2.style.borderLeft = "6px solid transparent";
-    element2.style.borderRight = "6px solid transparent";
-    element2.style.borderBottom = "12px solid " + colors.secondHand;
-    element3s.style.top = "32px";
-    element3s.style.height = "calc(100% - 32px)";
-    element3s.style.left = "calc(50% - 2px)";
-    element3s.style.width = "4px";
-    element3.style.top = "32px";
-    element3.style.height = "calc(100% - 32px)";
-    element3.style.left = "calc(50% - 2px)";
-    element3.style.width = "4px";
+    element2.style.left = "0";
+    element2.style.width = "16px";
+    element2.style.borderTop = "0px solid transparent";
+    element2.style.borderLeft = "8px solid transparent";
+    element2.style.borderRight = "8px solid transparent";
+    element2.style.borderBottom = "16px solid " + colors.secondHand;
+    element3s.style.display = "none";
+    //element3s.style.top = "16px";
+    //element3s.style.height = "calc(100% - 8px)";
+    //element3s.style.left = "calc(50% - 4px)";
+    //element3s.style.width = "8px";
+    element3.style.top = "16px";
+    element3.style.height = "calc(100% - 8px)";
+    element3.style.left = "calc(50% - 4px)";
+    element3.style.width = "8px";
+    element3.style.background = colors.secondHand + "80";
   });
 }
 
@@ -2438,7 +2441,7 @@ let setCalendarHandRotation = null;
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
       layerName,
-      size: -316,
+      size: -(calendarTop + 112 - 4),
       shadow: true,
       glass: true,
       rotation: 6 * 360 / 42,
@@ -2503,7 +2506,7 @@ let setCalendarHandRotation = null;
   layerInitializers.push(clockElement => {
     createDiskElement(clockElement, {
       layerName,
-      size: -316,
+      size: -(calendarTop + 112 - 4),
       shadow: true,
       glass: true,
       rotation: 6 * 360 / 42,
@@ -2532,7 +2535,7 @@ let setCalendarHandRotation = null;
       });
       createScaleElement(bodyElement, {
         layerName,
-        top: 48,
+        top: 28,
         height: 6,
         halfWidth: 1,
         rotation: -60 + 343 * 360 / 365,
@@ -2605,12 +2608,12 @@ const yearScaleTop = calendarTop;
     }, clip => {
       const calendarDelta = yearScaleTop - halfdayScaleTop;
 
-      clip.circleBegin (330,                168 + calendarDelta, +1, +1);
-      clip.circleLineTo(330 + 2 * 360 / 42, 169 + calendarDelta, -1, +1);
-      clip.circleLineTo(330 + 2 * 360 / 42, 140 + calendarDelta, -1, +1);
-      clip.circleLineTo( 30,                140 + calendarDelta, -1, +1);
-      clip.circleLineTo( 30,                 88 + calendarDelta, -1, +1);
-      clip.circleLineTo( 30 + 6 * 360 / 42,  88 + calendarDelta, -1, +1);
+      clip.circleBegin (330,                164 + calendarDelta, +1, +1);
+      clip.circleLineTo(330 + 2 * 360 / 42, 164 + calendarDelta, -1, +1);
+      clip.circleLineTo(330 + 2 * 360 / 42, 136 + calendarDelta, -1, +1);
+      clip.circleLineTo( 30,                136 + calendarDelta, -1, +1);
+      clip.circleLineTo( 30,                 84 + calendarDelta, -1, +1);
+      clip.circleLineTo( 30 + 6 * 360 / 42,  84 + calendarDelta, -1, +1);
       clip.circleLineTo( 30.6 + 6 * 360 / 42,56,                 -1, -1);
       clip.circleLineTo(  0,                 56,                 -1, -1);
       clip.circleLineTo(  0,                  0,                 -1, +1);
@@ -2629,9 +2632,9 @@ const yearScaleTop = calendarTop;
       }
       clip.circleLineTo( 31 + 6 * 360 / 42,  20,                 +1, -1);
 
-      clip.circleLineTo( 31 + 6 * 360 / 42,  88 + calendarDelta, +1, +1);
-      clip.circleLineTo(180,                 88 + calendarDelta,  0, +1);
-      clip.circleLineTo(329 - 6 * 360 / 42,  88 + calendarDelta, -1, +1);
+      clip.circleLineTo( 31 + 6 * 360 / 42,  84 + calendarDelta, +1, +1);
+      clip.circleLineTo(180,                 84 + calendarDelta,  0, +1);
+      clip.circleLineTo(329 - 6 * 360 / 42,  84 + calendarDelta, -1, +1);
 
       clip.circleLineTo(329 - 6 * 360 / 42,  20,                 -1, -1);
       for (let i = 0; i <= 2; i++) {
@@ -2651,8 +2654,8 @@ const yearScaleTop = calendarTop;
       clip.circleLineTo(  0,                 56,                 +1, -1);
       clip.circleLineTo(329.4 - 6 * 360 / 42,56,                 +1, -1);
 
-      clip.circleLineTo(330 - 6 * 360 / 42,  88 + calendarDelta, +1, +1);
-      clip.circleLineTo(330,                 88 + calendarDelta, +1, +1);
+      clip.circleLineTo(330 - 6 * 360 / 42,  84 + calendarDelta, +1, +1);
+      clip.circleLineTo(330,                 84 + calendarDelta, +1, +1);
       clip.circleLineTo(330,                168 + calendarDelta, +1, +1);
       clip.end();
     }, (shadowElement, bodyElement, glassElement) => {
@@ -2720,13 +2723,13 @@ const yearScaleTop = calendarTop;
     // 西暦年
     printYear2000Disk(element, {
       layerName,
-      top: year2000HandTop - halfdayScaleTop + 4,
+      top: year2000HandTop - halfdayScaleTop - 14,
     });
 
     // 1月～12月
     printMonthsDisk(element, {
       layerName,
-      top: monthHandTop - halfdayScaleTop - 6,
+      top: monthHandTop - halfdayScaleTop - 10,
     })
   });
 })();
@@ -2744,7 +2747,7 @@ function printYear2000Disk(element, {
       const text = year;
       createTextElement(element, {
         layerName,
-        top: top - 8,
+        top: top - 4,
         halfWidth: 40,
         text,
         rotation: (year - 1970) * 3 + 30,
@@ -2839,15 +2842,15 @@ function printMonthsDisk(element, {
 
     createScaleElement(element, {
       layerName,
-      top: top + 6,
-      height: 24,
+      top: top + 4,
+      height: 16,
       halfWidth: 1,
       rotation: dayCount * 360 / 365,
     });
     for (let j = 10; j <= 20; j+=10) {
       createScaleElement(element, {
         layerName,
-        top: top + 24,
+        top: top + 4,
         height: 6,
         halfWidth: 1,
         rotation: (dayCount + j - 1) * 360 / 365,
@@ -2876,7 +2879,7 @@ function printMonthsDisk(element, {
 // 西暦年の針
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const year2000HandTop = 306;
+const year2000HandTop = 314;
 
 (() => {
   const layerName = "year2000-hand";
@@ -2925,6 +2928,79 @@ const year2000HandTop = 306;
       }
       diskScrolling(angle) {
         //diskScrollingCommon(moveDisk, this, angle);
+      }
+    }();
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// 1月～12月の針
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const monthHandTop = 350;
+
+(() => {
+  const layerName = "month-hand";
+  const help = [
+    "1年で1周する針です。マウスで動かすことができます。",
+    "うるう年の2月のみ、通常28日かけて回転する角度を29日かけることになるため回転速度がわずかに遅くなるよう調整されています。",
+  ];
+  helpNames.push({name:layerName, help, add:["main-scale"], clip:-halfdayScaleTop});
+
+  layerInitializers.push(clockElement => {
+    createArrowHandElement(clockElement, {
+      layerName,
+      top: monthHandTop,
+    });
+  });
+
+  diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
+    new class {
+      constructor() {
+        this.time = 0;
+        this.value = null;
+        this.angle = 0;
+        addTimeResetEventListener(this);
+        addMoveEventListener("mday-hand", this);
+        addDiskScrollListener(this, 360 / 12);
+      }
+      name() {
+        return layerName;
+      }
+      timeToValue(time) {
+        let [year, yday]  = timeToYear(time);
+        if (year % 4 == 0) {
+          return yday + 366;
+        } else {
+          return yday;
+        }
+      }
+      valueToAngle(value) {
+        let isLeap = false;
+        if (value >= 366) {
+          isLeap = true;
+          value -= 366;
+        }
+        let [month, mday, daysOfMonth] = ydayToMonth(value);
+        if (value >= 60) {
+          value = value - 1;
+        } else if (isLeap && value >= 31 && value < 60) {
+          value = (value - 31) * 28 / 29 + 31;
+        }
+        return value * 360 / 365;
+      }
+      setTime(time) {
+        this.time = time;
+        diskSetTimeCommon(moveDisk, this, time);
+      }
+      diskScrolled(count) {
+        this.angle = 0;
+        let delta = calcSecondsPerMonth(this.time, count);
+        changeIndicatingTime(delta, true);
+        setPulseMode({isPulseActive: false, isNow: false});
+      }
+      diskScrolling(angle) {
+        diskScrollingCommon(moveDisk, this, angle);
       }
     }();
   });
@@ -3122,79 +3198,6 @@ const northernSkyElementSize = 128;
       }
       setTime(time) {
         diskSetTimeCommon(moveDisk, this, time);
-      }
-    }();
-  });
-})();
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// 1月～12月の針
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const monthHandTop = 346;
-
-(() => {
-  const layerName = "month-hand";
-  const help = [
-    "1年で1周する針です。マウスで動かすことができます。",
-    "うるう年の2月のみ、通常28日かけて回転する角度を29日かけることになるため回転速度がわずかに遅くなるよう調整されています。",
-  ];
-  helpNames.push({name:layerName, help, add:["main-scale"], clip:-halfdayScaleTop});
-
-  layerInitializers.push(clockElement => {
-    createArrowHandElement(clockElement, {
-      layerName,
-      top: monthHandTop + 2,
-    });
-  });
-
-  diskGenerators.push((addTimeResetEventListener, addPulseEventListener, addMoveEventListener, addDiskScrollListener, moveDisk, changeIndicatingTime, setPulseMode) => {
-    new class {
-      constructor() {
-        this.time = 0;
-        this.value = null;
-        this.angle = 0;
-        addTimeResetEventListener(this);
-        addMoveEventListener("mday-hand", this);
-        addDiskScrollListener(this, 360 / 12);
-      }
-      name() {
-        return layerName;
-      }
-      timeToValue(time) {
-        let [year, yday]  = timeToYear(time);
-        if (year % 4 == 0) {
-          return yday + 366;
-        } else {
-          return yday;
-        }
-      }
-      valueToAngle(value) {
-        let isLeap = false;
-        if (value >= 366) {
-          isLeap = true;
-          value -= 366;
-        }
-        let [month, mday, daysOfMonth] = ydayToMonth(value);
-        if (value >= 60) {
-          value = value - 1;
-        } else if (isLeap && value >= 31 && value < 60) {
-          value = (value - 31) * 28 / 29 + 31;
-        }
-        return value * 360 / 365;
-      }
-      setTime(time) {
-        this.time = time;
-        diskSetTimeCommon(moveDisk, this, time);
-      }
-      diskScrolled(count) {
-        this.angle = 0;
-        let delta = calcSecondsPerMonth(this.time, count);
-        changeIndicatingTime(delta, true);
-        setPulseMode({isPulseActive: false, isNow: false});
-      }
-      diskScrolling(angle) {
-        diskScrollingCommon(moveDisk, this, angle);
       }
     }();
   });
