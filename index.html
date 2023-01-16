@@ -3170,6 +3170,7 @@ const northernSkyElementSize = 128;
       shadow: false,
       glass: true,
       rotation: 180,
+      classNames: ["scrollable"],
     }, clip => {
       const start = 122;
       const end = 238;
@@ -3229,6 +3230,7 @@ const northernSkyElementSize = 128;
         this.angle = 0;
         addTimeResetEventListener(this);
         addMoveEventListener("minute-hand", this);
+        addDiskScrollListener(this, 15);
       }
       name() {
         return layerName;
@@ -3241,6 +3243,14 @@ const northernSkyElementSize = 128;
       }
       setTime(time) {
         diskSetTimeCommon(moveDisk, this, time);
+      }
+      diskScrolled(count) {
+        this.angle = 0;
+        changeIndicatingTime(3600 * count, true);
+        setPulseMode({isPulseActive: false, isNow: false});
+      }
+      diskScrolling(angle) {
+        diskScrollingCommon(moveDisk, this, angle);
       }
     }();
   });
