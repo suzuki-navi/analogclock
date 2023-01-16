@@ -54,7 +54,7 @@ const normalColors = {
   calendarTransparent: "#e0d8d020",
   scale: "#aaaaaa",
   firstHand: "#666666e0",
-  firstHandBorder: "#eeeeee",
+  firstHandBorder: "#bbbbbb",
   secondHand: "#ed8d8d",
   skyHand: "#999999",
   shaft: "#d7d163",
@@ -611,7 +611,7 @@ function createFirstHandElement(parentElement, {
   }, element => {
     element.style.backgroundColor = colors.firstHand;
     element.style.borderRadius = halfWidth + "px";
-    element.style.border = "1px solid " + colors.firstHandBorder;
+    element.style.border = "3px solid " + colors.firstHandBorder;
   });
   let halfWidth2 = halfWidth;
   if (halfWidth2 < 12) {
