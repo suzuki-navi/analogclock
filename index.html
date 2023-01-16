@@ -1024,7 +1024,7 @@ const weekdayScaleTop = 176;
 const calendarTop = weekdayScaleTop + 32;
 const yearScaleTop = calendarTop;
 const year2000HandTop = calendarTop + 28 * 3 + 18;
-const monthHandTop = year2000HandTop + 36; // 344;
+const monthHandTop = year2000HandTop + 38; // 344;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 最初のヘルプ
@@ -2755,7 +2755,7 @@ let setCalendarHandRotation = null;
     // 1月～12月
     createDiskElement(element, {
       layerName,
-      size: -(calendarDelta + 28 * 3 + 34),
+      size: -(calendarDelta + 28 * 3 + 36),
       shadow: false,
       glass: true,
       rotation: 0,
@@ -2817,7 +2817,7 @@ function printYear2000Disk(element, {
 
     let scaleHeight2 = 2;
     if ((year - warekiBaseYear) % 10 == 0 || (year - warekiBaseYear) == 1) {
-      scaleHeight2 = 16;
+      scaleHeight2 = 18;
     } else if ((year - warekiBaseYear) % 10 == 5) {
       scaleHeight2 = 8;
     } else {
