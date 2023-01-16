@@ -1019,7 +1019,7 @@ const worldCitiesTop = 16;
 const halfdayScaleTop = 44;
 const southernSkyTop = 64;
 const eclipticTop = southernSkyTop + southernLatToY(0);
-const planetHelpTop = eclipticTop - 12;
+const planetHelpTop = eclipticTop - 20;
 const weekdayScaleTop = 176;
 const calendarTop = weekdayScaleTop + 32;
 const yearScaleTop = calendarTop;
@@ -1031,19 +1031,35 @@ const monthHandTop = year2000HandTop + 38; // 344;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 helpNames.push({name: "intro-1", help: [
+  "これは時計です。",
   "右上の◀▶をクリックすると次の説明文または前の説明文に移動できます。",
   "時計のソースコードおよび詳細な説明は<a href=\"https://github.com/suzuki-navi/analogclock\" target=\"_blank\">GitHub</a>にもあります。",
 ], add:["all"], clip:0});
 
 helpNames.push({name: "intro-2", help: [
-  "この時計には、カレンダーがあり、星座早見盤もあり、月の満ち欠けがわかり、惑星の位置もわかり、日食・月食や流星群の時期もわかります。",
-  "世界時計、万年カレンダー、星座早見盤、天文時計を兼ねた情報量の多いアナログ時計です。",
+  "この時計には、カレンダーがあり、星座早見盤もあり、月の満ち欠けがわかり、惑星の位置もわかり、日食・月食や流星群の時期もわかります。世界時計、万年カレンダー、星座早見盤、天文時計を兼ねた情報量の多いアナログ時計です。",
 ], add:["all"], clip:0});
 
+/*
 helpNames.push({name: "intro-3", help: [
   "時計の針はマウスで動かすことができます。",
   "時計のパーツをクリックするとその説明が表示されます。",
 ], add:["all"], clip:0});
+*/
+
+helpNames.push({name: "analog-clock-time", help: [
+  "これらのパーツが普通のアナログ時計です。文字盤の外周にある目盛りを見てください。",
+  "長針・短針・秒針はマウスで動かして時間調整できますが、この時計にはほかにもマウスで動かせるパーツがたくさんあります。時間調整すると時計が止まります。",
+  "時計が止まっているときに秒針を時計回りに少し動かすと時計が動き出します。秒針を半周以上回転させると自動で現在時刻に設定されます。",
+], add:["main-scale", "hour-hand", "minute-hand", "second-hand", "shaft"], clip:-halfdayScaleTop});
+
+helpNames.push({name: "analog-clock-date", help: [
+  "これらのパーツが年月日を表します。カレンダーとその内側にある目盛りを見てください。",
+  "先が丸い針は日付と曜日を指します。全部で6本あるうちのいずれか1本か2本が日付と曜日を指しています。残りは隠れていて見えないかもしれません。",
+  "カレンダーの内側に砂時計みたいな形の針が2つあります。",
+  "短いほうの針は1年で1周し、月を指しています。",
+  "長いほうの針は1970年から2069年の範囲で動く針で、年を指しています。年の目盛りは西暦と和暦が書かれています。",
+], add:["calendar-third-background", "weekday-scale", "calendar-mdays", "mday-hand", "calendar-lower-mask", "main-scale", "year2000-hand", "month-hand", "shaft"], clip:-halfdayScaleTop});
 
 helpNames.push({name: "world-cities-time", help: [
   "外側の文字盤に対して都市名は、各都市の現在時刻を示します。",
@@ -1057,9 +1073,9 @@ helpNames.push({name: "world-cities-sky", help: [
 ], add:["world-cities", "southern-sky", "southern-stars"], clip:-worldCitiesTop});
 
 helpNames.push({name: "perpetual-calendar", help: [
-  "この部分はカレンダーです。",
+  "この部分は万年カレンダーです。",
   "毎月の曜日配置に応じて日付の記載されたパーツが回転します。",
-  "日付を指す針の星座早見盤との干渉を少しでも軽減するために、針が途中で折れ曲がるようになっています。",
+  "日付と曜日を指す針が6本あります。そのうちのいずれか1本か2本が日付と曜日を指し、残りの針は星座早見盤との干渉を少しでも軽減するために、途中で折れ曲がるようになっています。",
 ], add:["calendar-third-background", "weekday-scale", "calendar-mdays", "mday-hand", "calendar-lower-mask"], clip:-weekdayScaleTop});
 
 helpNames.push({name: "planisphere", help: [
@@ -1086,13 +1102,13 @@ helpNames.push({name: "sun-eastwest", help: [
 ], add:["southern-horizon", "planisphere-common", "southern-stars", "eastwest-horizon", "northern-stars", "northern-horizon"], clip:-worldCitiesTop});
 
 helpNames.push({name: "sun-opposition", help: [
-  "太陽と反対方向の黄色の針に月が来ると満月です。惑星が来ると衝といい、惑星が地球に近く一晩中見やすい時期を示します。",
-  "逆に月が太陽と同じ方向に来ると新月です。",
+  "太陽と反対方向の黄色の針に月が来ると満月です。逆に月が太陽と同じ方向に来ると新月です。",
+  "惑星が黄色の針に来るとは衝と言います。惑星が地球に近く、また太陽と反対側に来るため一晩中見やすい時期です。",
 ], add:["planisphere-common", "planisphere-planets", "southern-stars", "northern-stars"], clip:-southernSkyTop});
 
 helpNames.push({name: "perihelion", help: [
-  "黄色の針が地球近日点を指している時期は地球が太陽に近いです。毎年1月ごろです。",
-  "逆に遠日点の時期は地球が太陽から遠いです。毎年7月ごろです。",
+  "黄色の針が地球近日点を指している時期は地球が太陽に近いです。北半球に住んでいる人にとっては直感に反して毎年冬に地球は太陽に近づきます。",
+  "逆に黄色の針が地球遠日点を指している時期は地球が太陽から遠いです。",
 ], add:["planisphere-common", "southern-stars", "northern-stars"], clip:-southernSkyTop});
 
 helpNames.push({name: "sun-southern-ecliptic", help: [
@@ -1100,10 +1116,6 @@ helpNames.push({name: "sun-southern-ecliptic", help: [
   "太陽黄経は地球から見た太陽の方向を示します。星座の円盤は赤経を基準にしているため黄経の目盛りは一定間隔ではありません。",
   "流星群は極大の時期を示します。",
 ], add:["planisphere-common", "southern-stars", "northern-stars"], clip:-southernSkyTop});
-
-helpNames.push({name: "southern-stars-revolution", help: [
-  "星座の円盤は地球の公転に合わせて反時計回りに1年で1周します。地球の公転軌道上の速度は一定ではありませんが、この円盤は一定速度で回転します。地球の楕円軌道および地軸の傾きに起因する速度のムラは均時差の原因となりますが、この時計では太陽とその反対にある黄色の針が1年かけて左右に揺れることで表現しています。",
-], add:["planisphere-common", "southern-stars", "northern-stars", "sun"], clip:-southernSkyTop});
 
 helpNames.push({name: "eclipse-2", help: [
   "日食や月食もわかります。",
@@ -1116,6 +1128,15 @@ helpNames.push({name: "super-moon", help: [
   "月が近地点のあたりですといつもより大きめの月、遠地点のあたりですといつもより小さめの月が見えます。",
   "近地点に近いときに満月になるとスーパームーンと呼ばれることがあります。スーパームーンはいつもよりも大きな満月です。",
 ], add:["perigee", "moon"], clip:-planetHelpTop});
+
+helpNames.push({name: "southern-stars-revolution", help: [
+  "星座の円盤は地球の公転に合わせて反時計回りに1年で1周します。地球の公転軌道上の速度は一定ではありませんが、この円盤は一定速度で回転します。地球の楕円軌道および地軸の傾きに起因する速度のムラは均時差の原因となりますが、この時計では太陽とその反対にある黄色の針が1年かけて左右に揺れることで表現しています。",
+], add:["planisphere-common", "southern-stars", "northern-stars", "sun"], clip:-southernSkyTop});
+
+helpNames.push({name: "stars-north-south", help: [
+  "星座の円盤は南天と北天とでパーツが分かれており、太陽などの針は南天と北天の間にあります。",
+  "針をすべて前面に配置すると針が多すぎて北天エリアが針だらけになってしまうため、南天と北天の間に挟んでいます。",
+], add:["planisphere-common", "southern-stars", "northern-stars", "planisphere-planets", "sun", "perigee", "eclipse", "eastwest-horizon", "mday-hand", "year2000-hand", "month-hand"], clip:-southernSkyTop});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // 外周の24時間の目盛り
@@ -1834,7 +1855,7 @@ for (const [planetLayerName, planetName, calcPlanet, calcPhase, scrollAngle, pla
     "金星は三日月状のときにもっとも明るくなります。",
   ]],
   ["moon", "月", calcMoonLng, calcMoonPhase, 12, 14, () => colors.moon, [
-    "月の位置を示す針です。29日から30日で時計回りに1周します。",
+    "月の位置を示す針です。約29.5日で時計回りに1周します。",
     "月の満ち欠けも表現しています。太陽と月の赤経の差から簡易的に位相角を計算し満ち欠けを表示しています。",
     "マウスで動かすと1日ずつ時間を調整できます。",
   ]],
@@ -2117,7 +2138,7 @@ for (const [planetLayerName, planetName, calcPlanet, calcPhase, scrollAngle, pla
 (() => {
   const layerName = "calendar-third-background";
   const help = [
-    "カレンダーの3段目の背景となるパーツです。日付が書かれているパーツが透明で3段目の表示エリアが回転するため、3段目専用の回転する背景です。",
+    "カレンダーの3段目の背景となるパーツです。日付が書かれているパーツが透明で、しかも3段目の表示エリアが回転するため、3段目専用の回転する背景パーツを備えています。",
   ];
   helpNames.push({name:layerName, help, clip:-calendarTop});
 
@@ -2616,8 +2637,8 @@ let setCalendarHandRotation = null;
   const layerName = "main-scale";
   const help = [
     "時計のメインの文字盤となる固定の円盤です。目盛り、年、月、時の数字が書かれています。",
-    "月の記載は、12月の表記だけ1枚後ろ側の円盤に書かれています。",
-    "南天の星座表記を優先するため、6時の表記は省略されています。",
+    "「12月」の表記だけ1枚後ろ側の円盤に書かれています。",
+    "夏の流星群の表記を優先するため、「6」時の表記は省略されています。",
     "年の記載は、この時計のサポート対象となる1970年から2069年の範囲です。",
     "太陽・月・惑星の位置計算は1980年から2050年の範囲で誤差が小さくなるように計算されています。その範囲から外れると誤差が大きい可能性があります。",
   ];
@@ -3373,7 +3394,7 @@ const minuteHandTop = halfdayScaleTop + 15;
   const help = [
     "秒針です。",
     "マウスで動かして時間調整できます。時間調整すると時計が止まります。",
-    "時計が止まっているときに秒針を時計回りに少し動かすと時計が動き出します。半周以上回転すると自動で現在時刻が設定されます。",
+    "時計が止まっているときに秒針を時計回りに少し動かすと時計が動き出します。秒針を半周以上回転させると自動で現在時刻に設定されます。",
   ];
   helpNames.push({name:layerName, help, add:["main-scale"], clip:-halfdayScaleTop});
 
@@ -3717,6 +3738,32 @@ const minuteHandTop = halfdayScaleTop + 15;
 })();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// 年月日
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(() => {
+  layerInitializers.push(clockElement => {
+
+    function createRectangle(layerName, top, rotation, text, classNames) {
+      createHelpTextElement(clockElement, {
+        layerName,
+        top,
+        halfWidth: 80,
+        text,
+        angle: 0,
+        rotation,
+        fontSize: 32,
+        classNames,
+      });
+    }
+    createRectangle("weekday-scale", weekdayScaleTop - 40, 0, "日付と曜日", ["analog-clock-date-help"]);
+    createRectangle("month-hand", monthHandTop + 40, 0, "月", ["analog-clock-date-help"]);
+    createRectangle("year2000-hand", year2000HandTop - 48, 0, "年", ["analog-clock-date-help"]);
+
+  });
+})();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // 万年カレンダー
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -3725,7 +3772,7 @@ const minuteHandTop = halfdayScaleTop + 15;
 
     createHelpRectangleElement(clockElement, {
       layerName: "",
-      classNames: ["perpetual-calendar-help"],
+      classNames: ["perpetual-calendar-help", "analog-clock-date-help"],
     }, clip => {
       clip.circleBegin (  0,   -10 + weekdayScaleTop,  0, +1);
       clip.circleLineTo( 31.4, -10 + weekdayScaleTop, +1, +1);
@@ -3812,38 +3859,19 @@ const minuteHandTop = halfdayScaleTop + 15;
       layerName: "sun",
       classNames: ["sun-southern-ecliptic-help"]
     }, clip => {
-      clip.circleBegin (180 +  0,   44 + calendarTop,  0, +1);
-      clip.circleLineTo(180 +  6.4, 44 + calendarTop, +1, +1);
-      clip.circleLineTo(180 +  7.0, 96 + calendarTop, +1, -1);
-      clip.circleLineTo(180 + -7.0, 96 + calendarTop, -1, -1);
-      clip.circleLineTo(180 + -6.4, 44 + calendarTop, -1, +1);
-      clip.circleLineTo(180 +  0,   44 + calendarTop,  0, +1);
+      clip.circleBegin (180 +  0,  -16 + southernSkyTop,  0, +1);
+      clip.circleLineTo(180 +  3.6,-16 + southernSkyTop, +1, +1);
+      clip.circleLineTo(180 +  7.0,100 + calendarTop, +1, -1);
+      clip.circleLineTo(180 + -7.0,100 + calendarTop, -1, -1);
+      clip.circleLineTo(180 + -3.6,-16 + southernSkyTop, -1, +1);
+      clip.circleLineTo(180 +  0,  -16 + southernSkyTop,  0, +1);
 
-      clip.circleLineTo(180 +  0,   52 + calendarTop,  0, -1);
-      clip.circleLineTo(180 + -5.2, 52 + calendarTop, +1, -1);
-      clip.circleLineTo(180 + -5.2, 88 + calendarTop, +1, +1);
-      clip.circleLineTo(180 +  5.2, 88 + calendarTop, -1, +1);
-      clip.circleLineTo(180 +  5.2, 52 + calendarTop, -1, -1);
-      clip.circleLineTo(180 +  0,   52 + calendarTop,  0, -1);
-      clip.end();
-    });
-    createHelpRectangleElement(clockElement, {
-      layerName: "sun",
-      classNames: ["sun-southern-ecliptic-help"]
-    }, clip => {
-      clip.circleBegin (180 +  0,  -12 + southernSkyTop,  0, +1);
-      clip.circleLineTo(180 +  6.4,-12 + southernSkyTop, +1, +1);
-      clip.circleLineTo(180 +  6.4, 40 + southernSkyTop, +1, -1);
-      clip.circleLineTo(180 + -6.4, 40 + southernSkyTop, -1, -1);
-      clip.circleLineTo(180 + -6.4,-12 + southernSkyTop, -1, +1);
-      clip.circleLineTo(180 +  0,  -12 + southernSkyTop,  0, +1);
-
-      clip.circleLineTo(180 +  0,   -4 + southernSkyTop,  0, -1);
-      clip.circleLineTo(180 + -5.2, -4 + southernSkyTop, +1, -1);
-      clip.circleLineTo(180 + -5.2, 32 + southernSkyTop, +1, +1);
-      clip.circleLineTo(180 +  5.2, 32 + southernSkyTop, -1, +1);
-      clip.circleLineTo(180 +  5.2, -4 + southernSkyTop, -1, -1);
-      clip.circleLineTo(180 +  0,   -4 + southernSkyTop,  0, -1);
+      clip.circleLineTo(180 +  0,   -8 + southernSkyTop,  0, -1);
+      clip.circleLineTo(180 + -3.0, -8 + southernSkyTop, +1, -1);
+      clip.circleLineTo(180 + -5.2, 92 + calendarTop, +1, +1);
+      clip.circleLineTo(180 +  5.2, 92 + calendarTop, -1, +1);
+      clip.circleLineTo(180 +  3.0, -8 + southernSkyTop, -1, -1);
+      clip.circleLineTo(180 +  0,   -8 + southernSkyTop,  0, -1);
       clip.end();
     });
     createHelpRectangleElement(clockElement, {
