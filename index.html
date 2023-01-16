@@ -1797,43 +1797,43 @@ helpNames.push({name: "super-moon", help: [
 // 太陽・月・惑星
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, planetColor, planetHelp] of [
-  ["saturn", calcSaturnLng, null, 12, 6, null, [
+for (const [planetLayerName, planetName, calcPlanet, calcPhase, scrollAngle, planetSize, planetColor, planetHelp] of [
+  ["saturn", "土星", calcSaturnLng, null, 12, 6, null, [
     "土星の位置を示す針です。1年と13日で反時計回りに1周します。背景の星座に対しては約29年で時計回りに1周します。",
     "下にある太陽と反対側にある黄色の針の位置に来るときが衝です。",
     "しし座とペガスス座付近に土星環消失の表記があります。土星がこの付近に来ると環が消失する現象が発生します。前後1年ぐらいの期間に複数回発生します。",
     "マウスで動かすと1年ずつ時間を調整できます。",
   ]],
-  ["jupiter", calcJupiterLng, null, 30, 12, null, [
+  ["jupiter", "木星", calcJupiterLng, null, 30, 12, null, [
     "木星の位置を示す針です。1年1か月で反時計回りに1周します。背景の星座に対しては約12年で時計回りに1周します。",
     "木星は全天で太陽、月、金星に次ぐ明るい星です。",
     "下にある黄色の針の位置に来るときが衝です。",
     "マウスで動かすと1年ずつ時間を調整できます。",
   ]],
-  ["mars", calcMarsLng, null, 0, 8, null, [
+  ["mars", "火星", calcMarsLng, null, 0, 8, null, [
     "火星の位置を示す針です。2年2か月で反時計回りに1周します。",
     "下にある太陽と反対側にある黄色の針の位置に来るときが衝です。",
     "みずがめ座付近に火星近日点の表記があります。この近日点付近で衝になるときに大接近となります。衝および合以外のときには火星近日点の表記は意味をなしません。",
   ]],
-  ["sun", calcSunLng, null, 0, 16, () => colors.sun, [
+  ["sun", "太陽", calcSunLng, null, 0, 16, () => colors.sun, [
     "太陽の位置を示す針です。",
     "太陽が中央より左にありますが、東京では12時より少し前に太陽が真南に来ることを示しています。11月ごろにもっとも左に来ます。",
     "太陽と反対方向にも黄色の針があります。これはほかのパーツと組み合わせてさまざまな事象を示します。",
   ]],
-  ["mercury", calcMercuryLng, calcMercuryPhase, 0, 6, () => colors.mercury, [
+  ["mercury", "水星", calcMercuryLng, calcMercuryPhase, 0, 6, () => colors.mercury, [
     "水星の位置を示す針です。常に太陽の近くにいます。地球から見ると4か月で太陽の周りを往復しています。",
     "太陽の右にある時期は夕方西の空に見え、太陽の左にある時期は明け方東の空に見えます。",
     "満ち欠けも表現していますが、肉眼では満ち欠けを認識できません。",
     "満月状のとき、この時計では太陽の手前にありますが、実際は太陽より向こう側にいます。",
   ]],
-  ["venus", calcVenusLng, calcVenusPhase, 0, 8, () => colors.venus, [
+  ["venus", "金星", calcVenusLng, calcVenusPhase, 0, 8, () => colors.venus, [
     "金星の位置を示す針です。地球から見ると1年7か月で太陽の周りを往復しています。",
     "太陽の右にある時期は夕方西の空に見え、宵の明星と呼ばれます。太陽の左にある時期は明け方東の空に見え、明けの明星と呼ばれます。全天で太陽、月に次ぐ明るい星です。",
     "満ち欠けも表現していますが、肉眼では満ち欠けを認識できません。",
     "満月状のとき、この時計では太陽の手前にありますが、実際は太陽より向こう側にいます。",
     "金星は三日月状のときにもっとも明るくなります。",
   ]],
-  ["moon", calcMoonLng, calcMoonPhase, 12, 14, () => colors.moon, [
+  ["moon", "月", calcMoonLng, calcMoonPhase, 12, 14, () => colors.moon, [
     "月の位置を示す針です。29日から30日で時計回りに1周します。",
     "月の満ち欠けも表現しています。太陽と月の赤経の差から簡易的に位相角を計算し満ち欠けを表示しています。",
     "マウスで動かすと1日ずつ時間を調整できます。",
@@ -1901,6 +1901,19 @@ for (const [planetLayerName, calcPlanet, calcPhase, scrollAngle, planetSize, pla
           });
         }
 
+        createTextElement(element2s, {
+          layerName,
+          top: -10,
+          halfWidth: 16,
+          text: planetName,
+          angle: 180,
+          classNames: ["planisphere-planets-layer", "planisphere-planets-help"],
+        }, (element1, element2) => {
+          element2.style.background = colors.skyGradient2;
+          element2.style.color = colors.skyConstellationFont;
+          element2.style.fontSize = "12px";
+          element2.style.lineHeight = "100%";
+        });
       });
       if (layerName == "sun") {
         createOppositionHandElement(clockElement, {
