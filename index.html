@@ -2682,6 +2682,7 @@ let setCalendarHandRotation = null;
       clip.circleLineTo( 29.6 + 6 * 360 / 42,56,                 -1, -1);
       clip.circleLineTo(  0,                 56,                 -1, -1);
       clip.circleLineTo(  0,                  0,                 -1, +1);
+      clip.circleLineTo( 90,                  0,                  0, +1);
       clip.circleLineTo(180,                  0,                 +1, +1);
       clip.circleLineTo(180,                 20,                 +1, -1);
       for (let i = 2; i >= 0; i--) {
@@ -2715,6 +2716,7 @@ let setCalendarHandRotation = null;
       }
       clip.circleLineTo(180,                 20,                 -1, -1);
       clip.circleLineTo(180,                  0,                 -1, +1);
+      clip.circleLineTo(270,                  0,                  0, +1);
       clip.circleLineTo(  0,                  0,                 +1, +1);
       clip.circleLineTo(  0,                 56,                 +1, -1);
       clip.circleLineTo(330.4 - 6 * 360 / 42,56,                 +1, -1);
@@ -2756,7 +2758,7 @@ let setCalendarHandRotation = null;
       let rot = i * 30;
       let top = 30;
       if (i == 3) {
-        rot += 0.2;
+        rot += 0.3;
       } else if (i == 4) {
         rot += 0.4;
       } else if (i == 5) {
@@ -2767,7 +2769,7 @@ let setCalendarHandRotation = null;
       } else if (i == 8) {
         rot -= 0.2;
       } else if (i == 9) {
-        rot -= 0.2;
+        rot -= 0.3;
       } else if (i == 12) {
         top += 4;
       }
